@@ -1,0 +1,129 @@
+3x-ui SiteKit 0.3.0-rc4 dependency provenance and build recipe
+2026-11-23, Linux amd64 target, Ubuntu 26.04 and CPython 3.14 for Certbot.
+
+Build inputs
+
+- 3x-ui v3.11.0, GitHub-verified commit c621ba9014a6aa21fd7c9ecf45655e44e24ebf13.
+  Source tar SHA-256 bacddae4a55df85a37a0503ed9c2c5312c01da46886a14f6b6d5134b6965c004.
+  https://github.com/MHSanaei/3x-ui/commit/c621ba9014a6aa21fd7c9ecf45655e44e24ebf13
+- Xray v26.10.21, GitHub-verified commit 1b1647cd9ddf0abc34b981d4611fc03bcac1ca74.
+  Source tar SHA-256 0a0e67b736ed8f9f4c0a6ccfe11eb903db72f56b3c2dfb9c2d3114187ac68fec.
+  https://github.com/XTLS/Xray-core/commit/1b1647cd9ddf0abc34b981d4611fc03bcac1ca74
+- Go 1.27.4, darwin-arm64 SHA-256
+  91a44a2b8a716600ad94a4f143e156116620db8828086a6e3602291be9bd0bb4.
+  https://go.dev/dl/
+- Zig 0.17.1, aarch64-macos SHA-256
+  75f1bc7a1e9852f17ec9a0c1895f767c4ec56d46bc8a834920eece1d0359dd8d.
+  https://ziglang.org/download/
+- Node v26.10.0, darwin-arm64 SHA-256
+  f222f7e85cc1d5a3d84786aa86836ec3d41c4dcdf59a40e4a9d719b6b0ae28af.
+  npm 11.19.1 from that archive.
+  https://nodejs.org/dist/v26.10.0/SHASUMS256.txt
+- OpenSSL supported 3.5 branch, exact commit 20d13b0afd31c8ce269dd16465fb2d9c7fb07db7.
+  Source tar SHA-256 89ec2ceca1cdaa3cea930e93e3698561336365d19cd31aaf5772ae96e4713072.
+  VERSION.dat identifies 3.5.10-dev. All eight November fix commits are ancestors.
+  https://github.com/openssl/openssl/commit/20d13b0afd31c8ce269dd16465fb2d9c7fb07db7
+  https://openssl-library.org/news/secadv/20261110.txt
+  https://openssl-library.org/news/secadv/20261117.txt
+- cryptography 50.0.2 PyPI sdist SHA-256
+  7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5.
+  The bundled wheel is rebuilt from this source and its Cargo.lock.
+  https://pypi.org/project/cryptography/50.0.2/#files
+- Rust 1.97.1, toolchain commit 8bab26f4f68e0e26f0bb7960be334d5b520ea452,
+  x86_64-unknown-linux-gnu target. Build-only maturin 1.16.0, cffi 2.1.1,
+  pycparser 3.12 and setuptools 84.2.1.
+- geoip.dat and geosite.dat from the verified old panel release, archive SHA-256
+  0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916.
+  Both hashes independently match the published upstream assets for
+  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/tag/202610242205 .
+  Data SHA-256 respectively a6271d3c96361d96156e6d3f7cf1550ef21b00d2f951deb772f464db91e89ac5
+  and e16ee9af893247f9c8b15c5259e5c0a6ae491b85ee351c22f1954e696ebb8997.
+  The matching upstream source tar includes the licensed generation workflow.
+  The GeoIP asset also matches Loyalsoldier/geoip release 202610230445.
+  Its source is included, along with the GeoIP attribution in
+  THIRD_PARTY_NOTICES.md.
+  It uses versioned and rolling external list inputs. The checks above
+  identify the exact released bytes independently of regenerating the lists.
+
+Go builds
+
+Extract the two vendored source tars in separate scratch directories. Copy
+the supplied final go.mod and go.sum into each tree. For each use Go 1.27.4,
+GOTOOLCHAIN=local, GOENV=off, GOPROXY=https://proxy.golang.org,
+GOSUMDB=sum.golang.org. Run go mod download and go mod verify.
+
+For the panel, use the supplied npm lock from the upstream commit. Under
+frontend/ run npm ci --ignore-scripts --no-audit --no-fund, then npm run build.
+From the panel source root build:
+
+  CC='zig cc -target x86_64-linux-musl' CXX='zig c++ -target x86_64-linux-musl' \
+  CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GOAMD64=v1 \
+  go build -p 4 -trimpath -mod=readonly -buildvcs=false \
+    -ldflags="-s -w -buildid= -linkmode external -extldflags '-static'" -o x-ui .
+
+From the Xray source root build:
+
+  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 \
+  go build -p 4 -trimpath -mod=readonly -buildvcs=false \
+    -ldflags="-s -w -buildid= -X github.com/xtls/xray-core/core.build=1b1647c" \
+    -o xray-linux-amd64 ./main
+
+Both exact Go executable hashes were reproduced in a second build using
+GOPROXY=off and the verified module cache. The verified/ folder contains
+go version -m and govulncheck 1.10.0 evidence. Rebuild with the target GOOS,
+GOARCH and CGO settings before auditing source again.
+
+Certbot runtime build
+
+1. Extract the pinned OpenSSL source and build linux-x86_64 with Zig using
+   CC='zig cc -target x86_64-linux-gnu.2.34', AR='zig ar', RANLIB='zig ranlib'.
+
+   ./Configure linux-x86_64 shared no-tests no-docs no-apps \
+     --prefix=/opt/https-node/certbot/openssl --openssldir=/etc/ssl --libdir=lib
+   make -j4 build_libs
+   make install_dev DESTDIR=/absolute/path/to/openssl-stage
+
+2. Extract the pinned cryptography sdist. With Rust 1.97.1 and the Linux GNU
+   target installed, run cargo fetch --locked --target x86_64-unknown-linux-gnu.
+   Set OPENSSL_DIR, OPENSSL_LIB_DIR and OPENSSL_INCLUDE_DIR to the staged
+   OpenSSL development files. Set OPENSSL_STATIC=0. Point both
+   CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER and CC_x86_64_unknown_linux_gnu
+   at a wrapper executing zig cc -target x86_64-linux-gnu.2.34. Use CPython
+   3.14 with the stated maturin, cffi and setuptools build versions.
+   Set AR_x86_64_unknown_linux_gnu and RANLIB_x86_64_unknown_linux_gnu to
+   wrappers for zig ar and zig ranlib.
+
+   PYO3_CROSS=1 PYO3_CROSS_PYTHON_VERSION=3.14 CRATE_CC_NO_DEFAULTS=1 \
+   CFLAGS_x86_64_unknown_linux_gnu='-fPIC -O2' SOURCE_DATE_EPOCH=1795456800 \
+   maturin build --release --locked --offline --target x86_64-unknown-linux-gnu \
+     --compatibility linux --auditwheel skip --interpreter python3.14
+
+3. For the runtime archive use the freshly built libcrypto.so.3 and
+   libssl.so.3, the rebuilt wheel and the other PyPI wheels in the final
+   requirements.lock. The reference PyPI wheel used for comparison is not
+   selected by the runtime. pip 26.3 boots the offline install from its wheel
+   and is kept outside the installed venv. No system pip is required.
+
+The lock and hashes under verified/ describe the exact supplied artifact.
+The project installer independently verifies the complete release SHA-256
+and the nested manifest before starting system installation. Use the manifest
+to compare a rebuild before admitting it into a dated policy.
+
+Private nginx OpenSSL runtime
+
+RC4 adds x-ui/nginx-openssl to the pinned RC2 staging archive. The two ELF
+libraries are unmodified copies of the reviewed OpenSSL build described
+above. At installation the managed nginx and Certbot use independent
+copies and absolute paths. The small private nginx directory has its own
+SHA256SUMS. Reproduce the RC4 archive with:
+
+  python3 dependencies/repack-nginx-openssl.py \
+    HTTPS-Node-0.3.0-rc2-linux-amd64.tar.gz \
+    3x-ui-sitekit-0.3.0-rc4-linux-amd64.tar.gz
+
+Pinned RC2 staging archive SHA-256:
+  832452bfe1e36e91e89a478f866d93e972a80a9d9306aa40f8b509f0eb8b8a9b
+Expected RC4 runtime SHA-256:
+  cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f
+The tracked SOURCE-ARCHIVES.sha256 covers archives included in the complete
+source release. The GitHub-generated source snapshot omits these assets.

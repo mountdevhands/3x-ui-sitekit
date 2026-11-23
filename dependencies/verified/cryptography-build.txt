@@ -1,0 +1,12 @@
+🍹 Building a mixed python/rust project
+🐍 Found CPython 3.14
+🔗 Found pyo3 bindings with abi3 support
+   Compiling cryptography-cffi v0.50.2 (./cryptography-source/src/rust/cryptography-cffi)
+   Compiling cryptography-rust v0.50.2 (./cryptography-source/src/rust)
+warning: linker stderr: ignoring deprecated linker optimization setting "1"
+  |
+  = note: `#[warn(linker_messages)]` on by default
+
+warning: `cryptography-rust` (lib) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 37.96s
+📦 Built wheel for abi3 Python ≥ 3.14 to ./private-crypto-wheel-final/cryptography-50.0.2-cp314-abi3-linux_x86_64.whl

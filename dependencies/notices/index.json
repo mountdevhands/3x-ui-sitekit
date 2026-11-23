@@ -1,0 +1,1635 @@
+{
+  "go": {
+    "github.com/Azure/go-ntlmssp@v0.1.1": [
+      "go/github.com/Azure/go-ntlmssp@v0.1.1/LICENSE"
+    ],
+    "github.com/amnezia-vpn/amneziawg-go/v3@v3.1.20260828": [
+      "go/github.com/amnezia-vpn/amneziawg-go/v3@v3.1.20260828/LICENSE"
+    ],
+    "github.com/andybalholm/brotli@v1.2.7": [
+      "go/github.com/andybalholm/brotli@v1.2.7/LICENSE"
+    ],
+    "github.com/apernet/quic-go@v0.61.1-0.20260806010916-184d081eef3e": [
+      "go/github.com/apernet/quic-go@v0.61.1-0.20260806010916-184d081eef3e/LICENSE"
+    ],
+    "github.com/gabriel-vasile/mimetype@v1.4.16": [
+      "go/github.com/gabriel-vasile/mimetype@v1.4.16/LICENSE"
+    ],
+    "github.com/ghodss/yaml@v1.0.1-0.20220118164431-d8423dcdf344": [
+      "go/github.com/ghodss/yaml@v1.0.1-0.20220118164431-d8423dcdf344/LICENSE"
+    ],
+    "github.com/gin-contrib/gzip@v1.2.8": [
+      "go/github.com/gin-contrib/gzip@v1.2.8/LICENSE"
+    ],
+    "github.com/gin-contrib/sessions@v1.1.2": [
+      "go/github.com/gin-contrib/sessions@v1.1.2/LICENSE"
+    ],
+    "github.com/gin-contrib/sse@v1.1.2": [
+      "go/github.com/gin-contrib/sse@v1.1.2/LICENSE"
+    ],
+    "github.com/gin-gonic/gin@v1.12.0": [
+      "go/github.com/gin-gonic/gin@v1.12.0/LICENSE"
+    ],
+    "github.com/go-asn1-ber/asn1-ber@v1.5.8": [
+      "go/github.com/go-asn1-ber/asn1-ber@v1.5.8/LICENSE"
+    ],
+    "github.com/go-ldap/ldap/v3@v3.4.15": [
+      "go/github.com/go-ldap/ldap/v3@v3.4.15/LICENSE"
+    ],
+    "github.com/go-playground/locales@v0.14.2": [
+      "go/github.com/go-playground/locales@v0.14.2/LICENSE"
+    ],
+    "github.com/go-playground/universal-translator@v0.18.2": [
+      "go/github.com/go-playground/universal-translator@v0.18.2/LICENSE"
+    ],
+    "github.com/go-playground/validator/v10@v10.30.5": [
+      "go/github.com/go-playground/validator/v10@v10.30.5/LICENSE"
+    ],
+    "github.com/goccy/go-json@v0.11.2": [
+      "go/github.com/goccy/go-json@v0.11.2/LICENSE"
+    ],
+    "github.com/goccy/go-yaml@v1.19.2": [
+      "go/github.com/goccy/go-yaml@v1.19.2/LICENSE"
+    ],
+    "github.com/google/btree@v1.1.3": [
+      "go/github.com/google/btree@v1.1.3/LICENSE"
+    ],
+    "github.com/google/gopacket@v1.1.19": [
+      "go/github.com/google/gopacket@v1.1.19/LICENSE"
+    ],
+    "github.com/google/uuid@v1.6.0": [
+      "go/github.com/google/uuid@v1.6.0/LICENSE"
+    ],
+    "github.com/gorilla/context@v1.1.2": [
+      "go/github.com/gorilla/context@v1.1.2/LICENSE"
+    ],
+    "github.com/gorilla/securecookie@v1.1.2": [
+      "go/github.com/gorilla/securecookie@v1.1.2/LICENSE"
+    ],
+    "github.com/gorilla/sessions@v1.4.0": [
+      "go/github.com/gorilla/sessions@v1.4.0/LICENSE"
+    ],
+    "github.com/gorilla/websocket@v1.5.3": [
+      "go/github.com/gorilla/websocket@v1.5.3/LICENSE"
+    ],
+    "github.com/grbit/go-json@v0.11.0": [
+      "go/github.com/grbit/go-json@v0.11.0/LICENSE"
+    ],
+    "github.com/huin/goupnp@v1.2.0": [
+      "go/github.com/huin/goupnp@v1.2.0/LICENSE"
+    ],
+    "github.com/huin/goupnp@v1.3.0": [
+      "go/github.com/huin/goupnp@v1.3.0/LICENSE"
+    ],
+    "github.com/jackc/pgpassfile@v1.0.0": [
+      "go/github.com/jackc/pgpassfile@v1.0.0/LICENSE"
+    ],
+    "github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761": [
+      "go/github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761/LICENSE"
+    ],
+    "github.com/jackc/pgx/v5@v5.11.0": [
+      "go/github.com/jackc/pgx/v5@v5.11.0/LICENSE"
+    ],
+    "github.com/jackc/puddle/v2@v2.2.3": [
+      "go/github.com/jackc/puddle/v2@v2.2.3/LICENSE"
+    ],
+    "github.com/jackpal/go-nat-pmp@v1.0.2": [
+      "go/github.com/jackpal/go-nat-pmp@v1.0.2/LICENSE"
+    ],
+    "github.com/jackpal/go-nat-pmp@v1.1.0": [
+      "go/github.com/jackpal/go-nat-pmp@v1.1.0/LICENSE"
+    ],
+    "github.com/jinzhu/inflection@v1.0.0": [
+      "go/github.com/jinzhu/inflection@v1.0.0/LICENSE"
+    ],
+    "github.com/jinzhu/now@v1.1.5": [
+      "go/github.com/jinzhu/now@v1.1.5/License"
+    ],
+    "github.com/joho/godotenv@v1.5.1": [
+      "go/github.com/joho/godotenv@v1.5.1/LICENCE"
+    ],
+    "github.com/juju/ratelimit@v1.0.2": [
+      "go/github.com/juju/ratelimit@v1.0.2/LICENSE"
+    ],
+    "github.com/klauspost/compress@v1.20.3": [
+      "go/github.com/klauspost/compress@v1.20.3/LICENSE"
+    ],
+    "github.com/klauspost/cpuid/v2@v2.4.1": [
+      "go/github.com/klauspost/cpuid/v2@v2.4.1/LICENSE"
+    ],
+    "github.com/koron/go-ssdp@v0.0.4": [
+      "go/github.com/koron/go-ssdp@v0.0.4/LICENSE"
+    ],
+    "github.com/koron/go-ssdp@v0.9.1": [
+      "go/github.com/koron/go-ssdp@v0.9.1/LICENSE"
+    ],
+    "github.com/leodido/go-urn@v1.5.0": [
+      "go/github.com/leodido/go-urn@v1.5.0/LICENSE"
+    ],
+    "github.com/libp2p/go-nat@v1.0.1-0.20250821073202-01afc089f138": [
+      "go/github.com/libp2p/go-nat@v1.0.1-0.20250821073202-01afc089f138/LICENSE"
+    ],
+    "github.com/libp2p/go-netroute@v0.2.1": [
+      "go/github.com/libp2p/go-netroute@v0.2.1/LICENSE"
+    ],
+    "github.com/libp2p/go-netroute@v0.4.0": [
+      "go/github.com/libp2p/go-netroute@v0.4.0/LICENSE"
+    ],
+    "github.com/mattn/go-isatty@v0.0.24": [
+      "go/github.com/mattn/go-isatty@v0.0.24/LICENSE"
+    ],
+    "github.com/mattn/go-sqlite3@v1.14.52": [
+      "go/github.com/mattn/go-sqlite3@v1.14.52/LICENSE"
+    ],
+    "github.com/miekg/dns@v1.1.73": [
+      "go/github.com/miekg/dns@v1.1.73/COPYRIGHT",
+      "go/github.com/miekg/dns@v1.1.73/LICENSE"
+    ],
+    "github.com/molecule-man/go-brrr@v1.3.0": [
+      "go/github.com/molecule-man/go-brrr@v1.3.0/LICENSE"
+    ],
+    "github.com/mymmrac/telego@v1.12.1": [
+      "go/github.com/mymmrac/telego@v1.12.1/LICENSE"
+    ],
+    "github.com/nicksnyder/go-i18n/v2@v2.6.1": [
+      "go/github.com/nicksnyder/go-i18n/v2@v2.6.1/LICENSE"
+    ],
+    "github.com/op/go-logging@v0.0.0-20160315200505-970db520ece7": [
+      "go/github.com/op/go-logging@v0.0.0-20160315200505-970db520ece7/LICENSE"
+    ],
+    "github.com/pelletier/go-toml/v2@v2.4.3": [
+      "go/github.com/pelletier/go-toml/v2@v2.4.3/LICENSE"
+    ],
+    "github.com/pelletier/go-toml@v1.9.5": [
+      "go/github.com/pelletier/go-toml@v1.9.5/LICENSE"
+    ],
+    "github.com/pion/dtls/v3@v3.1.15": [
+      "go/github.com/pion/dtls/v3@v3.1.15/LICENSE"
+    ],
+    "github.com/pion/dtls/v3@v3.1.5": [
+      "go/github.com/pion/dtls/v3@v3.1.5/LICENSE"
+    ],
+    "github.com/pion/logging@v0.2.4": [
+      "go/github.com/pion/logging@v0.2.4/LICENSE"
+    ],
+    "github.com/pion/stun/v3@v3.1.7": [
+      "go/github.com/pion/stun/v3@v3.1.7/LICENSE"
+    ],
+    "github.com/pion/transport/v4@v4.1.0": [
+      "go/github.com/pion/transport/v4@v4.1.0/LICENSE"
+    ],
+    "github.com/pion/transport/v4@v4.1.1": [
+      "go/github.com/pion/transport/v4@v4.1.1/LICENSE"
+    ],
+    "github.com/pion/transport/v5@v5.1.1": [
+      "go/github.com/pion/transport/v5@v5.1.1/LICENSE"
+    ],
+    "github.com/pires/go-proxyproto@v0.15.0": [
+      "go/github.com/pires/go-proxyproto@v0.15.0/LICENSE"
+    ],
+    "github.com/pires/go-proxyproto@v0.16.0": [
+      "go/github.com/pires/go-proxyproto@v0.16.0/LICENSE"
+    ],
+    "github.com/quic-go/qpack@v0.6.0": [
+      "go/github.com/quic-go/qpack@v0.6.0/LICENSE.md"
+    ],
+    "github.com/quic-go/quic-go@v0.64.1": [
+      "go/github.com/quic-go/quic-go@v0.64.1/LICENSE"
+    ],
+    "github.com/refraction-networking/utls@v1.8.3-0.20260301010127-aa6edf4b11af": [
+      "go/github.com/refraction-networking/utls@v1.8.3-0.20260301010127-aa6edf4b11af/LICENSE"
+    ],
+    "github.com/robfig/cron/v3@v3.0.1": [
+      "go/github.com/robfig/cron/v3@v3.0.1/LICENSE"
+    ],
+    "github.com/shirou/gopsutil/v4@v4.26.9": [
+      "go/github.com/shirou/gopsutil/v4@v4.26.9/LICENSE"
+    ],
+    "github.com/skip2/go-qrcode@v0.0.0-20200617195104-da1b6568686e": [
+      "go/github.com/skip2/go-qrcode@v0.0.0-20200617195104-da1b6568686e/LICENSE"
+    ],
+    "github.com/tklauser/go-sysconf@v0.4.0": [
+      "go/github.com/tklauser/go-sysconf@v0.4.0/LICENSE"
+    ],
+    "github.com/tklauser/numcpus@v0.12.0": [
+      "go/github.com/tklauser/numcpus@v0.12.0/LICENSE"
+    ],
+    "github.com/ugorji/go/codec@v1.3.2": [
+      "go/github.com/ugorji/go/codec@v1.3.2/LICENSE"
+    ],
+    "github.com/valyala/bytebufferpool@v1.0.0": [
+      "go/github.com/valyala/bytebufferpool@v1.0.0/LICENSE"
+    ],
+    "github.com/valyala/fasthttp@v1.76.0": [
+      "go/github.com/valyala/fasthttp@v1.76.0/LICENSE"
+    ],
+    "github.com/valyala/fastjson@v1.6.10": [
+      "go/github.com/valyala/fastjson@v1.6.10/LICENSE"
+    ],
+    "github.com/vishvananda/netlink@v1.3.1": [
+      "go/github.com/vishvananda/netlink@v1.3.1/LICENSE"
+    ],
+    "github.com/vishvananda/netns@v0.0.5": [
+      "go/github.com/vishvananda/netns@v0.0.5/LICENSE"
+    ],
+    "github.com/wlynxg/anet@v0.0.5": [
+      "go/github.com/wlynxg/anet@v0.0.5/LICENSE"
+    ],
+    "github.com/xlzd/gotp@v0.1.0": [
+      "go/github.com/xlzd/gotp@v0.1.0/LICENSE"
+    ],
+    "github.com/xtls/reality@v0.0.0-20261014101318-83f621788ca8": [
+      "go/github.com/xtls/reality@v0.0.0-20261014101318-83f621788ca8/LICENSE",
+      "go/github.com/xtls/reality@v0.0.0-20261014101318-83f621788ca8/LICENSE-Go"
+    ],
+    "github.com/xtls/xray-core@v1.260327.1-0.20261021115930-1b1647cd9ddf": [
+      "go/github.com/xtls/xray-core@v1.260327.1-0.20261021115930-1b1647cd9ddf/LICENSE"
+    ],
+    "github.com/yuin/gopher-lua@v1.1.2": [
+      "go/github.com/yuin/gopher-lua@v1.1.2/LICENSE"
+    ],
+    "go.mongodb.org/mongo-driver/v2@v2.9.2": [
+      "go/go.mongodb.org/mongo-driver/v2@v2.9.2/LICENSE"
+    ],
+    "go.uber.org/atomic@v1.12.0": [
+      "go/go.uber.org/atomic@v1.12.0/LICENSE.txt"
+    ],
+    "go4.org/netipx@v0.0.0-20231129151722-fdeea329fbba": [
+      "go/go4.org/netipx@v0.0.0-20231129151722-fdeea329fbba/LICENSE"
+    ],
+    "go4.org/netipx@v0.0.0-20260823151212-3075585bcbeb": [
+      "go/go4.org/netipx@v0.0.0-20260823151212-3075585bcbeb/LICENSE"
+    ],
+    "golang.org/x/crypto/x509roots/fallback@v0.0.0-20261020153306-9f2b28d4331a": [
+      "go/golang.org/x/crypto/x509roots/fallback@v0.0.0-20261020153306-9f2b28d4331a/LICENSE"
+    ],
+    "golang.org/x/crypto@v0.59.0": [
+      "go/golang.org/x/crypto@v0.59.0/LICENSE",
+      "go/golang.org/x/crypto@v0.59.0/PATENTS"
+    ],
+    "golang.org/x/exp@v0.0.0-20240506185415-9bf2ced13842": [
+      "go/golang.org/x/exp@v0.0.0-20240506185415-9bf2ced13842/LICENSE",
+      "go/golang.org/x/exp@v0.0.0-20240506185415-9bf2ced13842/PATENTS"
+    ],
+    "golang.org/x/exp@v0.0.0-20261014143641-f0251eb4aa3e": [
+      "go/golang.org/x/exp@v0.0.0-20261014143641-f0251eb4aa3e/LICENSE",
+      "go/golang.org/x/exp@v0.0.0-20261014143641-f0251eb4aa3e/PATENTS"
+    ],
+    "golang.org/x/net@v0.62.0": [
+      "go/golang.org/x/net@v0.62.0/LICENSE",
+      "go/golang.org/x/net@v0.62.0/PATENTS"
+    ],
+    "golang.org/x/sync@v0.25.0": [
+      "go/golang.org/x/sync@v0.25.0/LICENSE",
+      "go/golang.org/x/sync@v0.25.0/PATENTS"
+    ],
+    "golang.org/x/sys@v0.50.0": [
+      "go/golang.org/x/sys@v0.50.0/LICENSE",
+      "go/golang.org/x/sys@v0.50.0/PATENTS"
+    ],
+    "golang.org/x/text@v0.44.0": [
+      "go/golang.org/x/text@v0.44.0/LICENSE",
+      "go/golang.org/x/text@v0.44.0/PATENTS"
+    ],
+    "golang.org/x/time@v0.16.0": [
+      "go/golang.org/x/time@v0.16.0/LICENSE",
+      "go/golang.org/x/time@v0.16.0/PATENTS"
+    ],
+    "golang.zx2c4.com/wireguard@v0.0.0-20250521234502-f333402bd9cb": [
+      "go/golang.zx2c4.com/wireguard@v0.0.0-20250521234502-f333402bd9cb/LICENSE"
+    ],
+    "golang.zx2c4.com/wireguard@v0.0.0-20261006164505-2631ce99a06f": [
+      "go/golang.zx2c4.com/wireguard@v0.0.0-20261006164505-2631ce99a06f/LICENSE"
+    ],
+    "google.golang.org/genproto/googleapis/rpc@v0.0.0-20260706201446-f0a921348800": [
+      "go/google.golang.org/genproto/googleapis/rpc@v0.0.0-20260706201446-f0a921348800/LICENSE"
+    ],
+    "google.golang.org/genproto/googleapis/rpc@v0.0.0-20261019180522-ce908d29299b": [
+      "go/google.golang.org/genproto/googleapis/rpc@v0.0.0-20261019180522-ce908d29299b/LICENSE"
+    ],
+    "google.golang.org/grpc@v1.84.0": [
+      "go/google.golang.org/grpc@v1.84.0/LICENSE",
+      "go/google.golang.org/grpc@v1.84.0/NOTICE.txt"
+    ],
+    "google.golang.org/grpc@v1.86.0-dev": [
+      "go/google.golang.org/grpc@v1.86.0-dev/LICENSE",
+      "go/google.golang.org/grpc@v1.86.0-dev/NOTICE.txt"
+    ],
+    "google.golang.org/protobuf@v1.36.12": [
+      "go/google.golang.org/protobuf@v1.36.12/LICENSE",
+      "go/google.golang.org/protobuf@v1.36.12/PATENTS"
+    ],
+    "gopkg.in/natefinch/lumberjack.v2@v2.2.1": [
+      "go/gopkg.in/natefinch/lumberjack.v2@v2.2.1/LICENSE"
+    ],
+    "gopkg.in/yaml.v2@v2.4.0": [
+      "go/gopkg.in/yaml.v2@v2.4.0/LICENSE",
+      "go/gopkg.in/yaml.v2@v2.4.0/LICENSE.libyaml",
+      "go/gopkg.in/yaml.v2@v2.4.0/NOTICE"
+    ],
+    "gorm.io/driver/postgres@v1.6.3": [
+      "go/gorm.io/driver/postgres@v1.6.3/License"
+    ],
+    "gorm.io/driver/sqlite@v1.6.0": [
+      "go/gorm.io/driver/sqlite@v1.6.0/License"
+    ],
+    "gorm.io/gorm@v1.31.2": [
+      "go/gorm.io/gorm@v1.31.2/LICENSE"
+    ],
+    "gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0": [
+      "go/gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0/LICENSE"
+    ],
+    "layeh.com/gopher-luar@v1.0.11": [
+      "go/layeh.com/gopher-luar@v1.0.11/LICENSE"
+    ],
+    "lukechampine.com/blake3@v1.4.1": [
+      "go/lukechampine.com/blake3@v1.4.1/LICENSE"
+    ]
+  },
+  "npm": {
+    "@ant-design/colors": [
+      "npm/@ant-design/colors/LICENSE"
+    ],
+    "@ant-design/cssinjs": [
+      "npm/@ant-design/cssinjs/LICENSE.md"
+    ],
+    "@ant-design/cssinjs-utils": [
+      "npm/@ant-design/cssinjs-utils/LICENSE"
+    ],
+    "@ant-design/fast-color": [
+      "npm/@ant-design/fast-color/LICENSE"
+    ],
+    "@ant-design/icons": [
+      "npm/@ant-design/icons/LICENSE"
+    ],
+    "@ant-design/icons-svg": [
+      "npm/@ant-design/icons-svg/LICENSE"
+    ],
+    "@ant-design/react-slick": [
+      "npm/@ant-design/react-slick/LICENSE"
+    ],
+    "@babel/runtime": [
+      "npm/@babel/runtime/LICENSE"
+    ],
+    "@babel/runtime-corejs3": [
+      "npm/@babel/runtime-corejs3/LICENSE"
+    ],
+    "@codemirror/autocomplete": [
+      "npm/@codemirror/autocomplete/LICENSE"
+    ],
+    "@codemirror/commands": [
+      "npm/@codemirror/commands/LICENSE"
+    ],
+    "@codemirror/lang-json": [
+      "npm/@codemirror/lang-json/LICENSE"
+    ],
+    "@codemirror/language": [
+      "npm/@codemirror/language/LICENSE"
+    ],
+    "@codemirror/lint": [
+      "npm/@codemirror/lint/LICENSE"
+    ],
+    "@codemirror/search": [
+      "npm/@codemirror/search/LICENSE"
+    ],
+    "@codemirror/state": [
+      "npm/@codemirror/state/LICENSE"
+    ],
+    "@codemirror/theme-one-dark": [
+      "npm/@codemirror/theme-one-dark/LICENSE"
+    ],
+    "@codemirror/view": [
+      "npm/@codemirror/view/LICENSE"
+    ],
+    "@corvu/utils": [
+      "npm/@corvu/utils/LICENSE"
+    ],
+    "@emotion/hash": [
+      "npm/@emotion/hash/LICENSE"
+    ],
+    "@emotion/unitless": [
+      "npm/@emotion/unitless/LICENSE"
+    ],
+    "@floating-ui/core": [
+      "npm/@floating-ui/core/LICENSE"
+    ],
+    "@floating-ui/dom": [
+      "npm/@floating-ui/dom/LICENSE"
+    ],
+    "@floating-ui/utils": [
+      "npm/@floating-ui/utils/LICENSE"
+    ],
+    "@hookform/resolvers": [
+      "npm/@hookform/resolvers/LICENSE"
+    ],
+    "@internationalized/number": [
+      "npm/@internationalized/number/LICENSE"
+    ],
+    "@kobalte/core": [
+      "npm/@kobalte/core/LICENSE.md",
+      "npm/@kobalte/core/NOTICE.txt"
+    ],
+    "@kobalte/utils": [
+      "npm/@kobalte/utils/LICENSE.md"
+    ],
+    "@lezer/common": [
+      "npm/@lezer/common/LICENSE"
+    ],
+    "@lezer/highlight": [
+      "npm/@lezer/highlight/LICENSE"
+    ],
+    "@lezer/json": [
+      "npm/@lezer/json/LICENSE"
+    ],
+    "@lezer/lr": [
+      "npm/@lezer/lr/LICENSE"
+    ],
+    "@marijn/find-cluster-break": [
+      "npm/@marijn/find-cluster-break/LICENSE"
+    ],
+    "@noble/hashes": [
+      "npm/@noble/hashes/LICENSE"
+    ],
+    "@rc-component/async-validator": [
+      "npm/@rc-component/async-validator/LICENSE.md"
+    ],
+    "@rc-component/cascader": [
+      "npm/@rc-component/cascader/LICENSE",
+      "npm/@rc-component/cascader/LICENSE.md"
+    ],
+    "@rc-component/checkbox": [
+      "npm/@rc-component/checkbox/LICENSE.md"
+    ],
+    "@rc-component/collapse": [
+      "npm/@rc-component/collapse/LICENSE.md"
+    ],
+    "@rc-component/color-picker": [
+      "npm/@rc-component/color-picker/LICENSE.md"
+    ],
+    "@rc-component/context": [
+      "npm/@rc-component/context/LICENSE.md"
+    ],
+    "@rc-component/dialog": [
+      "npm/@rc-component/dialog/LICENSE.md"
+    ],
+    "@rc-component/drawer": [
+      "npm/@rc-component/drawer/LICENSE"
+    ],
+    "@rc-component/dropdown": [
+      "npm/@rc-component/dropdown/LICENSE"
+    ],
+    "@rc-component/form": [
+      "npm/@rc-component/form/LICENSE"
+    ],
+    "@rc-component/image": [
+      "npm/@rc-component/image/LICENSE",
+      "npm/@rc-component/image/LICENSE.md"
+    ],
+    "@rc-component/input": [
+      "npm/@rc-component/input/LICENSE.md"
+    ],
+    "@rc-component/input-number": [
+      "npm/@rc-component/input-number/LICENSE.md"
+    ],
+    "@rc-component/listy": [
+      "npm/@rc-component/listy/LICENSE"
+    ],
+    "@rc-component/mentions": [
+      "npm/@rc-component/mentions/LICENSE",
+      "npm/@rc-component/mentions/LICENSE.md"
+    ],
+    "@rc-component/menu": [
+      "npm/@rc-component/menu/LICENSE",
+      "npm/@rc-component/menu/LICENSE.md"
+    ],
+    "@rc-component/mini-decimal": [
+      "npm/@rc-component/mini-decimal/LICENSE"
+    ],
+    "@rc-component/motion": [
+      "npm/@rc-component/motion/LICENSE.md"
+    ],
+    "@rc-component/mutate-observer": [
+      "npm/@rc-component/mutate-observer/LICENSE"
+    ],
+    "@rc-component/notification": [
+      "npm/@rc-component/notification/LICENSE",
+      "npm/@rc-component/notification/LICENSE.md"
+    ],
+    "@rc-component/overflow": [
+      "npm/@rc-component/overflow/LICENSE.md"
+    ],
+    "@rc-component/pagination": [
+      "npm/@rc-component/pagination/LICENSE.md"
+    ],
+    "@rc-component/picker": [
+      "npm/@rc-component/picker/LICENSE",
+      "npm/@rc-component/picker/LICENSE.md"
+    ],
+    "@rc-component/portal": [
+      "npm/@rc-component/portal/LICENSE"
+    ],
+    "@rc-component/progress": [
+      "npm/@rc-component/progress/LICENSE",
+      "npm/@rc-component/progress/LICENSE.md"
+    ],
+    "@rc-component/qrcode": [
+      "npm/@rc-component/qrcode/LICENSE"
+    ],
+    "@rc-component/rate": [
+      "npm/@rc-component/rate/LICENSE.md"
+    ],
+    "@rc-component/resize-observer": [
+      "npm/@rc-component/resize-observer/LICENSE.md"
+    ],
+    "@rc-component/segmented": [
+      "npm/@rc-component/segmented/LICENSE",
+      "npm/@rc-component/segmented/LICENSE.md"
+    ],
+    "@rc-component/segmented/node_modules/@babel/runtime": [
+      "npm/@rc-component/segmented/node_modules/@babel/runtime/LICENSE"
+    ],
+    "@rc-component/select": [
+      "npm/@rc-component/select/LICENSE",
+      "npm/@rc-component/select/LICENSE.md"
+    ],
+    "@rc-component/slider": [
+      "npm/@rc-component/slider/LICENSE"
+    ],
+    "@rc-component/steps": [
+      "npm/@rc-component/steps/LICENSE",
+      "npm/@rc-component/steps/LICENSE.md"
+    ],
+    "@rc-component/switch": [
+      "npm/@rc-component/switch/LICENSE.md"
+    ],
+    "@rc-component/table": [
+      "npm/@rc-component/table/LICENSE",
+      "npm/@rc-component/table/LICENSE.md"
+    ],
+    "@rc-component/tabs": [
+      "npm/@rc-component/tabs/LICENSE",
+      "npm/@rc-component/tabs/LICENSE.md"
+    ],
+    "@rc-component/tooltip": [
+      "npm/@rc-component/tooltip/LICENSE"
+    ],
+    "@rc-component/tour": [
+      "npm/@rc-component/tour/LICENSE"
+    ],
+    "@rc-component/tree": [
+      "npm/@rc-component/tree/LICENSE",
+      "npm/@rc-component/tree/LICENSE.md"
+    ],
+    "@rc-component/tree-select": [
+      "npm/@rc-component/tree-select/LICENSE",
+      "npm/@rc-component/tree-select/LICENSE.md"
+    ],
+    "@rc-component/trigger": [
+      "npm/@rc-component/trigger/LICENSE"
+    ],
+    "@rc-component/upload": [
+      "npm/@rc-component/upload/LICENSE"
+    ],
+    "@rc-component/util": [
+      "npm/@rc-component/util/LICENSE"
+    ],
+    "@rc-component/virtual-list": [
+      "npm/@rc-component/virtual-list/LICENSE"
+    ],
+    "@rc-component/virtual-list/node_modules/@babel/runtime": [
+      "npm/@rc-component/virtual-list/node_modules/@babel/runtime/LICENSE"
+    ],
+    "@remix-run/route-pattern": [
+      "npm/@remix-run/route-pattern/LICENSE"
+    ],
+    "@scarf/scarf": [
+      "npm/@scarf/scarf/LICENSE"
+    ],
+    "@solid-primitives/event-listener": [
+      "npm/@solid-primitives/event-listener/LICENSE"
+    ],
+    "@solid-primitives/keyed": [
+      "npm/@solid-primitives/keyed/LICENSE"
+    ],
+    "@solid-primitives/map": [
+      "npm/@solid-primitives/map/LICENSE"
+    ],
+    "@solid-primitives/media": [
+      "npm/@solid-primitives/media/LICENSE"
+    ],
+    "@solid-primitives/props": [
+      "npm/@solid-primitives/props/LICENSE"
+    ],
+    "@solid-primitives/refs": [
+      "npm/@solid-primitives/refs/LICENSE"
+    ],
+    "@solid-primitives/resize-observer": [
+      "npm/@solid-primitives/resize-observer/LICENSE"
+    ],
+    "@solid-primitives/rootless": [
+      "npm/@solid-primitives/rootless/LICENSE"
+    ],
+    "@solid-primitives/static-store": [
+      "npm/@solid-primitives/static-store/LICENSE"
+    ],
+    "@solid-primitives/storage": [
+      "npm/@solid-primitives/storage/LICENSE"
+    ],
+    "@solid-primitives/transition-group": [
+      "npm/@solid-primitives/transition-group/LICENSE"
+    ],
+    "@solid-primitives/trigger": [
+      "npm/@solid-primitives/trigger/LICENSE"
+    ],
+    "@solid-primitives/utils": [
+      "npm/@solid-primitives/utils/LICENSE"
+    ],
+    "@standard-schema/utils": [
+      "npm/@standard-schema/utils/LICENSE"
+    ],
+    "@swagger-api/apidom-ast": [
+      "npm/@swagger-api/apidom-ast/NOTICE"
+    ],
+    "@swagger-api/apidom-core": [
+      "npm/@swagger-api/apidom-core/NOTICE"
+    ],
+    "@swagger-api/apidom-error": [
+      "npm/@swagger-api/apidom-error/NOTICE"
+    ],
+    "@swagger-api/apidom-json-pointer": [
+      "npm/@swagger-api/apidom-json-pointer/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-a2a-1": [
+      "npm/@swagger-api/apidom-ns-a2a-1/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-api-design-systems": [
+      "npm/@swagger-api/apidom-ns-api-design-systems/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-arazzo-1": [
+      "npm/@swagger-api/apidom-ns-arazzo-1/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-asyncapi-2": [
+      "npm/@swagger-api/apidom-ns-asyncapi-2/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-asyncapi-3": [
+      "npm/@swagger-api/apidom-ns-asyncapi-3/NOTICE",
+      "npm/@swagger-api/apidom-ns-asyncapi-3/Apache-2.0.txt"
+    ],
+    "@swagger-api/apidom-ns-json-schema-2019-09": [
+      "npm/@swagger-api/apidom-ns-json-schema-2019-09/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-json-schema-2020-12": [
+      "npm/@swagger-api/apidom-ns-json-schema-2020-12/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-json-schema-draft-4": [
+      "npm/@swagger-api/apidom-ns-json-schema-draft-4/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-json-schema-draft-6": [
+      "npm/@swagger-api/apidom-ns-json-schema-draft-6/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-json-schema-draft-7": [
+      "npm/@swagger-api/apidom-ns-json-schema-draft-7/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-openapi-2": [
+      "npm/@swagger-api/apidom-ns-openapi-2/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-openapi-3-0": [
+      "npm/@swagger-api/apidom-ns-openapi-3-0/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-openapi-3-1": [
+      "npm/@swagger-api/apidom-ns-openapi-3-1/NOTICE"
+    ],
+    "@swagger-api/apidom-ns-openapi-3-2": [
+      "npm/@swagger-api/apidom-ns-openapi-3-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-a2a-json-1": [
+      "npm/@swagger-api/apidom-parser-adapter-a2a-json-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-a2a-yaml-1": [
+      "npm/@swagger-api/apidom-parser-adapter-a2a-yaml-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-api-design-systems-json": [
+      "npm/@swagger-api/apidom-parser-adapter-api-design-systems-json/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": [
+      "npm/@swagger-api/apidom-parser-adapter-api-design-systems-yaml/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-arazzo-json-1": [
+      "npm/@swagger-api/apidom-parser-adapter-arazzo-json-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-arazzo-yaml-1": [
+      "npm/@swagger-api/apidom-parser-adapter-arazzo-yaml-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-asyncapi-json-2": [
+      "npm/@swagger-api/apidom-parser-adapter-asyncapi-json-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-asyncapi-json-3": [
+      "npm/@swagger-api/apidom-parser-adapter-asyncapi-json-3/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-2": [
+      "npm/@swagger-api/apidom-parser-adapter-asyncapi-yaml-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-3": [
+      "npm/@swagger-api/apidom-parser-adapter-asyncapi-yaml-3/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-json": [
+      "npm/@swagger-api/apidom-parser-adapter-json/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-json-2": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-json-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-json-3-0": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-json-3-0/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-json-3-1": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-json-3-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-json-3-2": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-json-3-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-2": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-yaml-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-yaml-3-0/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-yaml-3-1/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-2": [
+      "npm/@swagger-api/apidom-parser-adapter-openapi-yaml-3-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-yaml-1-2": [
+      "npm/@swagger-api/apidom-parser-adapter-yaml-1-2/NOTICE"
+    ],
+    "@swagger-api/apidom-parser-adapter-yaml-1-2/node_modules/@tree-sitter-grammars/tree-sitter-yaml": [
+      "npm/@swagger-api/apidom-parser-adapter-yaml-1-2/node_modules/@tree-sitter-grammars/tree-sitter-yaml/LICENSE"
+    ],
+    "@swagger-api/apidom-parser-adapter-yaml-1-2/node_modules/tree-sitter": [
+      "npm/@swagger-api/apidom-parser-adapter-yaml-1-2/node_modules/tree-sitter/LICENSE"
+    ],
+    "@swagger-api/apidom-reference": [
+      "npm/@swagger-api/apidom-reference/NOTICE"
+    ],
+    "@swaggerexpert/cookie": [
+      "npm/@swaggerexpert/cookie/LICENSE",
+      "npm/@swaggerexpert/cookie/NOTICE"
+    ],
+    "@swaggerexpert/json-pointer": [
+      "npm/@swaggerexpert/json-pointer/LICENSE",
+      "npm/@swaggerexpert/json-pointer/NOTICE"
+    ],
+    "@swc/helpers": [
+      "npm/@swc/helpers/LICENSE"
+    ],
+    "@tanstack/match-sorter-utils": [
+      "npm/@tanstack/match-sorter-utils/LICENSE"
+    ],
+    "@tanstack/query-core": [
+      "npm/@tanstack/query-core/LICENSE"
+    ],
+    "@tanstack/query-devtools": [
+      "npm/@tanstack/query-devtools/LICENSE"
+    ],
+    "@tanstack/react-query": [
+      "npm/@tanstack/react-query/LICENSE"
+    ],
+    "@tanstack/react-query-devtools": [
+      "npm/@tanstack/react-query-devtools/LICENSE"
+    ],
+    "@tanstack/react-virtual": [
+      "npm/@tanstack/react-virtual/LICENSE"
+    ],
+    "@tanstack/virtual-core": [
+      "npm/@tanstack/virtual-core/LICENSE"
+    ],
+    "@types/hast": [
+      "npm/@types/hast/LICENSE"
+    ],
+    "@types/prismjs": [
+      "npm/@types/prismjs/LICENSE"
+    ],
+    "@types/ramda": [
+      "npm/@types/ramda/LICENSE"
+    ],
+    "@types/react": [
+      "npm/@types/react/LICENSE"
+    ],
+    "@types/react-dom": [
+      "npm/@types/react-dom/LICENSE"
+    ],
+    "@types/trusted-types": [
+      "npm/@types/trusted-types/LICENSE"
+    ],
+    "@types/unist": [
+      "npm/@types/unist/LICENSE"
+    ],
+    "@types/use-sync-external-store": [
+      "npm/@types/use-sync-external-store/LICENSE"
+    ],
+    "@typescript/typescript-darwin-arm64": [
+      "npm/@typescript/typescript-darwin-arm64/LICENSE",
+      "npm/@typescript/typescript-darwin-arm64/NOTICE.txt"
+    ],
+    "agent-base": [
+      "npm/agent-base/README.md"
+    ],
+    "antd": [
+      "npm/antd/LICENSE"
+    ],
+    "apg-lite": [
+      "npm/apg-lite/LICENSE.md"
+    ],
+    "argparse": [
+      "npm/argparse/LICENSE"
+    ],
+    "asynckit": [
+      "npm/asynckit/LICENSE"
+    ],
+    "autolinker": [
+      "npm/autolinker/LICENSE"
+    ],
+    "available-typed-arrays": [
+      "npm/available-typed-arrays/LICENSE"
+    ],
+    "axios": [
+      "npm/axios/LICENSE"
+    ],
+    "balanced-match": [
+      "npm/balanced-match/LICENSE.md"
+    ],
+    "base64-js": [
+      "npm/base64-js/LICENSE"
+    ],
+    "brace-expansion": [
+      "npm/brace-expansion/LICENSE"
+    ],
+    "buffer": [
+      "npm/buffer/LICENSE"
+    ],
+    "call-bind": [
+      "npm/call-bind/LICENSE"
+    ],
+    "call-bind-apply-helpers": [
+      "npm/call-bind-apply-helpers/LICENSE"
+    ],
+    "call-bound": [
+      "npm/call-bound/LICENSE"
+    ],
+    "character-entities": [
+      "npm/character-entities/license"
+    ],
+    "character-entities-legacy": [
+      "npm/character-entities-legacy/license"
+    ],
+    "character-reference-invalid": [
+      "npm/character-reference-invalid/license"
+    ],
+    "classnames": [
+      "npm/classnames/LICENSE"
+    ],
+    "clsx": [
+      "npm/clsx/license"
+    ],
+    "codemirror": [
+      "npm/codemirror/LICENSE"
+    ],
+    "combined-stream": [
+      "npm/combined-stream/License"
+    ],
+    "comma-separated-tokens": [
+      "npm/comma-separated-tokens/license"
+    ],
+    "compute-scroll-into-view": [
+      "npm/compute-scroll-into-view/LICENSE"
+    ],
+    "cookie-es": [
+      "npm/cookie-es/LICENSE"
+    ],
+    "copy-anything": [
+      "npm/copy-anything/LICENSE"
+    ],
+    "copy-to-clipboard": [
+      "npm/copy-to-clipboard/LICENSE"
+    ],
+    "core-js-pure": [
+      "npm/core-js-pure/LICENSE"
+    ],
+    "crelt": [
+      "npm/crelt/LICENSE"
+    ],
+    "css.escape": [
+      "npm/css.escape/LICENSE-MIT.txt"
+    ],
+    "csstype": [
+      "npm/csstype/LICENSE"
+    ],
+    "dayjs": [
+      "npm/dayjs/LICENSE"
+    ],
+    "debug": [
+      "npm/debug/LICENSE"
+    ],
+    "decode-named-character-reference": [
+      "npm/decode-named-character-reference/license"
+    ],
+    "deep-extend": [
+      "npm/deep-extend/LICENSE"
+    ],
+    "deepmerge": [
+      "npm/deepmerge/license.txt"
+    ],
+    "define-data-property": [
+      "npm/define-data-property/LICENSE"
+    ],
+    "delayed-stream": [
+      "npm/delayed-stream/License"
+    ],
+    "dompurify": [
+      "npm/dompurify/LICENSE",
+      "npm/dompurify/LICENSE-MPL"
+    ],
+    "drange": [
+      "npm/drange/LICENSE"
+    ],
+    "dunder-proto": [
+      "npm/dunder-proto/LICENSE"
+    ],
+    "es-define-property": [
+      "npm/es-define-property/LICENSE"
+    ],
+    "es-errors": [
+      "npm/es-errors/LICENSE"
+    ],
+    "es-object-atoms": [
+      "npm/es-object-atoms/LICENSE"
+    ],
+    "es-set-tostringtag": [
+      "npm/es-set-tostringtag/LICENSE"
+    ],
+    "fast-json-patch": [
+      "npm/fast-json-patch/LICENSE.txt"
+    ],
+    "fault": [
+      "npm/fault/license"
+    ],
+    "follow-redirects": [
+      "npm/follow-redirects/LICENSE"
+    ],
+    "for-each": [
+      "npm/for-each/LICENSE"
+    ],
+    "form-data": [
+      "npm/form-data/License"
+    ],
+    "format": [
+      "npm/format/Readme.md"
+    ],
+    "function-bind": [
+      "npm/function-bind/LICENSE"
+    ],
+    "get-intrinsic": [
+      "npm/get-intrinsic/LICENSE"
+    ],
+    "get-proto": [
+      "npm/get-proto/LICENSE"
+    ],
+    "goober": [
+      "npm/goober/LICENSE"
+    ],
+    "gopd": [
+      "npm/gopd/LICENSE"
+    ],
+    "has-property-descriptors": [
+      "npm/has-property-descriptors/LICENSE"
+    ],
+    "has-symbols": [
+      "npm/has-symbols/LICENSE"
+    ],
+    "has-tostringtag": [
+      "npm/has-tostringtag/LICENSE"
+    ],
+    "hasown": [
+      "npm/hasown/LICENSE"
+    ],
+    "hast-util-parse-selector": [
+      "npm/hast-util-parse-selector/license"
+    ],
+    "hastscript": [
+      "npm/hastscript/license"
+    ],
+    "highlight.js": [
+      "npm/highlight.js/LICENSE"
+    ],
+    "highlightjs-vue": [
+      "npm/highlightjs-vue/README.md"
+    ],
+    "html-parse-stringify": [
+      "npm/html-parse-stringify/LICENSE"
+    ],
+    "https-proxy-agent": [
+      "npm/https-proxy-agent/README.md"
+    ],
+    "i18next": [
+      "npm/i18next/LICENSE"
+    ],
+    "ieee754": [
+      "npm/ieee754/LICENSE"
+    ],
+    "immutable": [
+      "npm/immutable/LICENSE"
+    ],
+    "inherits": [
+      "npm/inherits/LICENSE"
+    ],
+    "invariant": [
+      "npm/invariant/LICENSE"
+    ],
+    "is-alphabetical": [
+      "npm/is-alphabetical/license"
+    ],
+    "is-alphanumerical": [
+      "npm/is-alphanumerical/license"
+    ],
+    "is-callable": [
+      "npm/is-callable/LICENSE"
+    ],
+    "is-decimal": [
+      "npm/is-decimal/license"
+    ],
+    "is-hexadecimal": [
+      "npm/is-hexadecimal/license"
+    ],
+    "is-mobile": [
+      "npm/is-mobile/README.md"
+    ],
+    "is-typed-array": [
+      "npm/is-typed-array/LICENSE"
+    ],
+    "isarray": [
+      "npm/isarray/LICENSE"
+    ],
+    "js-file-download": [
+      "npm/js-file-download/LICENSE"
+    ],
+    "js-tokens": [
+      "npm/js-tokens/LICENSE"
+    ],
+    "js-yaml": [
+      "npm/js-yaml/LICENSE"
+    ],
+    "json2mq": [
+      "npm/json2mq/LICENSE"
+    ],
+    "lodash": [
+      "npm/lodash/LICENSE"
+    ],
+    "lodash.debounce": [
+      "npm/lodash.debounce/LICENSE"
+    ],
+    "loose-envify": [
+      "npm/loose-envify/LICENSE"
+    ],
+    "lowlight": [
+      "npm/lowlight/license"
+    ],
+    "math-intrinsics": [
+      "npm/math-intrinsics/LICENSE"
+    ],
+    "mime-db": [
+      "npm/mime-db/LICENSE"
+    ],
+    "mime-types": [
+      "npm/mime-types/LICENSE"
+    ],
+    "minim": [
+      "npm/minim/LICENSE"
+    ],
+    "minimatch": [
+      "npm/minimatch/LICENSE.md"
+    ],
+    "ms": [
+      "npm/ms/license.md"
+    ],
+    "neotraverse": [
+      "npm/neotraverse/LICENSE"
+    ],
+    "node-abort-controller": [
+      "npm/node-abort-controller/LICENSE"
+    ],
+    "node-addon-api": [
+      "npm/node-addon-api/LICENSE.md"
+    ],
+    "node-gyp-build": [
+      "npm/node-gyp-build/LICENSE"
+    ],
+    "object-assign": [
+      "npm/object-assign/license"
+    ],
+    "openapi-path-templating": [
+      "npm/openapi-path-templating/LICENSE",
+      "npm/openapi-path-templating/NOTICE"
+    ],
+    "openapi-server-url-templating": [
+      "npm/openapi-server-url-templating/LICENSE",
+      "npm/openapi-server-url-templating/NOTICE"
+    ],
+    "otpauth": [
+      "npm/otpauth/LICENSE.md"
+    ],
+    "parse-entities": [
+      "npm/parse-entities/license"
+    ],
+    "parse-entities/node_modules/@types/unist": [
+      "npm/parse-entities/node_modules/@types/unist/LICENSE"
+    ],
+    "persian-calendar-suite": [
+      "npm/persian-calendar-suite/LICENSE"
+    ],
+    "possible-typed-array-names": [
+      "npm/possible-typed-array-names/LICENSE"
+    ],
+    "prismjs": [
+      "npm/prismjs/LICENSE"
+    ],
+    "prop-types": [
+      "npm/prop-types/LICENSE"
+    ],
+    "prop-types/node_modules/react-is": [
+      "npm/prop-types/node_modules/react-is/LICENSE"
+    ],
+    "property-information": [
+      "npm/property-information/license"
+    ],
+    "proxy-from-env": [
+      "npm/proxy-from-env/LICENSE"
+    ],
+    "querystringify": [
+      "npm/querystringify/LICENSE"
+    ],
+    "ramda": [
+      "npm/ramda/LICENSE.txt"
+    ],
+    "ramda-adjunct": [
+      "npm/ramda-adjunct/LICENSE.md"
+    ],
+    "randexp": [
+      "npm/randexp/LICENSE"
+    ],
+    "randombytes": [
+      "npm/randombytes/LICENSE"
+    ],
+    "react": [
+      "npm/react/LICENSE"
+    ],
+    "react-copy-to-clipboard": [
+      "npm/react-copy-to-clipboard/LICENSE"
+    ],
+    "react-debounce-input": [
+      "npm/react-debounce-input/LICENSE"
+    ],
+    "react-dom": [
+      "npm/react-dom/LICENSE"
+    ],
+    "react-hook-form": [
+      "npm/react-hook-form/LICENSE"
+    ],
+    "react-i18next": [
+      "npm/react-i18next/LICENSE"
+    ],
+    "react-immutable-proptypes": [
+      "npm/react-immutable-proptypes/LICENSE"
+    ],
+    "react-immutable-pure-component": [
+      "npm/react-immutable-pure-component/LICENSE"
+    ],
+    "react-inspector": [
+      "npm/react-inspector/LICENSE"
+    ],
+    "react-is": [
+      "npm/react-is/LICENSE"
+    ],
+    "react-redux": [
+      "npm/react-redux/LICENSE.md"
+    ],
+    "react-router": [
+      "npm/react-router/LICENSE.md"
+    ],
+    "react-syntax-highlighter": [
+      "npm/react-syntax-highlighter/LICENSE"
+    ],
+    "redux": [
+      "npm/redux/LICENSE.md"
+    ],
+    "refractor": [
+      "npm/refractor/license"
+    ],
+    "remarkable": [
+      "npm/remarkable/LICENSE"
+    ],
+    "remove-accents": [
+      "npm/remove-accents/LICENSE"
+    ],
+    "repeat-string": [
+      "npm/repeat-string/LICENSE"
+    ],
+    "requires-port": [
+      "npm/requires-port/LICENSE"
+    ],
+    "reselect": [
+      "npm/reselect/LICENSE"
+    ],
+    "ret": [
+      "npm/ret/LICENSE"
+    ],
+    "safe-buffer": [
+      "npm/safe-buffer/LICENSE"
+    ],
+    "scheduler": [
+      "npm/scheduler/LICENSE"
+    ],
+    "scroll-into-view-if-needed": [
+      "npm/scroll-into-view-if-needed/LICENSE"
+    ],
+    "serialize-error": [
+      "npm/serialize-error/license"
+    ],
+    "serialize-error/node_modules/type-fest": [
+      "npm/serialize-error/node_modules/type-fest/license"
+    ],
+    "seroval": [
+      "npm/seroval/LICENSE"
+    ],
+    "seroval-plugins": [
+      "npm/seroval-plugins/LICENSE"
+    ],
+    "set-function-length": [
+      "npm/set-function-length/LICENSE"
+    ],
+    "sha.js": [
+      "npm/sha.js/LICENSE"
+    ],
+    "short-unique-id": [
+      "npm/short-unique-id/README.md"
+    ],
+    "solid-js": [
+      "npm/solid-js/LICENSE"
+    ],
+    "solid-presence": [
+      "npm/solid-presence/LICENSE"
+    ],
+    "solid-prevent-scroll": [
+      "npm/solid-prevent-scroll/LICENSE"
+    ],
+    "solid-transition-group": [
+      "npm/solid-transition-group/LICENSE"
+    ],
+    "space-separated-tokens": [
+      "npm/space-separated-tokens/license"
+    ],
+    "string-convert": [
+      "npm/string-convert/LICENSE"
+    ],
+    "style-mod": [
+      "npm/style-mod/LICENSE"
+    ],
+    "stylis": [
+      "npm/stylis/LICENSE"
+    ],
+    "superjson": [
+      "npm/superjson/LICENSE"
+    ],
+    "swagger-client": [
+      "npm/swagger-client/LICENSE",
+      "npm/swagger-client/NOTICE"
+    ],
+    "swagger-ui-react": [
+      "npm/swagger-ui-react/LICENSE",
+      "npm/swagger-ui-react/NOTICE"
+    ],
+    "throttle-debounce": [
+      "npm/throttle-debounce/LICENSE.md"
+    ],
+    "to-buffer": [
+      "npm/to-buffer/LICENSE"
+    ],
+    "toggle-selection": [
+      "npm/toggle-selection/LICENSE"
+    ],
+    "tree-sitter": [
+      "npm/tree-sitter/LICENSE"
+    ],
+    "tree-sitter-json": [
+      "npm/tree-sitter-json/LICENSE"
+    ],
+    "ts-mixer": [
+      "npm/ts-mixer/LICENSE"
+    ],
+    "ts-toolbelt": [
+      "npm/ts-toolbelt/LICENSE"
+    ],
+    "tslib": [
+      "npm/tslib/LICENSE.txt"
+    ],
+    "typed-array-buffer": [
+      "npm/typed-array-buffer/LICENSE"
+    ],
+    "types-ramda": [
+      "npm/types-ramda/LICENSE.md"
+    ],
+    "typescript": [
+      "npm/typescript/LICENSE",
+      "npm/typescript/NOTICE.txt"
+    ],
+    "unraw": [
+      "npm/unraw/license.md"
+    ],
+    "uplot": [
+      "npm/uplot/LICENSE"
+    ],
+    "url-parse": [
+      "npm/url-parse/LICENSE"
+    ],
+    "use-sync-external-store": [
+      "npm/use-sync-external-store/LICENSE"
+    ],
+    "w3c-keyname": [
+      "npm/w3c-keyname/LICENSE"
+    ],
+    "web-tree-sitter": [
+      "npm/web-tree-sitter/LICENSE"
+    ],
+    "which-typed-array": [
+      "npm/which-typed-array/LICENSE"
+    ],
+    "xml": [
+      "npm/xml/LICENSE"
+    ],
+    "xml-but-prettier": [
+      "npm/xml-but-prettier/LICENSE"
+    ],
+    "zenscroll": [
+      "npm/zenscroll/LICENSE"
+    ],
+    "zod": [
+      "npm/zod/LICENSE"
+    ]
+  },
+  "python": {
+    "acme-5.10.0-py3-none-any.whl": [
+      "python/acme-5.10.0-py3-none-any.whl/acme-5.10.0.dist-info/licenses/LICENSE.txt"
+    ],
+    "certbot-5.10.0-py3-none-any.whl": [
+      "python/certbot-5.10.0-py3-none-any.whl/certbot-5.10.0.dist-info/licenses/LICENSE.txt"
+    ],
+    "certifi-2026.11.20-py3-none-any.whl": [
+      "python/certifi-2026.11.20-py3-none-any.whl/certifi-2026.11.20.dist-info/licenses/LICENSE"
+    ],
+    "cffi-2.1.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl": [
+      "python/cffi-2.1.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl/cffi-2.1.1.dist-info/licenses/LICENSE"
+    ],
+    "charset_normalizer-3.5.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl": [
+      "python/charset_normalizer-3.5.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl/charset_normalizer-3.5.3.dist-info/licenses/LICENSE"
+    ],
+    "configargparse-1.10.2-py3-none-any.whl": [
+      "python/configargparse-1.10.2-py3-none-any.whl/configargparse-1.10.2.dist-info/licenses/LICENSE"
+    ],
+    "configobj-5.0.9-py2.py3-none-any.whl": [
+      "python/configobj-5.0.9-py2.py3-none-any.whl/configobj-5.0.9.dist-info/LICENSE"
+    ],
+    "cryptography-50.0.2-cp314-abi3-linux_x86_64.whl": [
+      "python/cryptography-50.0.2-cp314-abi3-linux_x86_64.whl/cryptography-50.0.2.dist-info/licenses/LICENSE",
+      "python/cryptography-50.0.2-cp314-abi3-linux_x86_64.whl/cryptography-50.0.2.dist-info/licenses/LICENSE.APACHE",
+      "python/cryptography-50.0.2-cp314-abi3-linux_x86_64.whl/cryptography-50.0.2.dist-info/licenses/LICENSE.BSD"
+    ],
+    "distro-1.9.0-py3-none-any.whl": [
+      "python/distro-1.9.0-py3-none-any.whl/distro-1.9.0.dist-info/LICENSE"
+    ],
+    "idna-3.20-py3-none-any.whl": [
+      "python/idna-3.20-py3-none-any.whl/idna-3.20.dist-info/licenses/LICENSE.md"
+    ],
+    "josepy-2.3.0-py3-none-any.whl": [
+      "python/josepy-2.3.0-py3-none-any.whl/josepy-2.3.0.dist-info/licenses/LICENSE.txt"
+    ],
+    "parsedatetime-2.6-py3-none-any.whl": [
+      "python/parsedatetime-2.6-py3-none-any.whl/parsedatetime-2.6.dist-info/LICENSE.txt"
+    ],
+    "pip-26.3-py3-none-any.whl": [
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/AUTHORS.txt",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/msgpack/COPYING",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip-26.3.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/cachecontrol/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/certifi/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/distlib/LICENSE.txt",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/distro/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/idna/LICENSE.md",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/msgpack/COPYING",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/packaging/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/packaging/LICENSE.APACHE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/packaging/LICENSE.BSD",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/pkg_resources/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/platformdirs/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/pygments/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/pyproject_hooks/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/requests/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/resolvelib/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/rich/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/tomli/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/tomli_w/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/truststore/LICENSE",
+      "python/pip-26.3-py3-none-any.whl/pip/_vendor/urllib3/LICENSE.txt"
+    ],
+    "pycparser-3.12-py3-none-any.whl": [
+      "python/pycparser-3.12-py3-none-any.whl/pycparser-3.12.dist-info/licenses/LICENSE"
+    ],
+    "pyopenssl-26.4.0-py3-none-any.whl": [
+      "python/pyopenssl-26.4.0-py3-none-any.whl/pyopenssl-26.4.0.dist-info/licenses/LICENSE"
+    ],
+    "pyrfc3339-2.1.1-py3-none-any.whl": [
+      "python/pyrfc3339-2.1.1-py3-none-any.whl/pyrfc3339-2.1.1.dist-info/licenses/LICENSE.txt"
+    ],
+    "requests-2.34.2-py3-none-any.whl": [
+      "python/requests-2.34.2-py3-none-any.whl/requests-2.34.2.dist-info/licenses/LICENSE",
+      "python/requests-2.34.2-py3-none-any.whl/requests-2.34.2.dist-info/licenses/NOTICE"
+    ],
+    "urllib3-2.8.0-py3-none-any.whl": [
+      "python/urllib3-2.8.0-py3-none-any.whl/urllib3-2.8.0.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  "rust": {
+    "asn1-0.24.1": [
+      "rust/asn1-0.24.1/LICENSE"
+    ],
+    "asn1_derive-0.24.1": [
+      "rust/asn1_derive-0.24.1/LICENSE"
+    ],
+    "base64-0.23.0": [
+      "rust/base64-0.23.0/LICENSE-APACHE",
+      "rust/base64-0.23.0/LICENSE-MIT"
+    ],
+    "bitflags-2.13.1": [
+      "rust/bitflags-2.13.1/LICENSE-APACHE",
+      "rust/bitflags-2.13.1/LICENSE-MIT"
+    ],
+    "cc-1.4.0": [
+      "rust/cc-1.4.0/LICENSE-APACHE",
+      "rust/cc-1.4.0/LICENSE-MIT"
+    ],
+    "cfg-if-1.0.4": [
+      "rust/cfg-if-1.0.4/LICENSE-APACHE",
+      "rust/cfg-if-1.0.4/LICENSE-MIT"
+    ],
+    "find-msvc-tools-0.1.9": [
+      "rust/find-msvc-tools-0.1.9/LICENSE-APACHE",
+      "rust/find-msvc-tools-0.1.9/LICENSE-MIT"
+    ],
+    "foreign-types-0.3.2": [
+      "rust/foreign-types-0.3.2/LICENSE-APACHE",
+      "rust/foreign-types-0.3.2/LICENSE-MIT"
+    ],
+    "foreign-types-shared-0.1.1": [
+      "rust/foreign-types-shared-0.1.1/LICENSE-APACHE",
+      "rust/foreign-types-shared-0.1.1/LICENSE-MIT"
+    ],
+    "heck-0.5.0": [
+      "rust/heck-0.5.0/LICENSE-APACHE",
+      "rust/heck-0.5.0/LICENSE-MIT"
+    ],
+    "itoa-1.0.18": [
+      "rust/itoa-1.0.18/LICENSE-APACHE",
+      "rust/itoa-1.0.18/LICENSE-MIT"
+    ],
+    "libc-0.2.189": [
+      "rust/libc-0.2.189/LICENSE-APACHE",
+      "rust/libc-0.2.189/LICENSE-MIT"
+    ],
+    "once_cell-1.21.4": [
+      "rust/once_cell-1.21.4/LICENSE-APACHE",
+      "rust/once_cell-1.21.4/LICENSE-MIT"
+    ],
+    "openssl-0.10.81": [
+      "rust/openssl-0.10.81/LICENSE",
+      "rust/openssl-0.10.81/LICENSE-APACHE"
+    ],
+    "openssl-macros-0.1.1": [
+      "rust/openssl-macros-0.1.1/LICENSE-APACHE",
+      "rust/openssl-macros-0.1.1/LICENSE-MIT"
+    ],
+    "openssl-sys-0.9.117": [
+      "rust/openssl-sys-0.9.117/LICENSE-MIT"
+    ],
+    "pem-4.0.0": [
+      "rust/pem-4.0.0/LICENSE.md"
+    ],
+    "pkg-config-0.3.33": [
+      "rust/pkg-config-0.3.33/LICENSE-APACHE",
+      "rust/pkg-config-0.3.33/LICENSE-MIT"
+    ],
+    "proc-macro2-1.0.107": [
+      "rust/proc-macro2-1.0.107/LICENSE-APACHE",
+      "rust/proc-macro2-1.0.107/LICENSE-MIT"
+    ],
+    "pyo3-0.29.2": [
+      "rust/pyo3-0.29.2/LICENSE-APACHE",
+      "rust/pyo3-0.29.2/LICENSE-MIT"
+    ],
+    "pyo3-build-config-0.29.2": [
+      "rust/pyo3-build-config-0.29.2/LICENSE-APACHE",
+      "rust/pyo3-build-config-0.29.2/LICENSE-MIT"
+    ],
+    "pyo3-ffi-0.29.2": [
+      "rust/pyo3-ffi-0.29.2/LICENSE-APACHE",
+      "rust/pyo3-ffi-0.29.2/LICENSE-MIT"
+    ],
+    "pyo3-macros-0.29.2": [
+      "rust/pyo3-macros-0.29.2/LICENSE-APACHE",
+      "rust/pyo3-macros-0.29.2/LICENSE-MIT"
+    ],
+    "pyo3-macros-backend-0.29.2": [
+      "rust/pyo3-macros-backend-0.29.2/LICENSE-APACHE",
+      "rust/pyo3-macros-backend-0.29.2/LICENSE-MIT"
+    ],
+    "quote-1.0.47": [
+      "rust/quote-1.0.47/LICENSE-APACHE",
+      "rust/quote-1.0.47/LICENSE-MIT"
+    ],
+    "self_cell-1.3.0": [
+      "rust/self_cell-1.3.0/LICENSE-APACHE",
+      "rust/self_cell-1.3.0/LICENSE-GPLv2"
+    ],
+    "shlex-2.0.1": [
+      "rust/shlex-2.0.1/LICENSE-APACHE",
+      "rust/shlex-2.0.1/LICENSE-MIT"
+    ],
+    "syn-2.0.119": [
+      "rust/syn-2.0.119/LICENSE-APACHE",
+      "rust/syn-2.0.119/LICENSE-MIT"
+    ],
+    "target-lexicon-0.13.5": [
+      "rust/target-lexicon-0.13.5/LICENSE"
+    ],
+    "unicode-ident-1.0.24": [
+      "rust/unicode-ident-1.0.24/LICENSE-APACHE",
+      "rust/unicode-ident-1.0.24/LICENSE-MIT",
+      "rust/unicode-ident-1.0.24/LICENSE-UNICODE"
+    ],
+    "vcpkg-0.2.15": [
+      "rust/vcpkg-0.2.15/LICENSE-APACHE",
+      "rust/vcpkg-0.2.15/LICENSE-MIT"
+    ]
+  },
+  "toolchain": {
+    "go-1.27.4": [
+      "toolchain/go-1.27.4/LICENSE",
+      "toolchain/go-1.27.4/PATENTS"
+    ],
+    "musl": [
+      "toolchain/musl/COPYRIGHT"
+    ],
+    "zig-0.17.1": [
+      "toolchain/zig-0.17.1/LICENSE"
+    ]
+  },
+  "upstream": {
+    "3x-ui": [
+      "upstream/3x-ui/LICENSE"
+    ],
+    "cryptography": [
+      "upstream/cryptography/LICENSE",
+      "upstream/cryptography/LICENSE.APACHE",
+      "upstream/cryptography/LICENSE.BSD"
+    ],
+    "geo-rules": [
+      "upstream/geo-rules/LICENSE"
+    ],
+    "geoip-generator": [
+      "upstream/geoip-generator/LICENSE",
+      "upstream/geoip-generator/LICENSE-GPL"
+    ],
+    "openssl": [
+      "upstream/openssl/LICENSE.txt"
+    ],
+    "xray-core": [
+      "upstream/xray-core/LICENSE"
+    ]
+  }
+}

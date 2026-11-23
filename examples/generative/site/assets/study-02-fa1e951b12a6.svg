@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Circle field · 9 × 3</title>
+<rect width="960" height="600" fill="#F1E7D0"/>
+<circle cx="70" cy="70" r="27" fill="#D1B46B"/>
+<circle cx="172" cy="70" r="34" fill="#3E3213"/>
+<circle cx="275" cy="70" r="32" fill="#D1B46B"/>
+<circle cx="377" cy="70" r="19" fill="#3E3213"/>
+<circle cx="480" cy="70" r="29" fill="#3E3213"/>
+<circle cx="582" cy="70" r="37" fill="#D1B46B"/>
+<circle cx="685" cy="70" r="33" fill="#D1B46B"/>
+<circle cx="787" cy="70" r="29" fill="#3E3213"/>
+<circle cx="890" cy="70" r="11" fill="#3E3213"/>
+<circle cx="70" cy="300" r="21" fill="#D1B46B"/>
+<circle cx="172" cy="300" r="31" fill="#D1B46B"/>
+<circle cx="275" cy="300" r="10" fill="#D1B46B"/>
+<circle cx="377" cy="300" r="34" fill="#D1B46B"/>
+<circle cx="480" cy="300" r="29" fill="#D1B46B"/>
+<circle cx="582" cy="300" r="35" fill="#94772E"/>
+<circle cx="685" cy="300" r="16" fill="#3E3213"/>
+<circle cx="787" cy="300" r="16" fill="#3E3213"/>
+<circle cx="890" cy="300" r="27" fill="#D1B46B"/>
+<circle cx="70" cy="530" r="36" fill="#D1B46B"/>
+<circle cx="172" cy="530" r="11" fill="#D1B46B"/>
+<circle cx="275" cy="530" r="23" fill="#94772E"/>
+<circle cx="377" cy="530" r="17" fill="#D1B46B"/>
+<circle cx="480" cy="530" r="33" fill="#D1B46B"/>
+<circle cx="582" cy="530" r="22" fill="#94772E"/>
+<circle cx="685" cy="530" r="30" fill="#D1B46B"/>
+<circle cx="787" cy="530" r="33" fill="#3E3213"/>
+<circle cx="890" cy="530" r="19" fill="#D1B46B"/>
+</svg>

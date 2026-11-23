@@ -1,0 +1,77 @@
+{
+  "kind": "curves",
+  "method": "mirrored-pair",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#18430F",
+    "#389E24",
+    "#75DB61",
+    "#D4F4CD"
+  ],
+  "parameters": {
+    "control_points": [
+      [
+        [
+          75,
+          450
+        ],
+        [
+          337,
+          299
+        ],
+        [
+          657,
+          94
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          885,
+          450
+        ],
+        [
+          623,
+          299
+        ],
+        [
+          303,
+          94
+        ],
+        [
+          75,
+          150
+        ]
+      ]
+    ],
+    "stroke_width": 4,
+    "curve_count": 2
+  },
+  "primitives": [
+    {
+      "shape": "path",
+      "d": "M75 450C337 299 657 94 885 150",
+      "color": "#18430F",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M885 450C623 299 303 94 75 150",
+      "color": "#389E24",
+      "stroke_width": 4
+    }
+  ],
+  "title": "Mirrored Pair · 2 paths",
+  "description": "2 cubic Bezier paths with a 4-unit stroke. All four control points for every path are included in the downloadable data.",
+  "files": {
+    "svg": "study-03-94665b313f6a.svg",
+    "css": "study-03-94665b313f6a.css"
+  },
+  "svg_sha256": "24d065f739027bac994d3be35ee0d1623af9554070eaea8c413f31dbee853735"
+}

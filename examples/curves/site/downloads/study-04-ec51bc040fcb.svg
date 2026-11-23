@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Curve Bundle · 6 paths</title>
+<rect width="960" height="600" fill="#D3EEE4"/>
+<path d="M75 450C261 135 643 320 885 150" fill="none" stroke="#173B2E" stroke-width="6"/>
+<path d="M75 450C301 218 696 186 885 150" fill="none" stroke="#368C6C" stroke-width="6"/>
+<path d="M75 450C219 218 740 514 885 150" fill="none" stroke="#73C9A9" stroke-width="6"/>
+<path d="M75 450C382 355 565 179 885 150" fill="none" stroke="#173B2E" stroke-width="6"/>
+<path d="M75 450C411 363 686 72 885 150" fill="none" stroke="#368C6C" stroke-width="6"/>
+<path d="M75 450C313 340 747 361 885 150" fill="none" stroke="#73C9A9" stroke-width="6"/>
+</svg>

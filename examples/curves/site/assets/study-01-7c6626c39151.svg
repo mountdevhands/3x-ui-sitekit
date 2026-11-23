@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Curve Bundle · 8 paths</title>
+<rect width="960" height="600" fill="#E2D0F1"/>
+<path d="M75 450C212 71 792 204 885 150" fill="none" stroke="#2A133F" stroke-width="4"/>
+<path d="M75 450C398 513 697 106 885 150" fill="none" stroke="#642D95" stroke-width="4"/>
+<path d="M75 450C374 499 591 248 885 150" fill="none" stroke="#A26AD2" stroke-width="4"/>
+<path d="M75 450C145 290 615 436 885 150" fill="none" stroke="#2A133F" stroke-width="4"/>
+<path d="M75 450C160 516 761 271 885 150" fill="none" stroke="#642D95" stroke-width="4"/>
+<path d="M75 450C323 329 810 424 885 150" fill="none" stroke="#A26AD2" stroke-width="4"/>
+<path d="M75 450C210 310 811 296 885 150" fill="none" stroke="#2A133F" stroke-width="4"/>
+<path d="M75 450C230 297 604 65 885 150" fill="none" stroke="#642D95" stroke-width="4"/>
+</svg>

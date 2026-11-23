@@ -1,0 +1,42 @@
+{
+  "@ant-design/icons-svg": {
+    "declared_license": "MIT",
+    "notice_url": "https://raw.githubusercontent.com/ant-design/ant-design-icons/7f2516ac91226d2b41f93b35cb5197c8d94f7189/LICENSE"
+  },
+  "@swagger-api/apidom-ns-asyncapi-3": {
+    "declared_license": "Apache-2.0",
+    "notice_urls": [
+      "https://raw.githubusercontent.com/swagger-api/apidom/5b8e8a3d0488c4424c1775beeb7b2a839ed42f68/NOTICE",
+      "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    ]
+  },
+  "agent-base": {
+    "declared_license": "MIT",
+    "notice_url": "https://registry.npmjs.org/agent-base/6.0.2"
+  },
+  "format": {
+    "declared_license": null,
+    "notice_url": "https://registry.npmjs.org/format/0.2.2"
+  },
+  "highlightjs-vue": {
+    "declared_license": "CC0-1.0",
+    "notice_url": "https://registry.npmjs.org/highlightjs-vue/1.0.0"
+  },
+  "https-proxy-agent": {
+    "declared_license": "MIT",
+    "notice_url": "https://registry.npmjs.org/https-proxy-agent/5.0.1"
+  },
+  "is-mobile": {
+    "declared_license": "MIT",
+    "notice_url": "https://registry.npmjs.org/is-mobile/5.0.0"
+  },
+  "short-unique-id": {
+    "declared_license": "Apache-2.0",
+    "notice_url": "https://registry.npmjs.org/short-unique-id/5.3.2"
+  },
+  "toggle-selection": {
+    "declared_license": "MIT",
+    "license_source": "Repository license, corroborated by the published package MIT declaration.",
+    "notice_url": "https://raw.githubusercontent.com/sudodoki/toggle-selection/gh-pages/LICENSE"
+  }
+}

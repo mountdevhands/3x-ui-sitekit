@@ -1,0 +1,219 @@
+{
+  "kind": "generative",
+  "method": "circle-grid",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#3E3213",
+    "#94772E",
+    "#D1B46B",
+    "#F1E7D0"
+  ],
+  "parameters": {
+    "columns": 9,
+    "rows": 3,
+    "margin": 70,
+    "radius_min": 10,
+    "radius_max": 38
+  },
+  "primitives": [
+    {
+      "shape": "circle",
+      "cx": 70,
+      "cy": 70,
+      "radius": 27,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 172,
+      "cy": 70,
+      "radius": 34,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 275,
+      "cy": 70,
+      "radius": 32,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 377,
+      "cy": 70,
+      "radius": 19,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 480,
+      "cy": 70,
+      "radius": 29,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 582,
+      "cy": 70,
+      "radius": 37,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 685,
+      "cy": 70,
+      "radius": 33,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 787,
+      "cy": 70,
+      "radius": 29,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 890,
+      "cy": 70,
+      "radius": 11,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 70,
+      "cy": 300,
+      "radius": 21,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 172,
+      "cy": 300,
+      "radius": 31,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 275,
+      "cy": 300,
+      "radius": 10,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 377,
+      "cy": 300,
+      "radius": 34,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 480,
+      "cy": 300,
+      "radius": 29,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 582,
+      "cy": 300,
+      "radius": 35,
+      "color": "#94772E"
+    },
+    {
+      "shape": "circle",
+      "cx": 685,
+      "cy": 300,
+      "radius": 16,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 787,
+      "cy": 300,
+      "radius": 16,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 890,
+      "cy": 300,
+      "radius": 27,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 70,
+      "cy": 530,
+      "radius": 36,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 172,
+      "cy": 530,
+      "radius": 11,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 275,
+      "cy": 530,
+      "radius": 23,
+      "color": "#94772E"
+    },
+    {
+      "shape": "circle",
+      "cx": 377,
+      "cy": 530,
+      "radius": 17,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 480,
+      "cy": 530,
+      "radius": 33,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 582,
+      "cy": 530,
+      "radius": 22,
+      "color": "#94772E"
+    },
+    {
+      "shape": "circle",
+      "cx": 685,
+      "cy": 530,
+      "radius": 30,
+      "color": "#D1B46B"
+    },
+    {
+      "shape": "circle",
+      "cx": 787,
+      "cy": 530,
+      "radius": 33,
+      "color": "#3E3213"
+    },
+    {
+      "shape": "circle",
+      "cx": 890,
+      "cy": 530,
+      "radius": 19,
+      "color": "#D1B46B"
+    }
+  ],
+  "title": "Circle field · 9 × 3",
+  "description": "27 circles on a 9-column, 3-row grid. Radius and colour vary within the recorded bounds.",
+  "files": {
+    "svg": "study-02-fa1e951b12a6.svg",
+    "css": "study-02-fa1e951b12a6.css"
+  },
+  "svg_sha256": "6f69d61053d174f2ec89ee147215b20d476df52a85e723573fb37b3e698aa564"
+}

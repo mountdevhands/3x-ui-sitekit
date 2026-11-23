@@ -1,0 +1,142 @@
+{
+  "kind": "palettes",
+  "method": "monochrome",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#40270D",
+    "#88531B",
+    "#D5822A",
+    "#E6B47F",
+    "#F7E6D4"
+  ],
+  "parameters": {
+    "hsl": [
+      {
+        "h": 31,
+        "s": 67,
+        "l": 15
+      },
+      {
+        "h": 31,
+        "s": 67,
+        "l": 32
+      },
+      {
+        "h": 31,
+        "s": 67,
+        "l": 50
+      },
+      {
+        "h": 31,
+        "s": 67,
+        "l": 70
+      },
+      {
+        "h": 31,
+        "s": 67,
+        "l": 90
+      }
+    ],
+    "hex": [
+      "#40270D",
+      "#88531B",
+      "#D5822A",
+      "#E6B47F",
+      "#F7E6D4"
+    ],
+    "contrast_matrix": [
+      [
+        1.0,
+        2.18,
+        4.66,
+        7.397,
+        11.377
+      ],
+      [
+        2.18,
+        1.0,
+        2.138,
+        3.394,
+        5.22
+      ],
+      [
+        4.66,
+        2.138,
+        1.0,
+        1.587,
+        2.441
+      ],
+      [
+        7.397,
+        3.394,
+        1.587,
+        1.0,
+        1.538
+      ],
+      [
+        11.377,
+        5.22,
+        2.441,
+        1.538,
+        1.0
+      ]
+    ],
+    "strongest_pair": {
+      "first": "#40270D",
+      "second": "#F7E6D4",
+      "ratio": 11.377
+    }
+  },
+  "primitives": [
+    {
+      "shape": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#40270D"
+    },
+    {
+      "shape": "rect",
+      "x": 192,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#88531B"
+    },
+    {
+      "shape": "rect",
+      "x": 384,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#D5822A"
+    },
+    {
+      "shape": "rect",
+      "x": 576,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#E6B47F"
+    },
+    {
+      "shape": "rect",
+      "x": 768,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#F7E6D4"
+    }
+  ],
+  "title": "Monochrome · hue 31°",
+  "description": "Five sRGB colours from explicit HSL steps. The strongest measured pair is #40270D / #F7E6D4 at 11.38:1.",
+  "files": {
+    "svg": "study-02-312f018c0c47.svg",
+    "css": "study-02-312f018c0c47.css"
+  },
+  "svg_sha256": "beb0795597ab8242687c4e80f8690bfb5e21ecacf0d9e14c9a5620df82376174"
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="study-title">
+<title id="study-title">Tile / repeat / surface</title>
+<rect width="64" height="64" rx="14" fill="#54734F"/>
+<circle cx="24" cy="25" r="10" fill="#EFF1E6"/><path d="M22 45L45 22V45Z" fill="#EFF1E6"/>
+</svg>

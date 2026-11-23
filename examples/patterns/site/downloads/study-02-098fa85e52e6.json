@@ -1,0 +1,183 @@
+{
+  "kind": "patterns",
+  "method": "diagonal-stripes",
+  "canvas": {
+    "width": 128,
+    "height": 128
+  },
+  "colors": [
+    "#122140",
+    "#2A4E98",
+    "#678CD5",
+    "#CFDBF2"
+  ],
+  "parameters": {
+    "tile_width": 128,
+    "tile_height": 128,
+    "vertical_offset_interval": 16,
+    "stroke_width": 2,
+    "slope": 1
+  },
+  "primitives": [
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -128,
+      "x2": 128,
+      "y2": 0,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -112,
+      "x2": 128,
+      "y2": 16,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -96,
+      "x2": 128,
+      "y2": 32,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -80,
+      "x2": 128,
+      "y2": 48,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -64,
+      "x2": 128,
+      "y2": 64,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -48,
+      "x2": 128,
+      "y2": 80,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -32,
+      "x2": 128,
+      "y2": 96,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": -16,
+      "x2": 128,
+      "y2": 112,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 0,
+      "x2": 128,
+      "y2": 128,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 16,
+      "x2": 128,
+      "y2": 144,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 32,
+      "x2": 128,
+      "y2": 160,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 48,
+      "x2": 128,
+      "y2": 176,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 64,
+      "x2": 128,
+      "y2": 192,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 80,
+      "x2": 128,
+      "y2": 208,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 96,
+      "x2": 128,
+      "y2": 224,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 112,
+      "x2": 128,
+      "y2": 240,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    },
+    {
+      "shape": "line",
+      "x1": 0,
+      "y1": 128,
+      "x2": 128,
+      "y2": 256,
+      "color": "#2A4E98",
+      "stroke_width": 2
+    }
+  ],
+  "title": "Diagonal repeat · 16-unit interval",
+  "description": "Parallel 45-degree lines use vertical offsets of 16 units. That interval divides the 128-unit tile exactly, preserving the repeat across its edges.",
+  "files": {
+    "svg": "study-02-098fa85e52e6.svg",
+    "css": "study-02-098fa85e52e6.css"
+  },
+  "svg_sha256": "bc4f8ee49024c41fc1ea6b095b5e0aa632216f31640fd6acf4c49331c08464ed"
+}

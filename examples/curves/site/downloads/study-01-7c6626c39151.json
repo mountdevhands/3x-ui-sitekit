@@ -1,0 +1,221 @@
+{
+  "kind": "curves",
+  "method": "curve-bundle",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#2A133F",
+    "#642D95",
+    "#A26AD2",
+    "#E2D0F1"
+  ],
+  "parameters": {
+    "control_points": [
+      [
+        [
+          75,
+          450
+        ],
+        [
+          212,
+          71
+        ],
+        [
+          792,
+          204
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          398,
+          513
+        ],
+        [
+          697,
+          106
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          374,
+          499
+        ],
+        [
+          591,
+          248
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          145,
+          290
+        ],
+        [
+          615,
+          436
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          160,
+          516
+        ],
+        [
+          761,
+          271
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          323,
+          329
+        ],
+        [
+          810,
+          424
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          210,
+          310
+        ],
+        [
+          811,
+          296
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          230,
+          297
+        ],
+        [
+          604,
+          65
+        ],
+        [
+          885,
+          150
+        ]
+      ]
+    ],
+    "stroke_width": 4,
+    "curve_count": 8
+  },
+  "primitives": [
+    {
+      "shape": "path",
+      "d": "M75 450C212 71 792 204 885 150",
+      "color": "#2A133F",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C398 513 697 106 885 150",
+      "color": "#642D95",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C374 499 591 248 885 150",
+      "color": "#A26AD2",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C145 290 615 436 885 150",
+      "color": "#2A133F",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C160 516 761 271 885 150",
+      "color": "#642D95",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C323 329 810 424 885 150",
+      "color": "#A26AD2",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C210 310 811 296 885 150",
+      "color": "#2A133F",
+      "stroke_width": 4
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C230 297 604 65 885 150",
+      "color": "#642D95",
+      "stroke_width": 4
+    }
+  ],
+  "title": "Curve Bundle · 8 paths",
+  "description": "8 cubic Bezier paths with a 4-unit stroke. All four control points for every path are included in the downloadable data.",
+  "files": {
+    "svg": "study-01-7c6626c39151.svg",
+    "css": "study-01-7c6626c39151.css"
+  },
+  "svg_sha256": "c41478b7638806e4e00246bb80abefaeeceb11f500a3a3402a97ac628ea4008e"
+}

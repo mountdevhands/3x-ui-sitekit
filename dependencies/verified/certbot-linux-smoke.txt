@@ -1,0 +1,52 @@
+Looking in links: ./certbot-payload
+Processing ./certbot-payload/acme-5.10.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 1))
+Processing ./certbot-payload/certbot-5.10.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 2))
+Processing ./certbot-payload/certifi-2026.11.20-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 3))
+Processing ./certbot-payload/cffi-2.1.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r ./certbot-payload/requirements.lock (line 4))
+Processing ./certbot-payload/charset_normalizer-3.5.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (from -r ./certbot-payload/requirements.lock (line 5))
+Processing ./certbot-payload/configargparse-1.10.2-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 6))
+Processing ./certbot-payload/configobj-5.0.9-py2.py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 7))
+Processing ./certbot-payload/cryptography-50.0.2-cp314-abi3-linux_x86_64.whl (from -r ./certbot-payload/requirements.lock (line 8))
+Processing ./certbot-payload/distro-1.9.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 9))
+Processing ./certbot-payload/idna-3.20-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 10))
+Processing ./certbot-payload/josepy-2.3.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 11))
+Processing ./certbot-payload/parsedatetime-2.6-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 12))
+Processing ./certbot-payload/pycparser-3.12-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 13))
+Processing ./certbot-payload/pyopenssl-26.4.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 14))
+Processing ./certbot-payload/pyrfc3339-2.1.1-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 15))
+Processing ./certbot-payload/requests-2.34.2-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 16))
+Processing ./certbot-payload/urllib3-2.8.0-py3-none-any.whl (from -r ./certbot-payload/requirements.lock (line 17))
+Installing collected packages: parsedatetime, urllib3, pyRFC3339, pycparser, idna, distro, configobj, ConfigArgParse, charset-normalizer, certifi, requests, cffi, cryptography, pyOpenSSL, josepy, acme, certbot
+
+Successfully installed ConfigArgParse-1.10.2 acme-5.10.0 certbot-5.10.0 certifi-2026.11.20 cffi-2.1.1 charset-normalizer-3.5.3 configobj-5.0.9 cryptography-50.0.2 distro-1.9.0 idna-3.20 josepy-2.3.0 parsedatetime-2.6 pyOpenSSL-26.4.0 pyRFC3339-2.1.1 pycparser-3.12 requests-2.34.2 urllib3-2.8.0
+No broken requirements found.
+Certbot 5.10.0 ACME 5.10.0
+Python ssl: OpenSSL 3.5.10-dev
+cryptography: OpenSSL 3.5.10-dev
+certbot 5.10.0
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+* standalone
+Description: Runs an HTTP server locally which serves the necessary validation
+files under the /.well-known/acme-challenge/ request path. Suitable if there is
+no HTTP server already running. HTTP challenge only (wildcards not supported).
+Interfaces: Authenticator, Plugin
+Entry point: EntryPoint(name='standalone',
+value='certbot._internal.plugins.standalone:Authenticator',
+group='certbot.plugins')
+
+* webroot
+Description: Saves the necessary validation files to a
+.well-known/acme-challenge/ directory within the nominated webroot path. A
+separate HTTP server must be running and serving files from the webroot path.
+HTTP challenge only (wildcards not supported).
+Interfaces: Authenticator, Plugin
+Entry point: EntryPoint(name='webroot',
+value='certbot._internal.plugins.webroot:Authenticator',
+group='certbot.plugins')
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+No simulated renewals were attempted.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Offline install, pip check, both private OpenSSL consumers, webroot and exact renew flags PASS. Empty scratch renewal inventory.

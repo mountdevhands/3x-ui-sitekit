@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Monochrome · hue 31°</title>
+<rect width="960" height="600" fill="#F7E6D4"/>
+<rect x="0" y="0" width="192" height="600" fill="#40270D"/>
+<rect x="192" y="0" width="192" height="600" fill="#88531B"/>
+<rect x="384" y="0" width="192" height="600" fill="#D5822A"/>
+<rect x="576" y="0" width="192" height="600" fill="#E6B47F"/>
+<rect x="768" y="0" width="192" height="600" fill="#F7E6D4"/>
+<text x="96" y="540" text-anchor="middle" font-family="monospace" font-size="22" fill="#FFFFFF">#40270D</text>
+<text x="288" y="540" text-anchor="middle" font-family="monospace" font-size="22" fill="#FFFFFF">#88531B</text>
+<text x="480" y="540" text-anchor="middle" font-family="monospace" font-size="22" fill="#000000">#D5822A</text>
+<text x="672" y="540" text-anchor="middle" font-family="monospace" font-size="22" fill="#000000">#E6B47F</text>
+<text x="864" y="540" text-anchor="middle" font-family="monospace" font-size="22" fill="#000000">#F7E6D4</text>
+</svg>

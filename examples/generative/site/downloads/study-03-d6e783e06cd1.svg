@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Bar rhythm · 13 elements</title>
+<rect width="960" height="600" fill="#CEF2F3"/>
+<rect x="70" y="220" width="55" height="300" fill="#269A9C"/>
+<rect x="133" y="143" width="55" height="377" fill="#63D7D9"/>
+<rect x="196" y="307" width="55" height="213" fill="#104142"/>
+<rect x="259" y="351" width="55" height="169" fill="#63D7D9"/>
+<rect x="322" y="417" width="55" height="103" fill="#104142"/>
+<rect x="385" y="234" width="55" height="286" fill="#63D7D9"/>
+<rect x="448" y="107" width="55" height="413" fill="#269A9C"/>
+<rect x="511" y="376" width="55" height="144" fill="#63D7D9"/>
+<rect x="574" y="231" width="55" height="289" fill="#104142"/>
+<rect x="637" y="109" width="55" height="411" fill="#104142"/>
+<rect x="700" y="391" width="55" height="129" fill="#104142"/>
+<rect x="763" y="100" width="55" height="420" fill="#63D7D9"/>
+<rect x="826" y="200" width="55" height="320" fill="#269A9C"/>
+</svg>

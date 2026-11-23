@@ -1,0 +1,35 @@
+{
+  "kind": "patterns",
+  "method": "dot-grid",
+  "canvas": {
+    "width": 160,
+    "height": 160
+  },
+  "colors": [
+    "#1B3737",
+    "#3F8382",
+    "#7CC0BF",
+    "#D6EBEB"
+  ],
+  "parameters": {
+    "tile_width": 160,
+    "tile_height": 160,
+    "radius": 36
+  },
+  "primitives": [
+    {
+      "shape": "circle",
+      "cx": 80,
+      "cy": 80,
+      "radius": 36,
+      "color": "#3F8382"
+    }
+  ],
+  "title": "Dot repeat · 160-unit tile",
+  "description": "A centred circle with radius 36 repeats on a 160 × 160 tile. The large preview repeats this exact tile.",
+  "files": {
+    "svg": "study-03-0c09d078c535.svg",
+    "css": "study-03-0c09d078c535.css"
+  },
+  "svg_sha256": "878cd444bfcfbcdee2e5ae546691b4b63abe49b3dc58cfa12c3f1f9554078946"
+}

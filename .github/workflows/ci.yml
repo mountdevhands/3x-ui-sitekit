@@ -1,0 +1,33 @@
+name: Local release checks
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  local-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - name: Build and verify the source manifest
+        run: |
+          bash -n install.sh
+          python -B build.py
+          sha256sum -c SHA256SUMS.txt
+      - name: Run local tests
+        run: |
+          python -B -m unittest discover -s tests -p 'test_*runtime.py'
+          python -B -m unittest discover -s tests -p 'test_security_policy.py'
+          python -B -m unittest discover -s tests -p 'test_panel_access.py'
+          python -B -m unittest discover -s tests -p 'test_nginx_openssl.py'
+          python -B -m unittest discover -s tests -p 'test_release_bootstrap.py'
+          python -B -m unittest discover -s tests -p 'test_guards.py'
+          python -B tests/test_artifact_sites.py --module dist/https-node.py
+          python -B tests/test_generated_site.py --module dist/https-node.py --report "$RUNNER_TEMP/generated-site.txt"

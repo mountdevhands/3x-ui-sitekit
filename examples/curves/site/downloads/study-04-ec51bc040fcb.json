@@ -1,0 +1,173 @@
+{
+  "kind": "curves",
+  "method": "curve-bundle",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#173B2E",
+    "#368C6C",
+    "#73C9A9",
+    "#D3EEE4"
+  ],
+  "parameters": {
+    "control_points": [
+      [
+        [
+          75,
+          450
+        ],
+        [
+          261,
+          135
+        ],
+        [
+          643,
+          320
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          301,
+          218
+        ],
+        [
+          696,
+          186
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          219,
+          218
+        ],
+        [
+          740,
+          514
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          382,
+          355
+        ],
+        [
+          565,
+          179
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          411,
+          363
+        ],
+        [
+          686,
+          72
+        ],
+        [
+          885,
+          150
+        ]
+      ],
+      [
+        [
+          75,
+          450
+        ],
+        [
+          313,
+          340
+        ],
+        [
+          747,
+          361
+        ],
+        [
+          885,
+          150
+        ]
+      ]
+    ],
+    "stroke_width": 6,
+    "curve_count": 6
+  },
+  "primitives": [
+    {
+      "shape": "path",
+      "d": "M75 450C261 135 643 320 885 150",
+      "color": "#173B2E",
+      "stroke_width": 6
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C301 218 696 186 885 150",
+      "color": "#368C6C",
+      "stroke_width": 6
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C219 218 740 514 885 150",
+      "color": "#73C9A9",
+      "stroke_width": 6
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C382 355 565 179 885 150",
+      "color": "#173B2E",
+      "stroke_width": 6
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C411 363 686 72 885 150",
+      "color": "#368C6C",
+      "stroke_width": 6
+    },
+    {
+      "shape": "path",
+      "d": "M75 450C313 340 747 361 885 150",
+      "color": "#73C9A9",
+      "stroke_width": 6
+    }
+  ],
+  "title": "Curve Bundle · 6 paths",
+  "description": "6 cubic Bezier paths with a 6-unit stroke. All four control points for every path are included in the downloadable data.",
+  "files": {
+    "svg": "study-04-ec51bc040fcb.svg",
+    "css": "study-04-ec51bc040fcb.css"
+  },
+  "svg_sha256": "a2388ca679ab93afd39054373ad51c37457db68dee540db655af16cd1928fb1f"
+}

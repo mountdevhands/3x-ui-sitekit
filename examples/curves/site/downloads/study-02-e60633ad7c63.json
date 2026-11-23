@@ -1,0 +1,53 @@
+{
+  "kind": "curves",
+  "method": "single-cubic",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#14193D",
+    "#303C91",
+    "#6E79CF",
+    "#D1D5F0"
+  ],
+  "parameters": {
+    "control_points": [
+      [
+        [
+          75,
+          450
+        ],
+        [
+          229,
+          236
+        ],
+        [
+          581,
+          215
+        ],
+        [
+          885,
+          150
+        ]
+      ]
+    ],
+    "stroke_width": 6,
+    "curve_count": 1
+  },
+  "primitives": [
+    {
+      "shape": "path",
+      "d": "M75 450C229 236 581 215 885 150",
+      "color": "#14193D",
+      "stroke_width": 6
+    }
+  ],
+  "title": "Single Cubic · 1 path",
+  "description": "1 cubic Bezier path with a 6-unit stroke. All four control points for every path are included in the downloadable data.",
+  "files": {
+    "svg": "study-02-e60633ad7c63.svg",
+    "css": "study-02-e60633ad7c63.css"
+  },
+  "svg_sha256": "3fff86ef2bd8543dd3136e6d1562cb1cc663e00dd3b3fdaf9c07281b9b800586"
+}

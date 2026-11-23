@@ -1,0 +1,6 @@
+7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5  dependencies/cryptography/cryptography-50.0.2.tar.gz
+81532863c6b288cbecc12d9806dd5319a015196e48072da64796021157e49ef2  dependencies/geo/loyalsoldier-geoip-202610230445.source.tar.gz
+1201551a79e20136a33639718378571fd7777c45e1ca7a68fc9d92ed56e4a1b3  dependencies/geo/v2ray-rules-dat-202610242205.source.tar.gz
+89ec2ceca1cdaa3cea930e93e3698561336365d19cd31aaf5772ae96e4713072  dependencies/openssl/openssl-3.5-fixed-source.tar.gz
+bacddae4a55df85a37a0503ed9c2c5312c01da46886a14f6b6d5134b6965c004  dependencies/panel/v3.11.0.source.tar.gz
+0a0e67b736ed8f9f4c0a6ccfe11eb903db72f56b3c2dfb9c2d3114187ac68fec  dependencies/xray/v26.10.21.source.tar.gz

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Dot repeat · 160-unit tile — repeated field</title>
+<defs><pattern id="tile" width="160" height="160" patternUnits="userSpaceOnUse">
+<rect width="160" height="160" fill="#D6EBEB"/>
+<circle cx="80" cy="80" r="36" fill="#3F8382"/>
+</pattern></defs>
+<rect width="960" height="600" fill="url(#tile)"/>
+</svg>

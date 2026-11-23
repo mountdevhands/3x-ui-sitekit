@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="study-title">
+<title id="study-title">Mirrored Pair · 2 paths</title>
+<rect width="960" height="600" fill="#D4F4CD"/>
+<path d="M75 450C337 299 657 94 885 150" fill="none" stroke="#18430F" stroke-width="4"/>
+<path d="M885 450C623 299 303 94 75 150" fill="none" stroke="#389E24" stroke-width="4"/>
+</svg>

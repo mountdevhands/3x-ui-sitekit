@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.test/</loc></url>
+  <url><loc>https://example.test/about.html</loc></url>
+  <url><loc>https://example.test/methods.html</loc></url>
+  <url><loc>https://example.test/downloads.html</loc></url>
+  <url><loc>https://example.test/studies/study-01-0418829ab71d.html</loc></url>
+  <url><loc>https://example.test/studies/study-02-fa1e951b12a6.html</loc></url>
+  <url><loc>https://example.test/studies/study-03-d6e783e06cd1.html</loc></url>
+</urlset>

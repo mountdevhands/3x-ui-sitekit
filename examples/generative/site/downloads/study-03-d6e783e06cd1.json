@@ -1,0 +1,132 @@
+{
+  "kind": "generative",
+  "method": "bar-field",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#104142",
+    "#269A9C",
+    "#63D7D9",
+    "#CEF2F3"
+  ],
+  "parameters": {
+    "baseline": 520,
+    "bars": 13,
+    "gap": 8
+  },
+  "primitives": [
+    {
+      "shape": "rect",
+      "x": 70,
+      "y": 220,
+      "width": 55,
+      "height": 300,
+      "color": "#269A9C"
+    },
+    {
+      "shape": "rect",
+      "x": 133,
+      "y": 143,
+      "width": 55,
+      "height": 377,
+      "color": "#63D7D9"
+    },
+    {
+      "shape": "rect",
+      "x": 196,
+      "y": 307,
+      "width": 55,
+      "height": 213,
+      "color": "#104142"
+    },
+    {
+      "shape": "rect",
+      "x": 259,
+      "y": 351,
+      "width": 55,
+      "height": 169,
+      "color": "#63D7D9"
+    },
+    {
+      "shape": "rect",
+      "x": 322,
+      "y": 417,
+      "width": 55,
+      "height": 103,
+      "color": "#104142"
+    },
+    {
+      "shape": "rect",
+      "x": 385,
+      "y": 234,
+      "width": 55,
+      "height": 286,
+      "color": "#63D7D9"
+    },
+    {
+      "shape": "rect",
+      "x": 448,
+      "y": 107,
+      "width": 55,
+      "height": 413,
+      "color": "#269A9C"
+    },
+    {
+      "shape": "rect",
+      "x": 511,
+      "y": 376,
+      "width": 55,
+      "height": 144,
+      "color": "#63D7D9"
+    },
+    {
+      "shape": "rect",
+      "x": 574,
+      "y": 231,
+      "width": 55,
+      "height": 289,
+      "color": "#104142"
+    },
+    {
+      "shape": "rect",
+      "x": 637,
+      "y": 109,
+      "width": 55,
+      "height": 411,
+      "color": "#104142"
+    },
+    {
+      "shape": "rect",
+      "x": 700,
+      "y": 391,
+      "width": 55,
+      "height": 129,
+      "color": "#104142"
+    },
+    {
+      "shape": "rect",
+      "x": 763,
+      "y": 100,
+      "width": 55,
+      "height": 420,
+      "color": "#63D7D9"
+    },
+    {
+      "shape": "rect",
+      "x": 826,
+      "y": 200,
+      "width": 55,
+      "height": 320,
+      "color": "#269A9C"
+    }
+  ],
+  "title": "Bar rhythm · 13 elements",
+  "description": "13 rectangles share a baseline at y=520. Their widths are 55 units; their individual heights are preserved in the JSON.",
+  "files": {
+    "svg": "study-03-d6e783e06cd1.svg",
+    "css": "study-03-d6e783e06cd1.css"
+  },
+  "svg_sha256": "22b47ce0947b14ee4991d8ba0ddebf8dd923bb0ccbd2b02a70c75eb066b23523"
+}

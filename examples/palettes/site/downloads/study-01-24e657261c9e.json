@@ -1,0 +1,142 @@
+{
+  "kind": "palettes",
+  "method": "split-complementary",
+  "canvas": {
+    "width": 960,
+    "height": 600
+  },
+  "colors": [
+    "#183334",
+    "#6F344F",
+    "#AD8152",
+    "#97CCCE",
+    "#EFDCE5"
+  ],
+  "parameters": {
+    "hsl": [
+      {
+        "h": 182,
+        "s": 36,
+        "l": 15
+      },
+      {
+        "h": 333,
+        "s": 36,
+        "l": 32
+      },
+      {
+        "h": 31,
+        "s": 36,
+        "l": 50
+      },
+      {
+        "h": 182,
+        "s": 36,
+        "l": 70
+      },
+      {
+        "h": 333,
+        "s": 36,
+        "l": 90
+      }
+    ],
+    "hex": [
+      "#183334",
+      "#6F344F",
+      "#AD8152",
+      "#97CCCE",
+      "#EFDCE5"
+    ],
+    "contrast_matrix": [
+      [
+        1.0,
+        1.46,
+        3.866,
+        7.583,
+        10.268
+      ],
+      [
+        1.46,
+        1.0,
+        2.649,
+        5.195,
+        7.035
+      ],
+      [
+        3.866,
+        2.649,
+        1.0,
+        1.961,
+        2.656
+      ],
+      [
+        7.583,
+        5.195,
+        1.961,
+        1.0,
+        1.354
+      ],
+      [
+        10.268,
+        7.035,
+        2.656,
+        1.354,
+        1.0
+      ]
+    ],
+    "strongest_pair": {
+      "first": "#183334",
+      "second": "#EFDCE5",
+      "ratio": 10.268
+    }
+  },
+  "primitives": [
+    {
+      "shape": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#183334"
+    },
+    {
+      "shape": "rect",
+      "x": 192,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#6F344F"
+    },
+    {
+      "shape": "rect",
+      "x": 384,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#AD8152"
+    },
+    {
+      "shape": "rect",
+      "x": 576,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#97CCCE"
+    },
+    {
+      "shape": "rect",
+      "x": 768,
+      "y": 0,
+      "width": 192,
+      "height": 600,
+      "color": "#EFDCE5"
+    }
+  ],
+  "title": "Split Complementary · hue 182°",
+  "description": "Five sRGB colours from explicit HSL steps. The strongest measured pair is #183334 / #EFDCE5 at 10.27:1.",
+  "files": {
+    "svg": "study-01-24e657261c9e.svg",
+    "css": "study-01-24e657261c9e.css"
+  },
+  "svg_sha256": "569dbb3fcb3d198e2854c189bcb499dc578a2548037007d8cf68a15072f6106a"
+}

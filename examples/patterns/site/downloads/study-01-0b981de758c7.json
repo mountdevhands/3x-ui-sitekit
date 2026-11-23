@@ -1,0 +1,249 @@
+{
+  "kind": "patterns",
+  "method": "truchet",
+  "canvas": {
+    "width": 128,
+    "height": 128
+  },
+  "colors": [
+    "#1A2137",
+    "#3E4E84",
+    "#7B8BC1",
+    "#D5DBEB"
+  ],
+  "parameters": {
+    "tile_width": 128,
+    "tile_height": 128,
+    "columns": 4,
+    "rows": 4,
+    "cell_size": 32,
+    "stroke_width": 3,
+    "orientations": [
+      [
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "primitives": [
+    {
+      "shape": "path",
+      "d": "M16 0A16 16 0 0 1 0 16",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 16A16 16 0 0 0 16 32",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 16A16 16 0 0 1 48 32",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M48 0A16 16 0 0 0 64 16",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M80 0A16 16 0 0 1 64 16",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 16A16 16 0 0 0 80 32",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 16A16 16 0 0 1 112 32",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M112 0A16 16 0 0 0 128 16",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M16 32A16 16 0 0 1 0 48",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 48A16 16 0 0 0 16 64",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 48A16 16 0 0 1 48 64",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M48 32A16 16 0 0 0 64 48",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M80 32A16 16 0 0 1 64 48",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 48A16 16 0 0 0 80 64",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 48A16 16 0 0 1 112 64",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M112 32A16 16 0 0 0 128 48",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M16 64A16 16 0 0 1 0 80",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 80A16 16 0 0 0 16 96",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M48 64A16 16 0 0 1 32 80",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M64 80A16 16 0 0 0 48 96",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M80 64A16 16 0 0 1 64 80",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 80A16 16 0 0 0 80 96",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M96 80A16 16 0 0 1 112 96",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M112 64A16 16 0 0 0 128 80",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M0 112A16 16 0 0 1 16 128",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M16 96A16 16 0 0 0 32 112",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M32 112A16 16 0 0 1 48 128",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M48 96A16 16 0 0 0 64 112",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M64 112A16 16 0 0 1 80 128",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M80 96A16 16 0 0 0 96 112",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M112 96A16 16 0 0 1 96 112",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    },
+    {
+      "shape": "path",
+      "d": "M128 112A16 16 0 0 0 112 128",
+      "color": "#3E4E84",
+      "stroke_width": 3
+    }
+  ],
+  "title": "Truchet repeat · 4 × 4 cells",
+  "description": "16 cells contain 32 quarter-circle arcs. Every arc meets a cell-edge midpoint; the JSON records all 16 orientations.",
+  "files": {
+    "svg": "study-01-0b981de758c7.svg",
+    "css": "study-01-0b981de758c7.css"
+  },
+  "svg_sha256": "7b71fcc2f05b575699b79aa6eb9489860c97fdde7f4402248c09a83e2820a345"
+}

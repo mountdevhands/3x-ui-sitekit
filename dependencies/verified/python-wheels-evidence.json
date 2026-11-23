@@ -1,0 +1,265 @@
+[
+  {
+    "name": "acme",
+    "version": "5.10.0",
+    "file": "acme-5.10.0-py3-none-any.whl",
+    "sha256": "406c2ee832ad7903cba9d300fb53c5f2a66b4fe0793ee0eb8b1a19760db3f71a",
+    "url": "https://files.pythonhosted.org/packages/0a/d9/e39b2a28b76fa030f6ec65893efed88fe0075354ccd526676e976a4d38ab/acme-5.10.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/acme/5.10.0/json",
+    "requires_dist": [
+      "cryptography>=47.0.0",
+      "josepy>=2.0.0",
+      "PyOpenSSL>=25.0.0",
+      "pyrfc3339",
+      "requests>=2.25.1",
+      "Sphinx>=1.0; extra == \"docs\"",
+      "sphinx_rtd_theme; extra == \"docs\"",
+      "pytest; extra == \"test\"",
+      "pytest-xdist; extra == \"test\"",
+      "typing-extensions; extra == \"test\""
+    ]
+  },
+  {
+    "name": "certbot",
+    "version": "5.10.0",
+    "file": "certbot-5.10.0-py3-none-any.whl",
+    "sha256": "a49bb7773b343e32871964983adb95140b1ef771566c5f090f4b7e3f45900f65",
+    "url": "https://files.pythonhosted.org/packages/40/6f/13c5ac38556c54fe0993befb45ae1035f4b3bd981f5bbcbef9a00540d9b5/certbot-5.10.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/certbot/5.10.0/json",
+    "requires_dist": [
+      "acme>=5.10.0",
+      "ConfigArgParse>=1.5.3",
+      "configobj>=5.0.6",
+      "cryptography>=47.0.0",
+      "distro>=1.7.0",
+      "importlib_metadata>=8.6.1; python_version < \"3.10\"",
+      "josepy>=2.0.0",
+      "parsedatetime>=2.6",
+      "pyrfc3339",
+      "pywin32>=300; sys_platform == \"win32\"",
+      "apacheconfig>=0.3.2; extra == \"dev\"",
+      "build; extra == \"dev\"",
+      "ipdb; extra == \"dev\"",
+      "poetry-plugin-export>=1.9.0; extra == \"dev\"",
+      "poetry>=1.2.0; extra == \"dev\"",
+      "towncrier; extra == \"dev\"",
+      "twine; extra == \"dev\"",
+      "Sphinx>=1.2; extra == \"docs\"",
+      "sphinx_rtd_theme; extra == \"docs\"",
+      "coverage; extra == \"test\"",
+      "mypy; extra == \"test\"",
+      "pip; extra == \"test\"",
+      "pylint; extra == \"test\"",
+      "pytest; extra == \"test\"",
+      "pytest-cov>=4.1.0; extra == \"test\"",
+      "pytest-xdist; extra == \"test\"",
+      "ruff; extra == \"test\"",
+      "setuptools; extra == \"test\"",
+      "tox; extra == \"test\"",
+      "types-httplib2; extra == \"test\"",
+      "types-pyRFC3339; extra == \"test\"",
+      "types-pywin32; extra == \"test\"",
+      "types-requests; extra == \"test\"",
+      "types-setuptools; extra == \"test\"",
+      "uv; extra == \"test\"",
+      "wheel; extra == \"test\"",
+      "certbot-apache>=5.10.0; extra == \"apache\"",
+      "python-augeas; extra == \"apache\"",
+      "certbot-nginx>=5.10.0; extra == \"nginx\"",
+      "PyOpenSSL>=25.0.0; extra == \"nginx\"",
+      "pyparsing>=3.0.0; extra == \"nginx\"",
+      "certbot[apache,dev,docs,nginx,test]; extra == \"all\""
+    ]
+  },
+  {
+    "name": "certifi",
+    "version": "2026.11.20",
+    "file": "certifi-2026.11.20-py3-none-any.whl",
+    "sha256": "7422df25243767b9877031a2248cb14d09ddac9beee846f4cef3d5c9191d488f",
+    "url": "https://files.pythonhosted.org/packages/6d/39/5eec3296860b94ac20bb8ed807725b88f6adfab3f343df592afd975f5f86/certifi-2026.11.20-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/certifi/2026.11.20/json",
+    "requires_dist": []
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "file": "cffi-2.1.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+    "sha256": "b0431303acaea1089ad4b3e9ce4e6518193def1118d4073ca848635ee4ea2e96",
+    "url": "https://files.pythonhosted.org/packages/e9/02/4e7d553a7ac4b4238b38b3c1b80d486e9d4436f8d2acbf87a0997fe3f402/cffi-2.1.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+    "pypi_metadata": "https://pypi.org/pypi/cffi/2.1.1/json",
+    "requires_dist": [
+      "pycparser; implementation_name != \"PyPy\""
+    ]
+  },
+  {
+    "name": "charset-normalizer",
+    "version": "3.5.3",
+    "file": "charset_normalizer-3.5.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl",
+    "sha256": "ee9de080e8d6221bbe4ba2667367b1cee0f47a53f60ffc5e431b698cd2f2b214",
+    "url": "https://files.pythonhosted.org/packages/aa/a8/0fed9cde3b8197c99b0981bc53ee7f84cc38a3805a4c5f1c1003cda50588/charset_normalizer-3.5.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl",
+    "pypi_metadata": "https://pypi.org/pypi/charset-normalizer/3.5.3/json",
+    "requires_dist": []
+  },
+  {
+    "name": "ConfigArgParse",
+    "version": "1.10.2",
+    "file": "configargparse-1.10.2-py3-none-any.whl",
+    "sha256": "926e28ca8262f066dfeb6585e227a78f01bd3d7f3fb63fad1c8045c5da1401ac",
+    "url": "https://files.pythonhosted.org/packages/e2/b3/1650a06626a382e6c34c8bc8684dfb0daa3f8a03fffd5b7fa10a416a8e12/configargparse-1.10.2-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/ConfigArgParse/1.10.2/json",
+    "requires_dist": [
+      "toml; extra == \"toml\"",
+      "PyYAML; extra == \"yaml\"",
+      "black; extra == \"test\"",
+      "toml; extra == \"test\"",
+      "PyYAML; extra == \"test\"",
+      "pytest; extra == \"test\"",
+      "pytest-cov; extra == \"test\"",
+      "pytest-subtests; extra == \"test\""
+    ]
+  },
+  {
+    "name": "configobj",
+    "version": "5.0.9",
+    "file": "configobj-5.0.9-py2.py3-none-any.whl",
+    "sha256": "1ba10c5b6ee16229c79a05047aeda2b55eb4e80d7c7d8ecf17ec1ca600c79882",
+    "url": "https://files.pythonhosted.org/packages/a6/c4/0679472c60052c27efa612b4cd3ddd2a23e885dcdc73461781d2c802d39e/configobj-5.0.9-py2.py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/configobj/5.0.9/json",
+    "requires_dist": []
+  },
+  {
+    "name": "cryptography",
+    "version": "50.0.2",
+    "file": "cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl",
+    "sha256": "9dab55f57c74c3cad24c323bacbbd04be4705ba6eb0d92e920b1fc4837ed5079",
+    "url": "https://files.pythonhosted.org/packages/d3/69/2c833a049475e0a3444e94c7d0aca0aa51d166374a449b09e92ac98138de/cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl",
+    "pypi_metadata": "https://pypi.org/pypi/cryptography/50.0.2/json",
+    "requires_dist": [
+      "cffi>=2.0.0 ; platform_python_implementation != 'PyPy'",
+      "typing-extensions>=4.13.2 ; python_full_version < '3.11'",
+      "bcrypt>=3.1.5 ; extra == 'ssh'"
+    ]
+  },
+  {
+    "name": "distro",
+    "version": "1.9.0",
+    "file": "distro-1.9.0-py3-none-any.whl",
+    "sha256": "7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2",
+    "url": "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/distro/1.9.0/json",
+    "requires_dist": []
+  },
+  {
+    "name": "idna",
+    "version": "3.20",
+    "file": "idna-3.20-py3-none-any.whl",
+    "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+    "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/idna/3.20/json",
+    "requires_dist": [
+      "ruff >= 0.16.0 ; extra == \"all\"",
+      "mypy >= 1.11.2 ; extra == \"all\"",
+      "ty >= 0.0.37 ; extra == \"all\"",
+      "pytest >= 8.3.2 ; extra == \"all\"",
+      "hypothesis >= 6.141.1 ; extra == \"all\"",
+      "coverage >= 7.10.0 ; extra == \"all\""
+    ]
+  },
+  {
+    "name": "josepy",
+    "version": "2.3.0",
+    "file": "josepy-2.3.0-py3-none-any.whl",
+    "sha256": "63a17ed5df81b360518d49c3b99f1e86897b318a41ae13333a145e400b5f0e57",
+    "url": "https://files.pythonhosted.org/packages/48/4f/afae542e4095e7fe4571a909f49f88d48fd2e8c069e1eba9d6446489ec57/josepy-2.3.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/josepy/2.3.0/json",
+    "requires_dist": [
+      "cryptography (>=1.5)",
+      "sphinx (>=4.3.0) ; extra == \"docs\"",
+      "sphinx-rtd-theme (>=1.0) ; extra == \"docs\""
+    ]
+  },
+  {
+    "name": "parsedatetime",
+    "version": "2.6",
+    "file": "parsedatetime-2.6-py3-none-any.whl",
+    "sha256": "cb96edd7016872f58479e35879294258c71437195760746faffedb692aef000b",
+    "url": "https://files.pythonhosted.org/packages/9d/a4/3dd804926a42537bf69fb3ebb9fd72a50ba84f807d95df5ae016606c976c/parsedatetime-2.6-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/parsedatetime/2.6/json",
+    "requires_dist": []
+  },
+  {
+    "name": "pip",
+    "version": "26.3",
+    "file": "pip-26.3-py3-none-any.whl",
+    "sha256": "f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13",
+    "url": "https://files.pythonhosted.org/packages/07/25/ee8c38ae72d66b844ce8eb9711ba905dba21ca1a8a0c960057c41cd23337/pip-26.3-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/pip/26.3/json",
+    "requires_dist": []
+  },
+  {
+    "name": "pycparser",
+    "version": "3.12",
+    "file": "pycparser-3.12-py3-none-any.whl",
+    "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e",
+    "url": "https://files.pythonhosted.org/packages/b6/ae/315bbeee126a769cbde43cf4908acb4b40408d8bf8bbf334dd7368d8dadf/pycparser-3.12-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/pycparser/3.12/json",
+    "requires_dist": []
+  },
+  {
+    "name": "pyOpenSSL",
+    "version": "26.4.0",
+    "file": "pyopenssl-26.4.0-py3-none-any.whl",
+    "sha256": "f0eb0cb2d581d3ad2b9c489468485e7f2ab6727d08401bcf9d824c3caddf3c1c",
+    "url": "https://files.pythonhosted.org/packages/51/ad/2cf6d3fa2fae5c79e1ed9960c0d42badd0f94d81dd12b50604cdc839e648/pyopenssl-26.4.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/pyOpenSSL/26.4.0/json",
+    "requires_dist": [
+      "cryptography<51,>=49.0.0",
+      "typing-extensions>=4.9; python_version < \"3.13\"",
+      "pytest-rerunfailures; extra == \"test\"",
+      "pretend; extra == \"test\"",
+      "pytest>=3.0.1; extra == \"test\"",
+      "sphinx!=5.2.0,!=5.2.0.post0,!=7.2.5; extra == \"docs\"",
+      "sphinx_rtd_theme; extra == \"docs\""
+    ]
+  },
+  {
+    "name": "pyRFC3339",
+    "version": "2.1.1",
+    "file": "pyrfc3339-2.1.1-py3-none-any.whl",
+    "sha256": "4973172cb8b29c14caca7f76e6a52890d9e59ec2722dd5eb29b7fdd9fda2232f",
+    "url": "https://files.pythonhosted.org/packages/fb/79/2746c2066389dd88ede14491bea64cd9d7dd12e4bda63c5960017913af0d/pyrfc3339-2.1.1-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/pyRFC3339/2.1.1/json",
+    "requires_dist": []
+  },
+  {
+    "name": "requests",
+    "version": "2.34.2",
+    "file": "requests-2.34.2-py3-none-any.whl",
+    "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+    "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/requests/2.34.2/json",
+    "requires_dist": [
+      "charset_normalizer<4,>=2",
+      "idna<4,>=2.5",
+      "urllib3<3,>=1.26",
+      "certifi>=2023.5.7",
+      "PySocks!=1.5.7,>=1.5.6; extra == \"socks\"",
+      "chardet<8,>=3.0.2; extra == \"use-chardet-on-py3\""
+    ]
+  },
+  {
+    "name": "urllib3",
+    "version": "2.8.0",
+    "file": "urllib3-2.8.0-py3-none-any.whl",
+    "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+    "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+    "pypi_metadata": "https://pypi.org/pypi/urllib3/2.8.0/json",
+    "requires_dist": [
+      "brotli>=1.2.0; (platform_python_implementation == 'CPython') and extra == 'brotli'",
+      "brotlicffi>=1.2.0.0; (platform_python_implementation != 'CPython') and extra == 'brotli'",
+      "h2<5,>=4; extra == 'h2'",
+      "pysocks!=1.5.7,<2.0,>=1.5.6; extra == 'socks'",
+      "backports-zstd>=1.0.0; (python_version < '3.14') and extra == 'zstd'"
+    ]
+  }
+]

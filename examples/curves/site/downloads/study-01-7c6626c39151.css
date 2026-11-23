@@ -1,0 +1,12 @@
+:root {
+  --study-color-1: #2A133F;
+  --study-color-2: #642D95;
+  --study-color-3: #A26AD2;
+  --study-color-4: #E2D0F1;
+}
+.study-artwork {
+  background-image: url('./study-01-7c6626c39151.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  aspect-ratio: 960 / 600;
+}

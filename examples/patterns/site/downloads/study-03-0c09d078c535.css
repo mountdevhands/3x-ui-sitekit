@@ -1,0 +1,11 @@
+:root {
+  --study-color-1: #1B3737;
+  --study-color-2: #3F8382;
+  --study-color-3: #7CC0BF;
+  --study-color-4: #D6EBEB;
+}
+.study-pattern {
+  background-image: url('./study-03-0c09d078c535.svg');
+  background-repeat: repeat;
+  background-size: 160px 160px;
+}
