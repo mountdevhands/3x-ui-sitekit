@@ -14,6 +14,7 @@ import pty
 import select
 import shlex
 import signal
+import shutil
 import struct
 import subprocess
 import tempfile
@@ -82,14 +83,14 @@ expected, response, status = responses.pop(0)
 state.write_text(json.dumps(responses))
 print('[dialog:' + widget + ']', flush=True)
 if response:
-    print(response, end='', file=sys.stderr)
+    os.write(int(args[args.index('--output-fd') + 1]), response.encode())
 raise SystemExit(status)
 """
 
 
 class WizardPTY(unittest.TestCase):
     def run_wizard(self, lines, *, arguments=("--dry-run",), verify="real", child_exit=0,
-                   eof=False, interrupt=False, choose_language=False, dialog=None, terminal="xterm-256color", dns_warning=False,
+                   eof=False, interrupt="", choose_language=False, dialog=None, terminal="xterm-256color", dns_warning=False,
                    apt_backports=""):
         with tempfile.TemporaryDirectory(prefix="sitekit-wizard-test-") as temporary:
             root = Path(temporary)
@@ -148,7 +149,7 @@ class WizardPTY(unittest.TestCase):
                         if not chunk:
                             break
                         output.extend(chunk)
-                    if interrupt and not sent_interrupt and b"Domain" in output:
+                    if interrupt and not sent_interrupt and interrupt.encode() in output:
                         os.write(master, b"\x03")  # Real foreground-terminal Ctrl-C.
                         sent_interrupt = True
                     if process.poll() is not None and not ready:
@@ -174,7 +175,7 @@ class WizardPTY(unittest.TestCase):
             return result, output.decode(errors="replace"), actions, argv
 
     def test_defaults_preview_is_read_only_and_command_is_safely_quoted(self):
-        status, output, actions, _ = self.run_wizard([DOMAIN, "owner@example.com", "", "", "", "y", "y"])
+        status, output, actions, _ = self.run_wizard([DOMAIN, "owner@example.com", "", "", "", "y"])
         self.assertEqual(status, 0, output)
         self.assertEqual(actions, ["dns:" + DOMAIN])
         command = next(line.strip() for line in output.splitlines() if line.startswith("  bash "))
@@ -188,19 +189,19 @@ class WizardPTY(unittest.TestCase):
 
     def test_backports_requires_consent_is_in_review_and_reaches_only_confirmed_install(self):
         location = "/etc/apt/sources.list.d/ubuntu.sources (stanza at line 1)"
-        status, output, actions, args = self.run_wizard([""], arguments=(), apt_backports=location)
+        status, output, actions, args = self.run_wizard(["n"], arguments=(), apt_backports=location)
         self.assertEqual((status, actions, args), (0, [], []))
         self.assertIn("outside the verified SiteKit package set", output)
         self.assertIn(location, output)
-        answers = ["y", DOMAIN, "owner@example.com", "", "", "", "y"]
-        for arguments, confirmation in ((('--dry-run',), 'y'), ((), '')):
+        answers = ["", DOMAIN, "owner@example.com", "", "", ""]
+        for arguments, confirmation in ((('--dry-run',), ''), ((), 'n')):
             status, output, actions, args = self.run_wizard([*answers, confirmation], arguments=arguments,
                                                             apt_backports=location)
             self.assertEqual((status, actions, args), (0, ["dns:" + DOMAIN], []))
-            self.assertIn("APT during installation: back up original files and disable only resolute-backports", output)
+            self.assertIn("APT: back up sources and disable only resolute-backports", output)
             if arguments:
                 self.assertIn("--disable-apt-backports", output)
-        status, output, actions, args = self.run_wizard([*answers, "y"], arguments=(), verify="pass",
+        status, output, actions, args = self.run_wizard([*answers, ""], arguments=(), verify="pass",
                                                         apt_backports=location)
         self.assertEqual(status, 0, output)
         self.assertEqual(args.count("--disable-apt-backports"), 1)
@@ -208,7 +209,7 @@ class WizardPTY(unittest.TestCase):
 
     def test_https_allowlist_normalizes_deduplicates_and_keeps_actual_arguments(self):
         status, output, actions, argv = self.run_wizard(
-            [DOMAIN, "owner@example.com", "https", "198.51.100.9/24,198.51.100.0/24 203.0.113.8", "palettes", "ws", "yes", "yes"],
+            [DOMAIN, "owner@example.com", "https", "198.51.100.9/24,198.51.100.0/24 203.0.113.8", "palettes", "ws", "yes"],
             arguments=("--lang", "ru"), verify="pass")
         self.assertEqual(status, 0, output)
         self.assertEqual(actions, ["dns:" + DOMAIN, "mktemp", "download", "execute"])
@@ -223,7 +224,7 @@ class WizardPTY(unittest.TestCase):
             payload = "$(touch " + str(target) + ")"
             status, output, actions, _ = self.run_wizard([
                 payload, DOMAIN, "owner@example.com;" + payload, "owner@example.com", "https",
-                "198.51.100.7;" + payload, "198.51.100.7", "wrong-theme", "", "wrong-transport", "", "y", "y",
+                "198.51.100.7;" + payload, "198.51.100.7", "wrong-theme", "", "wrong-transport", "", "y",
             ])
             self.assertEqual(status, 0, output)
             self.assertFalse(target.exists())
@@ -231,33 +232,34 @@ class WizardPTY(unittest.TestCase):
             self.assertIn("valid DNS name", output)
             self.assertIn("valid unquoted email", output)
 
-    def test_blank_email_needs_explicit_consent(self):
-        for consent, next_lines, expected in (("", ["owner@example.com"], "--email owner@example.com"),
-                                               ("yes", [], "--acme-no-email")):
+    def test_blank_email_accepts_enter_or_returns_to_input_on_no(self):
+        for consent, next_lines, expected in (("n", ["owner@example.com"], "--email owner@example.com"),
+                                               ("", [], "--acme-no-email")):
             with self.subTest(consent=consent):
-                status, output, actions, _ = self.run_wizard([DOMAIN, "", consent, *next_lines, "", "", "", "y", "y"])
+                status, output, actions, _ = self.run_wizard([DOMAIN, "", consent, *next_lines, "", "", "", "y"])
                 self.assertEqual(status, 0, output)
                 self.assertIn("WITHOUT an email address", output)
                 self.assertIn(expected, output)
                 self.assertNotIn(r"\x27", output)
                 self.assertEqual(actions, ["dns:" + DOMAIN])
 
-    def test_terms_summary_eof_and_interrupt_cancel_without_downloads(self):
-        cases = ([DOMAIN, "owner@example.com", "", "", "", ""],
-                 [DOMAIN, "owner@example.com", "", "", "", "y", ""])
-        for lines in cases:
-            with self.subTest(lines=lines):
-                status, output, actions, _ = self.run_wizard(lines, arguments=())
-                self.assertEqual(status, 0, output)
-                self.assertEqual(actions, ["dns:" + DOMAIN])
-        for kind in ("eof", "interrupt"):
-            with self.subTest(kind=kind):
-                status, output, actions, _ = self.run_wizard([], arguments=(), eof=kind == "eof", interrupt=kind == "interrupt")
-                self.assertEqual(status, 130, output)
-                self.assertEqual(actions, [])
+    def test_final_text_enter_no_eof_escape_and_interrupt(self):
+        choices = [DOMAIN, 'owner@example.com', '', '', '']
+        for lines, eof, expected in (([''], False, 0), (['n'], False, 0), ([], True, 130), (['\x1b'], False, 130)):
+            with self.subTest(lines=lines, eof=eof):
+                status, output, actions, argv = self.run_wizard([*choices, *lines], arguments=(), verify='pass', eof=eof)
+                self.assertEqual(status, expected, output)
+                self.assertEqual(actions.count('execute'), int(lines == ['']))
+                self.assertEqual(argv.count('--agree-tos'), int(lines == ['']))
+                self.assertIn('Install? [Y/n]', output)
+                self.assertIn('By choosing Install, you agree to the Let’s Encrypt Subscriber Agreement:', output)
+                self.assertNotIn('Do you agree to these terms?', output)
+        status, output, actions, _ = self.run_wizard(choices, arguments=(), interrupt='Install? [Y/n]')
+        self.assertEqual(status, 130, output)
+        self.assertEqual(actions, ['dns:' + DOMAIN])
 
     def test_hash_mismatch_never_executes_and_child_status_is_propagated(self):
-        lines = [DOMAIN, "owner@example.com", "", "", "", "y", "y"]
+        lines = [DOMAIN, "owner@example.com", "", "", "", "y"]
         status, output, actions, argv = self.run_wizard(lines, arguments=())
         self.assertEqual(status, 1, output)
         self.assertNotIn("execute", actions)
@@ -269,7 +271,7 @@ class WizardPTY(unittest.TestCase):
         self.assertNotIn("Installed.", output)
 
     def test_dns_failure_allows_change_or_cancel_before_other_questions(self):
-        status, output, actions, _ = self.run_wizard(["bad.example.test", "c", DOMAIN, "owner@example.com", "", "", "", "y", "y"])
+        status, output, actions, _ = self.run_wizard(["bad.example.test", "c", DOMAIN, "owner@example.com", "", "", "", "y"])
         self.assertEqual(status, 0, output)
         self.assertEqual(actions, ["dns:bad.example.test", "dns:" + DOMAIN])
         status, output, actions, _ = self.run_wizard(["bad.example.test", "q"], arguments=())
@@ -280,7 +282,7 @@ class WizardPTY(unittest.TestCase):
 
     def test_language_selection_defaults_to_english_and_numeric_menus_work(self):
         status, output, actions, _ = self.run_wizard(
-            ['', DOMAIN, 'owner@example.com', '2', '', '4', '2', 'yes', 'yes'], choose_language=True)
+            ['', DOMAIN, 'owner@example.com', '2', '', '4', '2', 'yes'], choose_language=True)
         self.assertEqual(status, 0, output)
         self.assertIn('English  [default]', output)
         self.assertIn('[1 / 6  Domain and DNS]', output)
@@ -290,27 +292,27 @@ class WizardPTY(unittest.TestCase):
         self.assertIn('--transport ws', output)
         self.assertEqual(actions, ['dns:' + DOMAIN])
         status, output, actions, _ = self.run_wizard(
-            ['2', DOMAIN, 'owner@example.com', '', '', '', 'да', 'да'], choose_language=True)
+            ['2', DOMAIN, 'owner@example.com', '', '', '', 'да'], choose_language=True)
         self.assertEqual(status, 0, output)
         self.assertIn('Настройте свой сервер', output)
         self.assertIn('[1 / 6  Домен и DNS]', output)
 
     def test_real_run_summary_does_not_show_shell_command(self):
         status, output, actions, argv = self.run_wizard(
-            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'], arguments=(), verify='pass')
+            [DOMAIN, 'owner@example.com', '', '', '', 'y'], arguments=(), verify='pass')
         self.assertEqual(status, 0, output)
         self.assertNotIn('  bash ', output)
         self.assertNotIn('--agree-tos', output)
         self.assertEqual(actions[-1], 'execute')
         self.assertIn('--agree-tos', argv)
 
-    def test_dialog_flow_uses_widgets_and_default_no_confirmations(self):
+    def test_dialog_flow_uses_default_menu_items_and_install(self):
         dialogs = [
             ('menu', 'en', 0), ('msgbox', '', 0),
             ('inputbox', DOMAIN, 0), ('inputbox', 'owner@example.com', 0),
             ('menu', 'https', 0), ('inputbox', '', 0),
             ('menu', 'auto', 0), ('menu', 'xhttp', 0),
-            ('yesno', '', 0), ('yesno', '', 0), ('msgbox', '', 0),
+            ('yesno', '', 0), ('msgbox', '', 0),
         ]
         status, output, actions, argv = self.run_wizard([], arguments=(), verify='pass',
                                                        choose_language=True, dialog=dialogs)
@@ -324,11 +326,14 @@ class WizardPTY(unittest.TestCase):
         self.assertEqual(calls[0]['argv'][calls[0]['argv'].index('--default-item') + 1], 'en')
         self.assertTrue(any(call['widget'] == 'infobox' for call in calls))
         confirms = [call for call in calls if call['widget'] == 'yesno']
-        self.assertEqual(len(confirms), 2)
-        self.assertTrue(all('--defaultno' in call['argv'] for call in confirms))
+        self.assertEqual(len(confirms), 1)
+        self.assertTrue(all('--defaultno' not in call['argv'] and '--scrolltext' not in call['argv'] for call in calls))
+        self.assertEqual(confirms[0]['argv'][confirms[0]['argv'].index('--yes-button') + 1], 'Install')
+        self.assertEqual(confirms[0]['argv'][confirms[0]['argv'].index('--no-button') + 1], 'Cancel')
         summary = confirms[-1]['argv'][confirms[-1]['argv'].index('--yesno') + 1]
         self.assertIn('HTTPS link in your browser', summary)
         self.assertIn('Any IP, with login and password', summary)
+        self.assertIn('https://letsencrypt.org/repository/', summary)
         self.assertNotIn('bash ', summary)
         self.assertTrue(all('--default-item' not in call['argv'] or '--menu' in call['argv'] for call in calls))
 
@@ -347,7 +352,7 @@ class WizardPTY(unittest.TestCase):
         self.assertEqual(status, 130, output)
         self.assertEqual(actions, [])
 
-    def test_dialog_declined_terms_never_downloads_and_error_never_silently_accepts(self):
+    def test_dialog_cancel_and_error_never_start_installation(self):
         dialogs = [
             ('msgbox', '', 0), ('inputbox', DOMAIN, 0), ('inputbox', 'owner@example.com', 0),
             ('menu', 'ssh', 0), ('menu', 'auto', 0), ('menu', 'xhttp', 0), ('yesno', '', 1),
@@ -374,7 +379,7 @@ class WizardPTY(unittest.TestCase):
 
     def test_dns_warning_is_shown_and_does_not_corrupt_bind_ip(self):
         status, output, actions, argv = self.run_wizard(
-            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'],
+            [DOMAIN, 'owner@example.com', '', '', '', 'y'],
             arguments=(), verify='pass', dns_warning=True)
         self.assertEqual(status, 0, output)
         self.assertIn('only Google', output)
@@ -388,12 +393,129 @@ class WizardPTY(unittest.TestCase):
         self.assertEqual(actions, [])
         self.assertIn('72 columns by 22 rows', output)
         status, output, actions, _ = self.run_wizard(
-            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'],
+            [DOMAIN, 'owner@example.com', '', '', '', 'y'],
             arguments=('--ui', 'auto', '--dry-run'), terminal='dumb', dialog=[])
         self.assertEqual(status, 0, output)
         self.assertEqual(self.dialog_calls, [])
         self.assertIn('[1 / 6  Domain and DNS]', output)
         self.assertEqual(actions, ['dns:' + DOMAIN])
+
+
+@unittest.skipUnless(shutil.which('whiptail'), 'requires the system whiptail executable')
+class RealWhiptailPTY(unittest.TestCase):
+    """Exercise the native widgets at 72x22, with no downloads or installer execution."""
+
+    def run_at_install(self, action):
+        with tempfile.TemporaryDirectory(prefix='sitekit-whiptail-') as temporary:
+            trace = Path(temporary) / 'trace'
+            args = Path(temporary) / 'args'
+            location = '/etc/apt/sources.list.d/ubuntu.sources (stanza at line 1)'
+            env = {**os.environ, 'TERM': 'xterm-256color', 'LC_ALL': 'C.UTF-8',
+                   'TEST_TRACE': str(trace), 'TEST_ARGS': str(args), 'TEST_VERIFY': 'pass',
+                   'TEST_TEMPFILE': str(Path(temporary) / 'tempfile'), 'TEST_APT_BACKPORTS': location}
+            if action == 'error':
+                real_whiptail = shlex.quote(shutil.which('whiptail'))
+                binary = Path(temporary) / 'whiptail'
+                binary.write_text(f"""#!/usr/bin/env bash
+if [[ "$*" == *'--yes-button Install --no-button Cancel --yesno '* ]]; then
+    printf 'dialog-error\\n' >> "$TEST_TRACE"
+    exec {real_whiptail} --yesno 'Fixture dialog error' invalid 68
+fi
+exec {real_whiptail} "$@"
+""")
+                binary.chmod(0o755)
+                env['PATH'] = temporary + os.pathsep + env['PATH']
+            master, slave = pty.openpty()
+            fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 22, 72, 0, 0))
+
+            def attach_terminal():
+                os.setsid()
+                fcntl.ioctl(slave, termios.TIOCSCTTY, 0)
+
+            process = subprocess.Popen(['bash', '-c', HARNESS, 'wizard-fixture', str(SCRIPT), '--ui', 'dialog'],
+                                       stdin=slave, stdout=slave, stderr=slave, env=env, preexec_fn=attach_terminal)
+            os.close(slave)
+            enter, down, right = b'\r', b'\x1bOB', b'\x1bOC'
+            transcript = bytearray()
+
+            def wait_for(marker):
+                frame = bytearray()
+                deadline = time.monotonic() + 4
+                while time.monotonic() < deadline:
+                    if not select.select([master], [], [], 0.05)[0]:
+                        continue
+                    try:
+                        chunk = os.read(master, 65536)
+                    except OSError as exc:
+                        if exc.errno != errno.EIO:
+                            raise
+                        break
+                    if not chunk:
+                        break
+                    frame.extend(chunk)
+                    transcript.extend(chunk)
+                    if marker in frame:
+                        return bytes(frame)
+                self.fail(f'Missing {marker!r} in whiptail output: {bytes(transcript)!r}')
+
+            try:
+                for marker, keys in (
+                    (b'English', enter), (b'Esc cancels.', enter),
+                    (b'disable only resolute-backports', enter),
+                    (b'Enter the name visitors', DOMAIN.encode() + enter),
+                    (b'Certificate email', b'owner@example.com' + enter),
+                    (b'How would you like', down + enter),
+                    (b'Allowed client IPs', enter),
+                    (b'Choose the theme', down + enter),
+                    (b'Choose the VLESS', down + enter),
+                ):
+                    wait_for(marker)
+                    os.write(master, keys)
+                if action != 'error':
+                    # These are screen bytes emitted by whiptail, before any final input.
+                    frame = wait_for(b'<Cancel>')
+                    for visible in (b'Review and install', DOMAIN.encode(), ADDRESS.encode(), b'owner@example.com',
+                                    b'HTTPS link in your browser', b'Any IP, with login and password',
+                                    b'Website: generative', b'Transport: ws', location.encode(),
+                                    b'disable only resolute-backports', b'By choosing Install',
+                                    b'Subscriber', b'Agreement:', b'https://letsencrypt.org/repository/', b'<Install>'):
+                        self.assertIn(visible, frame)
+                    self.assertEqual(trace.read_text().splitlines(), ['dns:' + DOMAIN])
+                if action == 'eof':
+                    os.close(master)
+                    master = -1
+                elif action != 'error':
+                    os.write(master, {'install': enter, 'no': right + enter, 'escape': b'\x1b', 'interrupt': b'\x03'}[action])
+                if action == 'install':
+                    wait_for(b'<Next>')
+                    os.write(master, enter)
+                result = process.wait(timeout=5)
+            finally:
+                if process.poll() is None:
+                    os.killpg(process.pid, signal.SIGKILL)
+                    process.wait()
+                if master != -1:
+                    os.close(master)
+            actions = trace.read_text().splitlines()
+            argv = args.read_bytes().decode().split('\0')[:-1] if args.exists() else []
+            return result, actions, argv
+
+    def test_english_72x22_without_tab(self):
+        status, actions, argv = self.run_at_install('install')
+        self.assertEqual(status, 0)
+        self.assertEqual(actions, ['dns:' + DOMAIN, 'mktemp', 'download', 'execute'])
+        for option, value in (('--panel-access', 'https'), ('--site-theme', 'generative'), ('--transport', 'ws')):
+            self.assertEqual(argv[argv.index(option) + 1], value)
+        self.assertEqual(argv.count('--agree-tos'), 1)
+        self.assertEqual(argv.count('--disable-apt-backports'), 1)
+
+    def test_cancel_escape_eof_interrupt_and_error_stop_before_installation(self):
+        for action in ('no', 'escape', 'eof', 'interrupt', 'error'):
+            with self.subTest(action=action):
+                status, actions, argv = self.run_at_install(action)
+                self.assertEqual(status == 0, action == 'no')
+                self.assertEqual(actions, ['dns:' + DOMAIN] + (['dialog-error'] if action == 'error' else []))
+                self.assertEqual(argv, [])
 
 
 class SyntheticDNS(unittest.TestCase):

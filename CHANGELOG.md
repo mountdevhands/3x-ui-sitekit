@@ -2,6 +2,13 @@
 
 English · [Русский](CHANGELOG.ru.md)
 
+## 0.3.0-rc7 — release candidate
+
+- Continue through the wizard with typing, arrows and Enter.
+- Show the Let’s Encrypt agreement and any planned APT change in the final
+  Install summary. Text confirmations use `[Y/n]`.
+- Cover the minimum 72×22 terminal and cancellation with a whiptail PTY fixture.
+
 ## 0.3.0-rc6 — release candidate
 
 - Check APT trust before writing installation state or masking nginx.

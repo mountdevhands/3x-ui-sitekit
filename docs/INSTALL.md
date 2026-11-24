@@ -2,7 +2,7 @@
 
 English · [Русский](INSTALL.ru.md)
 
-The installation commands in this source version target **v0.3.0-rc6**.
+The installation commands in this source version target **v0.3.0-rc7**.
 Use its published assets from [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases);
 a source commit and a published release are separate steps.
 
@@ -30,7 +30,9 @@ A fresh installation requires a dedicated host with available ports and no
 previous SiteKit state or Certbot lineage. Start with the
 [one-command wizard](../README.md#install-from-github-releases) in an
 interactive root shell with `curl`, `sha256sum`, `python3` and `ip`. The wizard
-uses `whiptail` if available and otherwise offers numbered text menus.
+uses `whiptail` in terminals of at least 72×22 when available. Type in
+fields, choose with the arrow keys, and press Enter to continue. Smaller
+terminals and `--ui text` use numbered menus.
 
 ## Guided setup
 
@@ -47,10 +49,11 @@ The wizard shows a welcome screen and walks through these choices:
 
 The domain must have exactly one A record matching a public IPv4 assigned
 to this server and no AAAA record. If DNS does not match, choose Retry,
-Change domain or Cancel. After collecting the choices, setup asks you to
-accept the Let's Encrypt terms and confirm a readable settings summary.
-Both consent choices default to **No**. SiteKit release files are downloaded
-only after both confirmations.
+Change domain or Cancel. Review your settings and the Let’s Encrypt
+Subscriber Agreement in the final summary. Choose **Install** to accept
+the agreement and start downloading the release files. The summary shows
+any planned backports change. In text mode, Enter accepts `[Y/n]` after a
+successful read, and `n` declines.
 
 A verified local copy of `setup.sh` also supports:
 
@@ -85,7 +88,7 @@ The installer generates the password, VLESS UUID and random panel path.
 
 ## Install with explicit arguments
 
-For automation, download the pinned rc6 bootstrap, verify its SHA-256, and
+For automation, download the pinned rc7 bootstrap, verify its SHA-256, and
 supply the settings explicitly. This example requires `curl`, `sha256sum`
 and `sudo`; when running as root, omit `sudo`. Replace the domain and email.
 Pass `--agree-tos` only after accepting the ACME provider's terms.
@@ -102,9 +105,9 @@ image where that pocket is enabled.
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/install.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/install.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc7/install.sh'
   printf '%s  %s\n' \
-    '9b08fbc3655573fc9a124d31f844bc8c307dbf71177e0b7f8042d0b359e4e209' "$sitekit_download/install.sh" |
+    'f91c150ca973ea11f0f7f29da23300bda8d94a4b73d32f19f6a9cac3f104545b' "$sitekit_download/install.sh" |
     sha256sum --check --strict
   sudo bash "$sitekit_download/install.sh" \
     --repository mountdevhands/3x-ui-sitekit \
@@ -135,7 +138,7 @@ the existing certificate and panel path.
 ## Completion and maintenance
 
 After success, read `/root/https-node-access.txt` locally as root. It contains
-the panel URL, username, password, VLESS link and, in rc6, its plain UTF-8 QR.
+the panel URL, username, password, VLESS link and, in rc7, its plain UTF-8 QR.
 Follow the [panel access guide](PANEL-ACCESS.md) to open the correct URL.
 Keep a verified standalone as `/root/https-node.py` for maintenance; the
 bootstrap removes its temporary downloaded installer. Use the
