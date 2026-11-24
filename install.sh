@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TAG='v0.3.0-rc5'
-INSTALLER='3x-ui-sitekit-0.3.0-rc5.py'
-RUNTIME='3x-ui-sitekit-0.3.0-rc5-linux-amd64.tar.gz'
-INSTALLER_SHA256='419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663'
+TAG='v0.3.0-rc6'
+INSTALLER='3x-ui-sitekit-0.3.0-rc6.py'
+RUNTIME='3x-ui-sitekit-0.3.0-rc6-linux-amd64.tar.gz'
+INSTALLER_SHA256='ad10280e655dad12441f097c97402de73f59fc9ea75eca0b9ccdf35d40dbd8a3'
 RUNTIME_SHA256='cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f'
 
 fail() { printf '%s\n' "$*" >&2; exit 1; }
@@ -59,7 +59,7 @@ main() (
             --bind-ip|--transport|--site-theme|--site-title|--site-description|--site-dir|--panel-access|--panel-allow)
                 (($#)) && [[ "$1" != --* ]] || fail "$option requires a value."
                 arguments+=("$option" "$1"); shift ;;
-            --reuse-stock-nginx) arguments+=("$option") ;;
+            --reuse-stock-nginx|--disable-apt-backports) arguments+=("$option") ;;
             *) fail "Unsupported bootstrap option: $option" ;;
         esac
     done

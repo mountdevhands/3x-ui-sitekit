@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# 3x-ui SiteKit 0.3.0-rc5 — single-file distribution
-# Source: bundled security_policy.py, certbot_runtime.py, site_content.py, site_art.py, artifact_sites.py, rendering.py, installer_core.py
+# 3x-ui SiteKit 0.3.0-rc6 — single-file distribution
+# Source: bundled security_policy.py, certbot_runtime.py, site_content.py, site_art.py, artifact_sites.py, rendering.py, apt_sources.py, installer_core.py
 # License: MIT (upstream components retain their own licenses)
 from __future__ import annotations
 
@@ -2900,6 +2900,116 @@ def render_generated_site(domain: str, profile: dict) -> Dict[str, str]:
     return _render_generated_site_v1(domain, profile)
 
 
+"""Read conventional APT sources and plan the single supported pocket change."""
+
+import re
+from pathlib import Path
+from typing import NamedTuple
+
+APT_BACKPORTS = "resolute-backports"
+APT_LIST_LINE = re.compile(r"deb(?:-src)?\s+(?:\[([^]]*)\]\s+)?(\S+)\s+(\S+)(?:\s+.*)?")
+
+
+class AptSource(NamedTuple):
+    fields: dict
+    location: str
+    start: int
+    end: int
+    positions: dict
+
+
+def apt_source_paths(root: Path):
+    parts = root / "sources.list.d"
+    return [root / "sources.list", *sorted(parts.glob("*.list")), *sorted(parts.glob("*.sources"))]
+
+
+def apt_source_records(path, text):
+    lines = text.splitlines(keepends=True)
+    if path.suffix != ".sources":
+        for index, raw in enumerate(lines):
+            line = raw.split("#", 1)[0].strip()
+            if not line:
+                continue
+            location = f"{path}:{index + 1}"
+            match = APT_LIST_LINE.fullmatch(line)
+            if not match:
+                raise ValueError(f"Unrecognized APT source line in {location}.")
+            options = {}
+            for item in (match[1] or "").split():
+                if "=" not in item:
+                    continue
+                key, value = item.split("=", 1)
+                if key.lower() == "enabled":
+                    raise ValueError(f"Enabled is a deb822 field and is unsupported in {location}.")
+                if key in options:
+                    raise ValueError(f"Duplicate APT option {key} in {location}.")
+                options[key] = value
+            yield AptSource({**options, "uris": match[2], "suites": match[3]}, location, index, index + 1, {})
+        return
+
+    start = 0
+    fields, positions, last_key = {}, {}, None
+    for index, raw in enumerate([*lines, ""]):
+        location = f"{path} (stanza at line {start + 1})"
+        if not raw.strip():
+            if fields:
+                yield AptSource(fields, location, start, index, positions)
+            start = index + 1
+            fields, positions, last_key = {}, {}, None
+        elif raw.startswith("#"):
+            continue
+        elif raw[:1].isspace() and last_key:
+            fields[last_key] += " " + raw.strip()
+            positions[last_key].append(index)
+        elif re.match(r"^[A-Za-z][A-Za-z0-9-]*:", raw):
+            key, value = raw.split(":", 1)
+            last_key = key.lower()
+            if last_key in fields:
+                raise ValueError(f"Duplicate deb822 APT field {key} in {location}.")
+            fields[last_key] = value.strip()
+            positions[last_key] = [index]
+        else:
+            raise ValueError(f"Malformed deb822 APT source at {path}:{index + 1}.")
+
+
+def apt_source_enabled(fields):
+    value = fields.get("enabled", "yes").strip().lower()
+    # APT's deb822 parser accepts these aliases as well as numeric zero.
+    return value not in {"no", "false", "without", "off", "disable"} and not re.fullmatch(r"[+-]?(?:0+|0x0+)", value)
+
+
+def apt_backports_records(path, text):
+    return [record for record in apt_source_records(path, text)
+            if apt_source_enabled(record.fields) and APT_BACKPORTS in record.fields.get("suites", "").split()]
+
+
+def without_apt_backports(path, text, records):
+    lines = text.splitlines(keepends=True)
+    for record in reversed(records):
+        if path.suffix != ".sources":
+            lines[record.start] = "# Disabled by SiteKit: " + lines[record.start]
+            continue
+        suites = record.fields["suites"].split()
+        if any(suite != APT_BACKPORTS for suite in suites):
+            for position in record.positions["suites"]:
+                first = position == record.positions["suites"][0]
+                prefix, value = lines[position].split(":", 1) if first else ("", lines[position])
+                value = re.sub(r"(?<!\S)" + APT_BACKPORTS + r"(?!\S)", "", value)
+                lines[position] = prefix + ":" + value if first else value if value.strip() else ""
+        elif "enabled" in record.positions:
+            first, *continuations = record.positions["enabled"]
+            newline = "\r\n" if lines[first].endswith("\r\n") else "\n" if lines[first].endswith("\n") else ""
+            lines[first] = lines[first].split(":", 1)[0] + ": no" + newline
+            for position in continuations:
+                lines[position] = ""
+        else:
+            newline = "\r\n" if lines[record.end - 1].endswith("\r\n") else "\n"
+            if not lines[record.end - 1].endswith("\n"):
+                lines[record.end - 1] += newline
+            lines.insert(record.end, "Enabled: no" + newline)
+    return "".join(lines)
+
+
 # ---------------- Installer and command line ----------------
 """HTTPS Node: an isolated, pinned 3x-ui/Xray + nginx installer.
 
@@ -2940,7 +3050,7 @@ import uuid
 from pathlib import Path
 
 
-APP_VERSION = "0.3.0-rc5"
+APP_VERSION = "0.3.0-rc6"
 RELEASE_VERSION = SECURITY_APPROVED_BUNDLE[0] if SECURITY_APPROVED_BUNDLE else "v3.11.0"
 RELEASE_SHA256 = (SECURITY_APPROVED_BUNDLE[1] if SECURITY_APPROVED_BUNDLE else
                   "0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916")
@@ -3284,10 +3394,11 @@ def approved_archive_uri(uri, info):
     return False
 
 
-def validate_apt_source_record(fields, info):
+def validate_apt_source_record(fields, info, *, source=None):
     """Require explicit official signing-key binding for each enabled source."""
-    if fields.get("enabled", "yes").lower() == "no":
+    if not apt_source_enabled(fields):
         return
+    location = " in " + source if source else ""
     distro = info.get("ID")
     expected_keyring = {"ubuntu": "/usr/share/keyrings/ubuntu-archive-keyring.gpg",
                         "debian": "/usr/share/keyrings/debian-archive-keyring.gpg"}.get(distro)
@@ -3295,20 +3406,29 @@ def validate_apt_source_record(fields, info):
                 ("debian", "12"): "bookworm", ("debian", "13"): "trixie"}.get(
                     (distro, info.get("VERSION_ID")))
     if not codename or fields.get("signed-by") != expected_keyring:
-        raise NodeError("APT sources need an explicit Signed-By binding to the distro archive keyring.")
+        raise NodeError("APT source needs an explicit Signed-By binding to the distro archive keyring" + location + ".")
     if not fields.get("uris") or any(not approved_archive_uri(uri, info) for uri in fields["uris"].split()):
-        raise NodeError("This limited update accepts only distro-operated archive URIs; custom mirrors/PPA need separate review.")
-    if not fields.get("suites") or any(suite not in {codename, codename + "-security", codename + "-updates"}
-                                       for suite in fields["suites"].split()):
-        raise NodeError("APT source suite is outside the reviewed release/security/updates pockets.")
+        raise NodeError("APT source uses an unapproved archive URI" + location + ". Use a distro-operated archive.")
+    allowed_suites = {codename, codename + "-security", codename + "-updates"}
+    suites = fields.get("suites", "").split()
+    unsupported = sorted(set(suites) - allowed_suites)
+    if not suites or unsupported:
+        detail = ", ".join(unsupported) if unsupported else "missing Suites"
+        advice = " Review or disable the unsupported source before retrying."
+        if unsupported == [APT_BACKPORTS] and codename == "resolute":
+            advice = (" Use --disable-apt-backports during a fresh install to back up the source file "
+                      "and disable only resolute-backports, or back up the source file and edit it yourself.")
+        raise NodeError("APT source suite is outside the reviewed release/security/updates pockets"
+                        + location + ": " + detail + ". Allowed: " + ", ".join(sorted(allowed_suites))
+                        + "." + advice)
     for name in ("trusted", "allow-insecure", "allow-weak", "allow-downgrade-to-insecure"):
         if fields.get(name, "no").lower() not in {"no", "false", "0"}:
-            raise NodeError("APT source weakens archive verification: " + name)
+            raise NodeError("APT source weakens archive verification" + location + ": " + name + ".")
     if fields.get("check-valid-until", "yes").lower() not in {"yes", "true", "1"}:
-        raise NodeError("APT source disables index expiry checks.")
+        raise NodeError("APT source disables index expiry checks" + location + ".")
 
 
-def verify_apt_trust(info):
+def verify_apt_trust(info, *, planned=None):
     """Validate conventional distro apt source files; do not rewrite the user's repos."""
     if os.environ.get("APT_CONFIG"):
         raise NodeError("A custom APT_CONFIG needs separate review before this limited update.")
@@ -3323,45 +3443,14 @@ def verify_apt_trust(info):
         found = re.findall(r"^" + re.escape(name) + r'\s+"([^"\n]*)";', config, re.M | re.I)
         if found and (found[-1] != expected if name == "Dir" else found[-1].rstrip("/") != expected.rstrip("/")):
             raise NodeError("Custom apt source-directory configuration needs separate review.")
-    paths = [Path("/etc/apt/sources.list"), *sorted(Path("/etc/apt/sources.list.d").glob("*.list")),
-             *sorted(Path("/etc/apt/sources.list.d").glob("*.sources"))]
     count = 0
-    for path in paths:
-        if not path.exists():
-            continue
-        if path.is_symlink() or not path.is_file() or path.stat().st_uid != 0 or path.stat().st_mode & 0o022:
-            raise NodeError("APT source files must be root-owned regular files without group/world write access.")
-        data = path.read_text(encoding="utf-8")
-        if path.suffix == ".sources":
-            for paragraph in re.split(r"\n\s*\n", data):
-                fields, last_key = {}, None
-                for line in paragraph.splitlines():
-                    if not line.strip() or line.lstrip().startswith("#"):
-                        continue
-                    if line[:1].isspace() and last_key:
-                        fields[last_key] += " " + line.strip()
-                    elif ":" in line:
-                        key, value = line.split(":", 1)
-                        last_key = key.lower()
-                        fields[last_key] = value.strip()
-                    else:
-                        raise NodeError("Malformed deb822 APT source file.")
-                if not fields or fields.get("enabled", "yes").lower() == "no":
-                    continue
-                if not fields.get("types") or any(kind not in {"deb", "deb-src"} for kind in fields["types"].split()):
-                    raise NodeError("Unrecognized APT source Types field.")
-                validate_apt_source_record(fields, info)
-                count += 1
-        else:
-            for line in data.splitlines():
-                line = line.split("#", 1)[0].strip()
-                if not line:
-                    continue
-                match = re.fullmatch(r"deb(?:-src)?\s+(?:\[([^]]*)\]\s+)?(\S+)\s+(\S+)(?:\s+.*)?", line)
-                if not match:
-                    raise NodeError("Unrecognized APT source line.")
-                options = dict(item.split("=", 1) for item in (match.group(1) or "").split() if "=" in item)
-                validate_apt_source_record({**options, "uris": match.group(2), "suites": match.group(3)}, info)
+    for path in apt_source_paths(Path("/etc/apt")):
+        if path.is_symlink() or path.exists():
+            data, _ = read_apt_source(path)
+            if planned and path in planned:
+                data = planned[path]
+            for record in read_apt_records(path, data):
+                validate_apt_source_record(record.fields, info, source=record.location)
                 count += 1
     if not count:
         raise NodeError("No explicitly verified distro APT sources found.")
@@ -3376,6 +3465,110 @@ def verify_apt_trust(info):
     if result.returncode not in (0, 1) or any(line.rstrip().endswith(str(keyring)) for line in result.stdout.splitlines()):
         raise NodeError("Archive keyring differs from the installed distro package.")
 
+
+
+def read_apt_source(path):
+    metadata = path.stat(follow_symlinks=False)
+    if not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != 0 or metadata.st_mode & 0o022:
+        raise NodeError(f"APT source must be a root-owned regular file without group/world write access: {path}.")
+    try:
+        return path.read_bytes().decode("utf-8"), metadata
+    except UnicodeError as exc:
+        raise NodeError(f"APT source is not UTF-8: {path}.") from exc
+
+
+def read_apt_records(path, data):
+    try:
+        for record in apt_source_records(path, data):
+            if not apt_source_enabled(record.fields):
+                continue
+            if path.suffix == ".sources" and (not record.fields.get("types") or any(
+                    kind not in {"deb", "deb-src"} for kind in record.fields["types"].split())):
+                raise NodeError(f"Unrecognized APT Types field in {record.location}.")
+            yield record
+    except ValueError as exc:
+        raise NodeError(str(exc)) from exc
+
+
+def apt_backports_plan(info):
+    """Validate proposed source files without changing the host."""
+    if (info.get("ID"), info.get("VERSION_ID")) != ("ubuntu", "26.04"):
+        raise NodeError("--disable-apt-backports is supported on Ubuntu 26.04 only.")
+    changes = {}
+    for path in apt_source_paths(Path("/etc/apt")):
+        if not path.is_symlink() and not path.exists():
+            continue
+        before, metadata = read_apt_source(path)
+        records = [record for record in read_apt_records(path, before)
+                   if APT_BACKPORTS in record.fields.get("suites", "").split()]
+        if not records:
+            continue
+        if metadata.st_nlink != 1 or any(parent.is_symlink() for parent in path.parents):
+            raise NodeError(f"Refusing to modify a linked APT source: {path}.")
+        for parent in (path.parent, path.parent.parent):
+            parent_info = parent.stat()
+            if parent_info.st_uid != 0 or parent_info.st_mode & 0o022:
+                raise NodeError(f"Refusing to modify APT sources in an unsafe directory: {parent}.")
+        for record in records:
+            suites = [value for value in record.fields["suites"].split() if value != APT_BACKPORTS]
+            fields = {**record.fields, "suites": " ".join(suites) or "resolute"}
+            validate_apt_source_record(fields, info, source=record.location)
+        changes[path] = (before, without_apt_backports(path, before, records), metadata)
+    verify_apt_trust(info, planned={path: after for path, (_, after, _) in changes.items()})
+    return changes
+
+
+def write_apt_source(path, data, metadata):
+    fd, temporary = tempfile.mkstemp(prefix=".sitekit-apt-", dir=path.parent)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            os.fchown(stream.fileno(), metadata.st_uid, metadata.st_gid)
+            os.fchmod(stream.fileno(), stat.S_IMODE(metadata.st_mode))
+            stream.write(data.encode("utf-8"))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        with contextlib.suppress(FileNotFoundError):
+            os.unlink(temporary)
+
+
+def apply_apt_backports(info):
+    changes = apt_backports_plan(info)
+    if not changes:
+        return
+    backup = Path(tempfile.mkdtemp(prefix="sitekit-apt-backports.", dir=Path("/root")))
+    originals = {}
+    for path, (before, _, metadata) in changes.items():
+        destination = backup / path.relative_to(Path("/etc/apt"))
+        destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        write_apt_source(destination, before, metadata)
+        originals[path] = destination
+    log("APT source backup: " + str(backup))
+    applied = []
+    try:
+        for path, (before, after, metadata) in changes.items():
+            current, current_metadata = read_apt_source(path)
+            identity = ("st_dev", "st_ino", "st_mode", "st_nlink", "st_uid", "st_gid")
+            if current != before or any(getattr(current_metadata, key) != getattr(metadata, key) for key in identity):
+                raise NodeError(f"APT source changed after preflight: {path}.")
+            write_apt_source(path, after, metadata)
+            applied.append(path)
+        verify_apt_trust(info)
+    except BaseException:
+        failures = []
+        for path in reversed(applied):
+            try:
+                if read_apt_source(path)[0] != changes[path][1]:
+                    raise NodeError("APT source changed during rollback.")
+                write_apt_source(path, originals[path].read_bytes().decode("utf-8"), changes[path][2])
+            except (OSError, ValueError, NodeError):
+                failures.append(str(path))
+        if failures:
+            raise NodeError(f"Unable to restore {', '.join(failures)}. Original sources: {backup}.")
+        log("Restored original APT source files after validation failed.")
+        raise
+    log("Disabled only resolute-backports. APT source trust checks passed.")
 
 def apt_candidate_origin(policy_text, candidate, releases, info):
     """Require a candidate from the supported distro's release/security/updates pockets."""
@@ -3790,7 +3983,7 @@ def update_nginx(args):
         log("This updated nginx only. Run security-check for the separate Certbot/release findings.")
 
 
-def preflight(domain, bind_ip=None, *, installing=False, reuse_stock_nginx=False):
+def preflight(domain, bind_ip=None, *, installing=False, reuse_stock_nginx=False, disable_apt_backports=False):
     domain = validate_domain(domain)
     if installing and os.geteuid() != 0:
         raise NodeError("Install requires root. Run with sudo python3.")
@@ -3825,6 +4018,12 @@ def preflight(domain, bind_ip=None, *, installing=False, reuse_stock_nginx=False
     for path in (UNIT_DIR / "nginx.service", Path("/run/systemd/system/nginx.service")):
         if path.exists() or path.is_symlink():
             raise NodeError("Existing nginx service override/mask; no change was made.")
+    # Reject source-policy conflicts before creating private state or masking nginx.
+    # refresh_apt() checks again immediately before using the package manager.
+    if disable_apt_backports:
+        apt_backports_plan(info)
+    else:
+        verify_apt_trust(info)
     addresses = command(["ip", "-j", "-4", "addr", "show", "scope", "global"]).stdout
     local = {a["local"] for item in json.loads(addresses) for a in item.get("addr_info", []) if a.get("family") == "inet"}
     if bind_ip is not None:
@@ -4783,7 +4982,9 @@ def install(args):
             raise NodeError("Provide a valid --email for certificate notifications.")
     elif not args.acme_no_email:
         raise NodeError("Provide --email or explicitly select --acme-no-email.")
-    facts = preflight(args.domain, args.bind_ip, installing=True, reuse_stock_nginx=args.reuse_stock_nginx)
+    disable_backports = getattr(args, "disable_apt_backports", False)
+    facts = preflight(args.domain, args.bind_ip, installing=True, reuse_stock_nginx=args.reuse_stock_nginx,
+                      disable_apt_backports=disable_backports)
     if facts["os"] != "ubuntu 26.04" or sys.version_info[:2] != (3, 14):
         raise NodeError("The reviewed offline Certbot wheels require Ubuntu 26.04 amd64 with Python 3.14.")
     if args.site_dir:
@@ -4809,6 +5010,10 @@ def install(args):
         verify_certbot_payload(certbot_payload)
         nginx_payload = extracted / "x-ui/nginx-openssl"
         verify_nginx_openssl(nginx_payload)
+        if disable_backports:
+            apply_apt_backports(os_info())
+        else:
+            verify_apt_trust(os_info())
         ETC.mkdir(mode=0o700)
         save_state(state)
         try:
@@ -4926,7 +5131,10 @@ def install(args):
                 log("Cleanup needs attention: " + "; ".join(cleanup_errors))
             log(f"Installation stopped at {state['stage']}. Private diagnostics were preserved in {ETC}.")
             log("Use status for details. To reset: uninstall --confirm-domain " + state["domain"])
-            log("After correcting the cause, install again with --reuse-stock-nginx (the inactive apt package remains).")
+            if shutil.which("nginx"):
+                log("nginx files remain. After correcting the cause and uninstalling this attempt, retry with --reuse-stock-nginx.")
+            else:
+                log("After correcting the cause, uninstall this failed attempt, then retry installation.")
             raise
 
 
@@ -5008,7 +5216,12 @@ def uninstall(args):
     log("Managed services, site, database and credentials removed. Installed apt packages remain.")
     if state.get("certificate_issued") and args.keep_certificate:
         log("The certificate was kept: " + state["cert_name"] + ". Its renewal needs a working webroot; fresh install preflight will reject it.")
-    log("To install again, add --reuse-stock-nginx. Existing active nginx services are always refused.")
+    if shutil.which("nginx"):
+        log("nginx files remain. To install again, add --reuse-stock-nginx; its stock service must be stopped and disabled.")
+    elif Path("/etc/nginx/nginx.conf").exists():
+        log("Review the residual nginx configuration before retrying installation.")
+    else:
+        log("No nginx files remain; the normal fresh-install command can be used again.")
 
 
 def main(argv=None):
@@ -5026,6 +5239,8 @@ def main(argv=None):
     registration.add_argument("--email", help="Email associated with the ACME account.")
     registration.add_argument("--acme-no-email", action="store_true", help="Explicitly register the ACME account without email (useful for a test VPS).")
     install_parser.add_argument("--agree-tos", action="store_true")
+    install_parser.add_argument("--disable-apt-backports", action="store_true",
+                                help="Back up APT sources and disable only resolute-backports on Ubuntu 26.04.")
     install_parser.add_argument("--transport", choices=("xhttp", "ws"), default="xhttp")
     install_parser.add_argument("--panel-access", choices=("ssh", "https"), default="ssh",
                                 help="Panel access: SSH tunnel only (default), or HTTPS at its secret path plus SSH.")

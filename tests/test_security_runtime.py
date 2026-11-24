@@ -16,6 +16,7 @@ import itertools
 import json
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
@@ -238,6 +239,181 @@ class AptSourceTrustGuards(unittest.TestCase):
                 core.refresh_apt()
         trust.assert_called_once_with(INFO)
         command.assert_not_called()
+
+
+class AptSourceFilePreflightGuards(unittest.TestCase):
+    """Exercise real source parsing with files rooted in a temporary VPS model."""
+
+    @contextlib.contextmanager
+    def sources(self, text, suffix=".sources"):
+        with tempfile.TemporaryDirectory(prefix="sitekit-apt-preflight-") as temporary:
+            root = Path(temporary).resolve()
+            source = root / ("etc/apt/sources.list.d/ubuntu" + suffix)
+            source.parent.mkdir(parents=True)
+            source.write_text(text, encoding="utf-8")
+            source.chmod(0o644)
+            keyring = root / "usr/share/keyrings/ubuntu-archive-keyring.gpg"
+            keyring.parent.mkdir(parents=True)
+            keyring.write_bytes(b"fixture archive keyring")
+            keyring.chmod(0o644)
+            (root / "run/systemd/system").mkdir(parents=True)
+            (root / "root").mkdir()
+            original_stat = Path.stat
+            calls = []
+
+            def owned_stat(path, *args, **kwargs):
+                values = list(original_stat(path, *args, **kwargs))
+                values[4] = 0  # Model root ownership on unprivileged CI runners.
+                return os.stat_result(values)
+
+            def rooted(path):
+                path = Path(path)
+                return path if path.is_relative_to(root) else root / path.relative_to("/")
+
+            def command(argv, **kwargs):
+                calls.append(argv)
+                if argv == ["apt-config", "dump"]:
+                    return completed(argv)
+                if argv == ["dpkg-query", "-S", str(keyring)]:
+                    return completed(argv, "ubuntu-keyring: " + str(keyring))
+                if argv == ["dpkg", "--verify", "ubuntu-keyring"]:
+                    return completed(argv)
+                if argv in (["getent", "passwd", core.USER], ["getent", "group", core.USER]):
+                    return completed(argv, returncode=2)
+                raise AssertionError("Unexpected external command: " + repr(argv))
+
+            with mock.patch.object(core, "Path", side_effect=rooted), \
+                    mock.patch.object(Path, "stat", new=owned_stat), \
+                    mock.patch.object(core, "command", side_effect=command), \
+                    mock.patch.dict(os.environ, {}, clear=True):
+                yield root, source, calls
+
+    def deb822(self, suites="resolute resolute-updates resolute-security"):
+        return ("Types: deb\nURIs: http://nl.archive.ubuntu.com/ubuntu\n"
+                + "Suites: " + suites + "\nComponents: main universe\n"
+                + "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg\n")
+
+    def test_backports_in_multiline_suites_reports_file_without_rewriting_it(self):
+        content = self.deb822("resolute resolute-updates\n resolute-backports")
+        with self.sources(content) as (_, source, calls):
+            with self.assertRaises(core.NodeError) as rejected:
+                core.verify_apt_trust(INFO)
+            self.assertIn(str(source), str(rejected.exception))
+            self.assertIn("resolute-backports", str(rejected.exception))
+            self.assertIn("--disable-apt-backports", str(rejected.exception))
+            self.assertEqual(source.read_text(encoding="utf-8"), content)
+            self.assertEqual(calls, [["apt-config", "dump"]])
+
+    def test_backports_legacy_source_reports_exact_line(self):
+        content = ("# fixture\n\n"
+                   "deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] "
+                   "http://nl.archive.ubuntu.com/ubuntu resolute-backports main\n")
+        with self.sources(content, ".list") as (_, source, calls):
+            with self.assertRaises(core.NodeError) as rejected:
+                core.verify_apt_trust(INFO)
+            self.assertIn(str(source) + ":3", str(rejected.exception))
+            self.assertIn("resolute-backports", str(rejected.exception))
+            self.assertEqual(source.read_text(encoding="utf-8"), content)
+            self.assertEqual(calls, [["apt-config", "dump"]])
+
+    def test_disabled_backports_and_commented_legacy_sources_are_ignored(self):
+        content = self.deb822() + "\n" + self.deb822("resolute-backports") + "Enabled: no\n"
+        with self.sources(content) as (_, source, calls):
+            legacy = source.with_name("disabled.list")
+            legacy.write_text("# deb http://example.invalid/ubuntu resolute-backports main\n", encoding="utf-8")
+            self.assertIsNone(core.verify_apt_trust(INFO))
+            self.assertEqual(source.read_text(encoding="utf-8"), content)
+            self.assertEqual([argv[0] for argv in calls], ["apt-config", "dpkg-query", "dpkg"])
+
+    def test_changes_only_the_pocket_in_mixed_standalone_and_disabled_stanzas(self):
+        mixed = self.deb822("resolute\n resolute-backports\n resolute-updates")
+        standalone = self.deb822("resolute-backports")
+        disabled = standalone + "Enabled: no\n"
+        already_disabled = [standalone + f"Enabled: {value}\n" for value in ("no", "off", "0x0")]
+        security = self.deb822("resolute-security")
+        original = "\n".join((mixed, standalone, *already_disabled, security))
+        with self.sources(original) as (root, source, _), mock.patch.object(core.os, "fchown"):
+            legacy = source.with_name("ubuntu-legacy.list")
+            line = "deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] http://archive.ubuntu.com/ubuntu "
+            old_list = line + "resolute-backports main # retain this comment\n" + line + "resolute main\n"
+            legacy.write_text(old_list)
+            changes = core.apt_backports_plan(INFO)
+            self.assertEqual(set(changes), {source, legacy})
+            self.assertEqual(source.read_text(), original)
+            self.assertEqual(legacy.read_text(), old_list)
+            core.apply_apt_backports(INFO)
+            self.assertEqual(source.read_text(), "\n".join((mixed.replace(" resolute-backports\n", ""),
+                                                           disabled, *already_disabled, security)))
+            self.assertEqual(legacy.read_text(), "# Disabled by SiteKit: " + old_list)
+            backup, = (root / "root").glob("sitekit-apt-backports.*")
+            self.assertEqual((backup / "sources.list.d" / source.name).read_text(), original)
+            self.assertEqual((backup / "sources.list.d" / legacy.name).read_text(), old_list)
+            self.assertEqual(stat.S_IMODE(backup.stat().st_mode), 0o700)
+            self.assertEqual(stat.S_IMODE(source.stat().st_mode), 0o644)
+            self.assertEqual(core.apt_backports_plan(INFO), {})
+
+    def test_restores_original_files_if_post_edit_trust_verification_fails(self):
+        original = self.deb822("resolute resolute-backports")
+        actual_verify = core.verify_apt_trust
+        with self.sources(original) as (root, source, _), mock.patch.object(core.os, "fchown"):
+            legacy = source.with_name("ubuntu-legacy.list")
+            line = "deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] http://archive.ubuntu.com/ubuntu resolute-backports main\n"
+            legacy.write_text(line)
+
+            def reject_after_writes(info, *, planned=None):
+                actual_verify(info, planned=planned)
+                if planned is None:
+                    self.assertNotEqual(source.read_text(), original)
+                    self.assertNotEqual(legacy.read_text(), line)
+                    raise core.NodeError("fixture rejected updated sources")
+
+            with mock.patch.object(core, "verify_apt_trust", side_effect=reject_after_writes):
+                with self.assertRaisesRegex(core.NodeError, "fixture rejected"):
+                    core.apply_apt_backports(INFO)
+            self.assertEqual(source.read_text(), original)
+            self.assertEqual(legacy.read_text(), line)
+            self.assertEqual(len(list((root / "root").glob("sitekit-apt-backports.*"))), 1)
+
+    def test_opt_in_refuses_other_suites_and_external_backports_before_editing(self):
+        for content, message in (
+            (self.deb822("resolute resolute-backports resolute-proposed"), "resolute-proposed"),
+            (self.deb822("resolute-backports").replace("nl.archive.ubuntu.com", "vendor.example"), "archive URI"),
+            (self.deb822("resolute resolute-backports") + " # part of Signed-By\n", "Signed-By"),
+            (self.deb822("resolute resolute-backports"), "linked APT source"),
+        ):
+            with self.subTest(message=message), self.sources(content) as (root, source, _):
+                if message == "linked APT source":
+                    source.with_name("other-copy").hardlink_to(source)
+                with self.assertRaisesRegex(core.NodeError, message):
+                    core.apply_apt_backports(INFO)
+                self.assertEqual(source.read_text(), content)
+                self.assertEqual(list((root / "root").iterdir()), [])
+
+    def test_backports_stops_real_install_preflight_before_any_managed_write(self):
+        args = argparse.Namespace(domain="example.com", bind_ip=None, reuse_stock_nginx=False,
+                                  release_archive="unused.tar.gz", agree_tos=True,
+                                  email="owner@example.com", acme_no_email=False)
+        with self.sources(self.deb822("resolute resolute-backports")) as (root, _, calls), \
+                contextlib.ExitStack() as stack:
+            stack.enter_context(mock.patch.object(core, "ETC", root / "etc/https-node"))
+            stack.enter_context(mock.patch.object(core, "OWNED_PATHS", (root / "etc/https-node",)))
+            stack.enter_context(mock.patch.object(core, "UNIT_DIR", root / "etc/systemd/system"))
+            stack.enter_context(mock.patch.object(core, "require_release_policy"))
+            stack.enter_context(mock.patch.object(core.os, "geteuid", return_value=0))
+            stack.enter_context(mock.patch.object(core, "os_info", return_value=INFO))
+            stack.enter_context(mock.patch.object(core.platform, "machine", return_value="x86_64"))
+            stack.enter_context(mock.patch.object(core.shutil, "which", side_effect=lambda name: name if name != "nginx" else None))
+            forbidden = []
+            for name in ("new_state", "save_state", "extract_release", "verify_public_dns"):
+                forbidden.append(stack.enter_context(mock.patch.object(core, name, side_effect=AssertionError(name))))
+            forbidden.append(stack.enter_context(mock.patch.object(core.tempfile, "TemporaryDirectory", side_effect=AssertionError("release workspace"))))
+            with self.assertRaisesRegex(core.NodeError, "resolute-backports"):
+                core.install(args)
+            self.assertFalse((root / "etc/https-node").exists())
+            self.assertEqual(calls, [["getent", "passwd", core.USER], ["getent", "group", core.USER],
+                                     ["apt-config", "dump"]])
+            for operation in forbidden:
+                operation.assert_not_called()
 
 
 class MaintenanceFixture:

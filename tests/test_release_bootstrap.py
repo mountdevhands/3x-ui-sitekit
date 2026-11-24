@@ -49,10 +49,11 @@ download() {
 run_installer() {
     [[ -s "$1" && -s "$6" && "$2" = install && "$3" = --domain && "$4" = example.com && "$5" = --release-archive ]] || return 99
     [[ "$(ls -ld "$(dirname "$1")" | cut -c 1-10)" = drwx------ ]] || return 99
+    [[ "${!#}" = --disable-apt-backports ]] || return 99
     printf 'ran\n' >> "$RECORD"
     return 7
 }
-main --repository example/3x-ui-sitekit --domain example.com --acme-no-email --agree-tos
+main --repository example/3x-ui-sitekit --domain example.com --acme-no-email --agree-tos --disable-apt-backports
 '''
 
 

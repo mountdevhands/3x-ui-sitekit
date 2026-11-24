@@ -2,6 +2,15 @@
 
 English · [Русский](CHANGELOG.ru.md)
 
+## 0.3.0-rc6 — release candidate
+
+- Check APT trust before writing installation state or masking nginx.
+- Detect Ubuntu 26.04 backports in the wizard. With explicit consent or
+  `--disable-apt-backports`, back up the originals and disable only that pocket.
+  Restore the originals if the edit or trust recheck fails.
+- Report the offending APT file, line or stanza and suite. Suggest reusing
+  stock nginx after cleanup only if nginx files are present.
+
 ## 0.3.0-rc5 — release candidate
 
 - Add a terminal setup wizard with a welcome screen, language selection,

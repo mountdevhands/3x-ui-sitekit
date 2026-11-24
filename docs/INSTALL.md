@@ -2,7 +2,7 @@
 
 English · [Русский](INSTALL.ru.md)
 
-The installation commands in this source version target **v0.3.0-rc5**.
+The installation commands in this source version target **v0.3.0-rc6**.
 Use its published assets from [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases);
 a source commit and a published release are separate steps.
 
@@ -13,16 +13,24 @@ release does not configure an IPv6 listener. A CDN proxy or NAT in front
 of the VPS is outside this release's supported configuration.
 
 Use the official signed Ubuntu pockets `resolute`, `resolute-updates` and
-`resolute-security`, with the distribution's `Signed-By` keyring. If the
-image enables `resolute-backports`, preserve the original sources file and
-remove only that pocket before installation.
+`resolute-security`, with the distribution's `Signed-By` keyring. The wizard
+detects `resolute-backports` before installation and shows the proposed change
+in the final confirmation. For an explicit installation use
+`--disable-apt-backports` if you want to approve that change.
+
+The installer checks APT trust before saving installation state or masking
+nginx. After confirmation it saves original files in a private
+`/root/sitekit-apt-backports.*` directory and disables only the backports
+pocket. It repeats the full trust check and restores the originals if the
+edit or recheck fails. `check` and `--dry-run` only read the sources. See
+[APT source recovery](DIAGNOSTICS.md#apt-source-policy-stopped-installation)
+for an earlier RC5 failure.
 
 A fresh installation requires a dedicated host with available ports and no
 previous SiteKit state or Certbot lineage. Start with the
 [one-command wizard](../README.md#install-from-github-releases) in an
-interactive root shell. That command prepares helper packages, including
-`whiptail`, before starting the wizard. The wizard then asks for the setup
-values and confirmations.
+interactive root shell with `curl`, `sha256sum`, `python3` and `ip`. The wizard
+uses `whiptail` if available and otherwise offers numbered text menus.
 
 ## Guided setup
 
@@ -77,10 +85,12 @@ The installer generates the password, VLESS UUID and random panel path.
 
 ## Install with explicit arguments
 
-For automation, download the pinned rc5 bootstrap, verify its SHA-256, and
+For automation, download the pinned rc6 bootstrap, verify its SHA-256, and
 supply the settings explicitly. This example requires `curl`, `sha256sum`
 and `sudo`; when running as root, omit `sudo`. Replace the domain and email.
 Pass `--agree-tos` only after accepting the ACME provider's terms.
+Append `--disable-apt-backports` to approve the documented APT change on an
+image where that pocket is enabled.
 
 <!-- sitekit-release-sha256: bootstrap -->
 ```bash
@@ -92,9 +102,9 @@ Pass `--agree-tos` only after accepting the ACME provider's terms.
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/install.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/install.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/install.sh'
   printf '%s  %s\n' \
-    '91e7457f68240ea294ac9fb6f21c2598d69e8acd9269c2f7e9d9bd8805027f1c' "$sitekit_download/install.sh" |
+    '9b08fbc3655573fc9a124d31f844bc8c307dbf71177e0b7f8042d0b359e4e209' "$sitekit_download/install.sh" |
     sha256sum --check --strict
   sudo bash "$sitekit_download/install.sh" \
     --repository mountdevhands/3x-ui-sitekit \
@@ -125,7 +135,7 @@ the existing certificate and panel path.
 ## Completion and maintenance
 
 After success, read `/root/https-node-access.txt` locally as root. It contains
-the panel URL, username, password, VLESS link and, in rc5, its plain UTF-8 QR.
+the panel URL, username, password, VLESS link and, in rc6, its plain UTF-8 QR.
 Follow the [panel access guide](PANEL-ACCESS.md) to open the correct URL.
 Keep a verified standalone as `/root/https-node.py` for maintenance; the
 bootstrap removes its temporary downloaded installer. Use the

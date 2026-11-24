@@ -2,8 +2,8 @@
 # Interactive terminal wizard for the pinned SiteKit release.
 
 readonly SITEKIT_SETUP_REPOSITORY='mountdevhands/3x-ui-sitekit'
-readonly SITEKIT_SETUP_TAG='v0.3.0-rc5'
-readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='91e7457f68240ea294ac9fb6f21c2598d69e8acd9269c2f7e9d9bd8805027f1c'
+readonly SITEKIT_SETUP_TAG='v0.3.0-rc6'
+readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='9b08fbc3655573fc9a124d31f844bc8c307dbf71177e0b7f8042d0b359e4e209'
 
 setup_text() {
     if [[ "${setup_lang:-en}" == ru ]]; then printf '%s' "$2"; else printf '%s' "$1"; fi
@@ -170,6 +170,117 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+
+# BEGIN GENERATED APT SOURCE PARSER
+"""Read conventional APT sources and plan the single supported pocket change."""
+
+import re
+from pathlib import Path
+from typing import NamedTuple
+
+APT_BACKPORTS = "resolute-backports"
+APT_LIST_LINE = re.compile(r"deb(?:-src)?\s+(?:\[([^]]*)\]\s+)?(\S+)\s+(\S+)(?:\s+.*)?")
+
+
+class AptSource(NamedTuple):
+    fields: dict
+    location: str
+    start: int
+    end: int
+    positions: dict
+
+
+def apt_source_paths(root: Path):
+    parts = root / "sources.list.d"
+    return [root / "sources.list", *sorted(parts.glob("*.list")), *sorted(parts.glob("*.sources"))]
+
+
+def apt_source_records(path, text):
+    lines = text.splitlines(keepends=True)
+    if path.suffix != ".sources":
+        for index, raw in enumerate(lines):
+            line = raw.split("#", 1)[0].strip()
+            if not line:
+                continue
+            location = f"{path}:{index + 1}"
+            match = APT_LIST_LINE.fullmatch(line)
+            if not match:
+                raise ValueError(f"Unrecognized APT source line in {location}.")
+            options = {}
+            for item in (match[1] or "").split():
+                if "=" not in item:
+                    continue
+                key, value = item.split("=", 1)
+                if key.lower() == "enabled":
+                    raise ValueError(f"Enabled is a deb822 field and is unsupported in {location}.")
+                if key in options:
+                    raise ValueError(f"Duplicate APT option {key} in {location}.")
+                options[key] = value
+            yield AptSource({**options, "uris": match[2], "suites": match[3]}, location, index, index + 1, {})
+        return
+
+    start = 0
+    fields, positions, last_key = {}, {}, None
+    for index, raw in enumerate([*lines, ""]):
+        location = f"{path} (stanza at line {start + 1})"
+        if not raw.strip():
+            if fields:
+                yield AptSource(fields, location, start, index, positions)
+            start = index + 1
+            fields, positions, last_key = {}, {}, None
+        elif raw.startswith("#"):
+            continue
+        elif raw[:1].isspace() and last_key:
+            fields[last_key] += " " + raw.strip()
+            positions[last_key].append(index)
+        elif re.match(r"^[A-Za-z][A-Za-z0-9-]*:", raw):
+            key, value = raw.split(":", 1)
+            last_key = key.lower()
+            if last_key in fields:
+                raise ValueError(f"Duplicate deb822 APT field {key} in {location}.")
+            fields[last_key] = value.strip()
+            positions[last_key] = [index]
+        else:
+            raise ValueError(f"Malformed deb822 APT source at {path}:{index + 1}.")
+
+
+def apt_source_enabled(fields):
+    value = fields.get("enabled", "yes").strip().lower()
+    # APT's deb822 parser accepts these aliases as well as numeric zero.
+    return value not in {"no", "false", "without", "off", "disable"} and not re.fullmatch(r"[+-]?(?:0+|0x0+)", value)
+
+
+def apt_backports_records(path, text):
+    return [record for record in apt_source_records(path, text)
+            if apt_source_enabled(record.fields) and APT_BACKPORTS in record.fields.get("suites", "").split()]
+
+
+def without_apt_backports(path, text, records):
+    lines = text.splitlines(keepends=True)
+    for record in reversed(records):
+        if path.suffix != ".sources":
+            lines[record.start] = "# Disabled by SiteKit: " + lines[record.start]
+            continue
+        suites = record.fields["suites"].split()
+        if any(suite != APT_BACKPORTS for suite in suites):
+            for position in record.positions["suites"]:
+                first = position == record.positions["suites"][0]
+                prefix, value = lines[position].split(":", 1) if first else ("", lines[position])
+                value = re.sub(r"(?<!\S)" + APT_BACKPORTS + r"(?!\S)", "", value)
+                lines[position] = prefix + ":" + value if first else value if value.strip() else ""
+        elif "enabled" in record.positions:
+            first, *continuations = record.positions["enabled"]
+            newline = "\r\n" if lines[first].endswith("\r\n") else "\n" if lines[first].endswith("\n") else ""
+            lines[first] = lines[first].split(":", 1)[0] + ": no" + newline
+            for position in continuations:
+                lines[position] = ""
+        else:
+            newline = "\r\n" if lines[record.end - 1].endswith("\r\n") else "\n"
+            if not lines[record.end - 1].endswith("\n"):
+                lines[record.end - 1] += newline
+            lines.insert(record.end, "Enabled: no" + newline)
+    return "".join(lines)
+# END GENERATED APT SOURCE PARSER
 
 
 class DNSRejected(ValueError):
@@ -391,6 +502,17 @@ def main(argv):
         result = allowlist(argv[1])
     elif action == 'dns':
         result = check_dns(domain_name(argv[1]), argv[2])
+    elif action == 'apt-backports':
+        locations = []
+        try:
+            for path in apt_source_paths(Path('/etc/apt')):
+                if path.exists() or path.is_symlink():
+                    records = apt_backports_records(path, path.read_text(encoding='utf-8'))
+                    locations.extend(record.location for record in records)
+        except (OSError, ValueError) as error:
+            print(str(error), file=sys.stderr)
+            raise SystemExit(1)
+        result = '\n'.join(locations)
     else:
         raise ValueError('Unknown validation action')
     print(result)
@@ -408,6 +530,8 @@ SITEKIT_SETUP_PYTHON
 }
 
 setup_check_dns() { setup_python dns "$1" "$setup_lang"; }
+
+setup_find_apt_backports() { setup_python apt-backports; }
 
 setup_require_root() {
     if [[ "$EUID" != 0 ]]; then
@@ -451,7 +575,7 @@ setup_main() (
     set -euo pipefail
     local setup_lang=en lang_selected=0 ui_requested=auto setup_ui=text setup_complete=0 setup_title='Language / Язык'
     local setup_width=76 setup_height=20 dry_run=0 REPLY='' domain='' bind_ip='' email='' panel=ssh theme=auto transport=xhttp
-    local value allow_text='' status=0 dns_result='' dns_warning='' summary='' panel_label='' allowed_label=''
+    local value allow_text='' status=0 dns_result='' dns_warning='' summary='' panel_label='' allowed_label='' apt_changes=''
     local -a allowed=() registration=() arguments=()
     SITEKIT_SETUP_DOWNLOAD_DIR=''
     while (($#)); do
@@ -487,6 +611,15 @@ setup_main() (
     if (( dry_run )); then
         setup_notice 'PREVIEW MODE: DNS will be checked, but SiteKit will not be downloaded or installed.' \
                      'ПРЕДПРОСМОТР: мастер проверит DNS, но не будет скачивать и устанавливать SiteKit.'
+    fi
+    if ! apt_changes=$(setup_find_apt_backports 2>&1); then
+        setup_notice "Could not read APT sources: $apt_changes" "Не удалось прочитать источники APT: $apt_changes"
+        setup_cancel 1
+    fi
+    if [[ -n "$apt_changes" ]]; then
+        setup_confirm \
+            $'resolute-backports is enabled and is outside the verified SiteKit package set.\n\nAffected entries:\n'"$apt_changes"$'\n\nBack up the original files and disable only resolute-backports when installation starts?' \
+            $'Активен resolute-backports. Он не входит в проверенный набор пакетов SiteKit.\n\nЗатронутые записи:\n'"$apt_changes"$'\n\nСохранить оригиналы и отключить только resolute-backports при установке?' || setup_cancel
     fi
 
     setup_step 1 'Domain and DNS' 'Домен и DNS'
@@ -572,6 +705,7 @@ setup_main() (
         $'Let\'s Encrypt выпускает сертификат HTTPS.\n\nУсловия: https://letsencrypt.org/repository/\n\nВы согласны с этими условиями?'; then setup_cancel; fi
     arguments=(--repository "$SITEKIT_SETUP_REPOSITORY" --domain "$domain" --bind-ip "$bind_ip"
                "${registration[@]}" --agree-tos --panel-access "$panel" --site-theme "$theme" --transport "$transport")
+    if [[ -n "$apt_changes" ]]; then arguments+=(--disable-apt-backports); fi
     if [[ -n "$allow_text" ]]; then
         for value in "${allowed[@]}"; do arguments+=(--panel-allow "$value"); done
     fi
@@ -588,6 +722,9 @@ setup_main() (
         "$(setup_text 'Panel' 'Панель')" "$panel_label" "$(setup_text 'Allowed clients' 'Доступ клиентов')" "$allowed_label" \
         "$(setup_text 'Website' 'Сайт')" "$theme" "$(setup_text 'Transport' 'Транспорт')" "$transport" \
         "$(setup_text 'Your panel login, random panel address and VLESS link/QR will be generated automatically.' 'Логин, пароль, случайный адрес панели и VLESS-ссылка/QR будут созданы автоматически.')")
+    if [[ -n "$apt_changes" ]]; then
+        summary="$summary"$'\n\n'"$(setup_text 'APT during installation: back up original files and disable only resolute-backports.' 'APT при установке: сохранить оригиналы и отключить только resolute-backports.')"$'\n'"$apt_changes"
+    fi
     if (( dry_run )); then
         summary="$summary"$'\n\n'"$(setup_text 'Complete this preview?' 'Завершить предпросмотр?')"
     else
