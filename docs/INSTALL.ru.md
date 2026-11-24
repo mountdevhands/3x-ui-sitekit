@@ -2,7 +2,7 @@
 
 [English](INSTALL.md) · Русский
 
-Команды в этой ревизии рассчитаны на **v0.3.0-rc7**. Используйте её
+Команды в этой ревизии рассчитаны на **v0.3.0**. Используйте её
 опубликованные файлы из [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases):
 коммит исходников и публикация релиза выполняются отдельно.
 
@@ -86,7 +86,7 @@ cat /root/https-node-access.txt
 
 ## Установка с явными параметрами
 
-Для автоматизации загрузите закреплённый bootstrap rc7, проверьте SHA-256
+Для автоматизации загрузите закреплённый bootstrap 0.3.0, проверьте SHA-256
 и передайте настройки явно. В этом примере нужны `curl`, `sha256sum` и
 `sudo`; при работе под root можно убрать `sudo`. Подставьте свой домен
 и email. Передавайте `--agree-tos` после согласия с условиями ACME-провайдера.
@@ -101,9 +101,9 @@ cat /root/https-node-access.txt
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/install.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc7/install.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0/install.sh'
   printf '%s  %s\n' \
-    'f91c150ca973ea11f0f7f29da23300bda8d94a4b73d32f19f6a9cac3f104545b' "$sitekit_download/install.sh" |
+    '3c59557da649a9e134fb152c253eb142b533b9c0eb468dc55e8e02996ea329db' "$sitekit_download/install.sh" |
     sha256sum --check --strict
   sudo bash "$sitekit_download/install.sh" \
     --repository mountdevhands/3x-ui-sitekit \
@@ -133,7 +133,7 @@ cat /root/https-node-access.txt
 ## Завершение и обслуживание
 
 После успеха прочитайте `/root/https-node-access.txt` на сервере под root.
-Там находятся URL панели, логин, пароль, VLESS-ссылка и в rc7 её QR в UTF-8.
+Там находятся URL панели, логин, пароль, VLESS-ссылка и в 0.3.0 её QR в UTF-8.
 Откройте нужный URL по [инструкции доступа](PANEL-ACCESS.ru.md).
 Сохраните проверенный standalone как `/root/https-node.py` для обслуживания:
 bootstrap удаляет временный скачанный установщик. При отсутствии файла

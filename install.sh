@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TAG='v0.3.0-rc7'
-INSTALLER='3x-ui-sitekit-0.3.0-rc7.py'
-RUNTIME='3x-ui-sitekit-0.3.0-rc7-linux-amd64.tar.gz'
-INSTALLER_SHA256='b6e086aea99af79122210cd79057d3304a31dd1fd02e4976751b852d9cbd55e1'
+TAG='v0.3.0'
+INSTALLER='3x-ui-sitekit-0.3.0.py'
+RUNTIME='3x-ui-sitekit-0.3.0-linux-amd64.tar.gz'
+INSTALLER_SHA256='7ae172a564d07ba1592494452f4704f5f5ff83822df30f372f317c9e1ca41d14'
 RUNTIME_SHA256='cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f'
 
 fail() { printf '%s\n' "$*" >&2; exit 1; }

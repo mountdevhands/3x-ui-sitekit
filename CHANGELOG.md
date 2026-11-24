@@ -2,6 +2,12 @@
 
 English · [Русский](CHANGELOG.ru.md)
 
+## 0.3.0 — stable release
+
+- Release the English and Russian keyboard-first setup wizard for Ubuntu 26.04 amd64.
+- Show settings, the Let’s Encrypt agreement and planned backports changes together before Install.
+- Keep the approved nginx, 3x-ui, Xray and Certbot runtime and the saved VLESS QR.
+
 ## 0.3.0-rc7 — release candidate
 
 - Continue through the wizard with typing, arrows and Enter.

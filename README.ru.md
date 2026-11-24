@@ -6,9 +6,9 @@ SiteKit устанавливает 3x-ui и Xray на отдельный VPS, н
 TLS и VLESS через XHTTP либо WebSocket и создаёт статический сайт с
 процедурно сгенерированными материалами.
 
-**Кандидат в релиз: 0.3.0-rc7.** Эта версия объединяет интерактивный мастер,
+**Стабильный выпуск: 0.3.0.** Эта версия объединяет интерактивный мастер,
 сохранение QR-кода VLESS и `credentials --refresh-file` в одной поставке.
-Команды загрузки рассчитаны на файлы `v0.3.0-rc7`; статус публикации указан
+Команды загрузки рассчитаны на файлы `v0.3.0`; статус публикации указан
 в [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases).
 Само обновление `main` эти файлы не публикует.
 
@@ -44,9 +44,9 @@ Certbot lineages. `check` не заменяет дополнительные п�
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/setup.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc7/setup.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0/setup.sh'
   printf '%s  %s\n' \
-    '068aebeca75b76f67cdba5fa5fcde23f6c49349d0243efd3f47450aaf0b88bc6' "$sitekit_download/setup.sh" |
+    '35ed2e990cad24fb7b5d14bfcf19c04856921aa5762448cb3030189a9dfc280c' "$sitekit_download/setup.sh" |
     sha256sum --check --strict
   bash "$sitekit_download/setup.sh"
 )
@@ -61,8 +61,8 @@ Certbot lineages. `check` не заменяет дополнительные п�
 В окнах по умолчанию выбраны «Далее», «Да» и «Установить». Esc или «Отмена»
 закрывают мастер до начала установки.
 
-Мастер устанавливает **rc7**, включая сохранение QR. Он сверяет загрузчик
-rc7, а тот проверяет установщик и runtime перед исполнением. Проверенный
+Мастер устанавливает **0.3.0**, включая сохранение QR. Он сверяет загрузчик
+0.3.0, а тот проверяет установщик и runtime перед исполнением. Проверенный
 runtime побайтно совпадает с комплектом зависимостей rc4. Если в Ubuntu
 активен `resolute-backports`, мастер предложит сохранить исходные файлы и
 отключить только этот pocket. Затронутые записи видны в итоговой сводке.
@@ -190,19 +190,19 @@ hex-символов, например `/9b62d4e1a7304c8fbe09521d6a84f703/`. Т�
 ## Ссылка и QR-код VLESS
 
 Закрытый файл `/root/https-node-access.txt` содержит адрес панели, логин,
-пароль и VLESS-ссылку. **В rc7** установка и переключение режима панели
+пароль и VLESS-ссылку. **В 0.3.0** установка и переключение режима панели
 также сохраняют туда QR-код в обычном UTF-8.
 Его нужно сканировать в функции импорта VLESS-клиента; это не вход в админку.
 Используйте светлые символы на тёмном фоне и моноширинный шрифт. Расширьте
 окно терминала так, чтобы строки QR не переносились, затем сканируйте.
 
-Возьмите [установщик rc7 для обслуживания](docs/PANEL-ACCESS.ru.md#получить-установщик-для-обслуживания)
+Возьмите [установщик 0.3.0 для обслуживания](docs/PANEL-ACCESS.ru.md#получить-установщик-для-обслуживания)
 или соберите соответствующие исходники командой `python3 -B build.py`.
-SHA-256 установщика rc7:
+SHA-256 установщика 0.3.0:
 
 <!-- sitekit-release-sha256: installer -->
 ```text
-b6e086aea99af79122210cd79057d3304a31dd1fd02e4976751b852d9cbd55e1
+7ae172a564d07ba1592494452f4704f5f5ff83822df30f372f317c9e1ca41d14
 ```
 <!-- /sitekit-release-sha256 -->
 
@@ -225,8 +225,8 @@ sudo cat /root/https-node-access.txt
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-`--refresh-file` входит в rc7. На действующем узле rc4 для этой команды
-можно использовать проверенный standalone rc7. QR формируется локально
+`--refresh-file` входит в 0.3.0. На действующем узле rc4 для этой команды
+можно использовать проверенный standalone 0.3.0. QR формируется локально
 без ANSI-кодов цвета и отправки VLESS-ссылки стороннему сервису. При ошибке QR во
 время установки или изменения режима файл всё равно сохраняет рабочие
 доступы и ссылку с явной отметкой о недоступном QR. Ссылка и QR содержат
@@ -249,8 +249,8 @@ sudo python3 /root/https-node.py credentials --qr
 
 ## Установка из готовых файлов
 
-Понадобятся `3x-ui-sitekit-0.3.0-rc7.py` и
-`3x-ui-sitekit-0.3.0-rc7-linux-amd64.tar.gz`. Runtime скачивается отдельным
+Понадобятся `3x-ui-sitekit-0.3.0.py` и
+`3x-ui-sitekit-0.3.0-linux-amd64.tar.gz`. Runtime скачивается отдельным
 файлом поставки. SHA-256 runtime приведён ниже.
 
 ```text
@@ -265,7 +265,7 @@ sudo python3 https-node.py check --domain node.example.com
 
 sudo python3 https-node.py install \
   --domain node.example.com \
-  --release-archive ./3x-ui-sitekit-0.3.0-rc7-linux-amd64.tar.gz \
+  --release-archive ./3x-ui-sitekit-0.3.0-linux-amd64.tar.gz \
   --transport xhttp \
   --panel-access ssh \
   --site-theme auto \
@@ -358,7 +358,7 @@ python3 -B tests/integration_panel_access.py \
 
 
 [Отчёт приёмки rc4](docs/ACCEPTANCE-0.3.0-rc4.md) относится к той исторической
-поставке. Локальные проверки rc7 не подтверждают новую приёмку VPS, ACME
+поставке. Локальные проверки 0.3.0 не подтверждают новую приёмку VPS, ACME
 или перезагрузки. Порядок подготовки и публикации описан в
 [RELEASING.md](docs/RELEASING.md).
 

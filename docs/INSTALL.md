@@ -2,7 +2,7 @@
 
 English · [Русский](INSTALL.ru.md)
 
-The installation commands in this source version target **v0.3.0-rc7**.
+The installation commands in this source version target **v0.3.0**.
 Use its published assets from [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases);
 a source commit and a published release are separate steps.
 
@@ -88,7 +88,7 @@ The installer generates the password, VLESS UUID and random panel path.
 
 ## Install with explicit arguments
 
-For automation, download the pinned rc7 bootstrap, verify its SHA-256, and
+For automation, download the pinned 0.3.0 bootstrap, verify its SHA-256, and
 supply the settings explicitly. This example requires `curl`, `sha256sum`
 and `sudo`; when running as root, omit `sudo`. Replace the domain and email.
 Pass `--agree-tos` only after accepting the ACME provider's terms.
@@ -105,9 +105,9 @@ image where that pocket is enabled.
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/install.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc7/install.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0/install.sh'
   printf '%s  %s\n' \
-    'f91c150ca973ea11f0f7f29da23300bda8d94a4b73d32f19f6a9cac3f104545b' "$sitekit_download/install.sh" |
+    '3c59557da649a9e134fb152c253eb142b533b9c0eb468dc55e8e02996ea329db' "$sitekit_download/install.sh" |
     sha256sum --check --strict
   sudo bash "$sitekit_download/install.sh" \
     --repository mountdevhands/3x-ui-sitekit \
@@ -138,7 +138,7 @@ the existing certificate and panel path.
 ## Completion and maintenance
 
 After success, read `/root/https-node-access.txt` locally as root. It contains
-the panel URL, username, password, VLESS link and, in rc7, its plain UTF-8 QR.
+the panel URL, username, password, VLESS link and, in 0.3.0, its plain UTF-8 QR.
 Follow the [panel access guide](PANEL-ACCESS.md) to open the correct URL.
 Keep a verified standalone as `/root/https-node.py` for maintenance; the
 bootstrap removes its temporary downloaded installer. Use the

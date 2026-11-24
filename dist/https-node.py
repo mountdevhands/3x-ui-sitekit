@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# 3x-ui SiteKit 0.3.0-rc7 — single-file distribution
+# 3x-ui SiteKit 0.3.0 — single-file distribution
 # Source: bundled security_policy.py, certbot_runtime.py, site_content.py, site_art.py, artifact_sites.py, rendering.py, apt_sources.py, installer_core.py
 # License: MIT (upstream components retain their own licenses)
 from __future__ import annotations
@@ -3050,7 +3050,7 @@ import uuid
 from pathlib import Path
 
 
-APP_VERSION = "0.3.0-rc7"
+APP_VERSION = "0.3.0"
 RELEASE_VERSION = SECURITY_APPROVED_BUNDLE[0] if SECURITY_APPROVED_BUNDLE else "v3.11.0"
 RELEASE_SHA256 = (SECURITY_APPROVED_BUNDLE[1] if SECURITY_APPROVED_BUNDLE else
                   "0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916")
