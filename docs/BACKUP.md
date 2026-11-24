@@ -1,31 +1,35 @@
-# Сохранение и восстановление данных
+# Back up and restore data
 
-Храните согласованную, зашифрованную копию следующих данных с владельцами,
-режимами файлов и символическими ссылками. Certbot использует ссылки
-между `live` и `archive`.
+English · [Русский](BACKUP.ru.md)
 
-| Данные | Путь |
+Keep a consistent encrypted copy of the following data, preserving owners,
+permissions and symbolic links. Certbot uses links between `live` and
+`archive`.
+
+| Data | Path |
 | --- | --- |
-| Состояние, конфигурация, приватный профиль | `/etc/https-node` |
-| SQLite и данные панели, включая соседние журналы SQLite | `/var/lib/https-node` |
-| Доступы | `/root/https-node-access.txt` |
-| Опубликованные файлы | `/var/www/https-node` |
-| Lineage, ключ, аккаунт ACME, конфигурация и hooks | `/etc/letsencrypt` |
-| Управляемые исполняемые файлы и библиотеки | `/opt/https-node` |
-| Unit-файлы | `/etc/systemd/system/https-node-*.service` и `.timer` |
+| State, configuration and private site profile | `/etc/https-node` |
+| SQLite and panel data, including adjacent SQLite journals | `/var/lib/https-node` |
+| Access details, including any saved VLESS QR | `/root/https-node-access.txt` |
+| Published website files | `/var/www/https-node` |
+| Certificate lineage, private key, ACME account, configuration and hooks | `/etc/letsencrypt` |
+| Managed executables and libraries | `/opt/https-node` |
+| Unit files | `/etc/systemd/system/https-node-*.service` and `.timer` |
 
-Запишите точную версию установщика, SHA-256 runtime, версии Ubuntu
-пакетов и UID/GID службы. Для согласованной копии используйте snapshot
-тома в короткое окно обслуживания после остановки двух служб SiteKit
-и таймера обновления. Дождитесь завершения активной задачи Certbot.
-После снимка запустите службы и проверьте `status`.
+Record the exact installer version, runtime SHA-256, Ubuntu package
+versions and service UID/GID. For a consistent copy, take a volume snapshot
+in a short maintenance window after stopping both SiteKit services and
+the renewal timer. Wait for any active Certbot task to finish. After the
+snapshot, start the services and check `status`.
 
-Для восстановления используйте согласованный набор на совместимой системе.
-Подготовьте те же версии пакетов и служебный UID/GID, оставьте службы
-остановленными, затем верните файлы, ссылки, права и unit-файлы из снимка.
-После `systemctl daemon-reload` проверьте конфигурацию nginx через
-управляемый launcher, включите управляемые службы и таймер, проверьте
-`status`, внешний TLS, панель через туннель и один запрос VLESS. Продление
-сертификата проверяйте отдельно в staging, используя нужный `--cert-name`.
-При переносе на другой адрес нужен отдельный план для DNS и привязок IP.
-Команды автоматического импорта snapshot в SiteKit нет.
+Restore a consistent set on a compatible system. Prepare the same package
+versions and service UID/GID, keep services stopped, then restore files,
+links, permissions and unit files from the snapshot. After `systemctl
+daemon-reload`, check nginx configuration through the managed launcher,
+enable the managed services and timer, and check `status`, external TLS,
+the panel through a tunnel, and one VLESS request. Test certificate renewal
+separately in staging, using the correct `--cert-name`.
+
+Moving to another address requires a separate DNS/IP binding plan. SiteKit
+does not provide an automatic snapshot-import command. Diagnostic
+checkpoints do not replace these backups.

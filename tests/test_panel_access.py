@@ -126,6 +126,7 @@ class PanelTransactionFixture:
     """Real temporary files, strict mock commands, and observable loaded config."""
 
     def __init__(self, root: Path, *, legacy=True):
+        root = root.resolve()
         self.root = root
         self.etc, self.site, self.data = root / "etc", root / "site", root / "data"
         for directory in (self.etc, self.site, self.data):
@@ -247,6 +248,7 @@ class PanelTransactionFixture:
             stack.enter_context(mock.patch.object(core.os, "fstat", side_effect=fixture_fd_owner))
             stack.enter_context(mock.patch.object(core.os, "geteuid", return_value=0))
             stack.enter_context(mock.patch.object(core, "command", side_effect=self.command))
+            stack.enter_context(mock.patch.object(core, "make_saved_access_text", side_effect=core.make_access_text))
             self.reload_probe = stack.enter_context(mock.patch.object(core, "reload_managed_nginx", side_effect=self.reload_ack))
             stack.enter_context(mock.patch.object(core.subprocess, "run", side_effect=AssertionError("Real subprocess prohibited")))
             stack.enter_context(mock.patch.object(core.urllib.request, "urlopen", side_effect=AssertionError("Real network prohibited")))
@@ -296,7 +298,7 @@ class PanelAccessTransaction(unittest.TestCase):
     def fixture(self, **kwargs):
         directory = tempfile.TemporaryDirectory(prefix="sitekit-panel-unit-")
         self.addCleanup(directory.cleanup)
-        return PanelTransactionFixture(Path(directory.name).resolve(), **kwargs)
+        return PanelTransactionFixture(Path(directory.name), **kwargs)
 
     def test_https_ssh_https_switch_keeps_existing_url_identity_database_site_and_certificate(self):
         fixture = self.fixture()
