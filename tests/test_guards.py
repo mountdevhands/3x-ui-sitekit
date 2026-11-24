@@ -161,6 +161,7 @@ class PublicDNSGuards(unittest.TestCase):
         with mock.patch.object(core.shutil, "which", side_effect=lambda name: name if name != "nginx" else None), \
                 mock.patch.object(core.platform, "machine", return_value="x86_64"), \
                 mock.patch.object(core, "os_info", return_value={"ID": "ubuntu", "VERSION_ID": "26.04"}), \
+                mock.patch.object(core, "verify_apt_trust"), \
                 mock.patch.object(core.Path, "is_dir", return_value=True), \
                 mock.patch.object(core.Path, "exists", return_value=False), \
                 mock.patch.object(core.Path, "is_symlink", return_value=False), \

@@ -6,9 +6,9 @@
 
 Загрузчик после установки удаляет свою временную копию Python-скрипта.
 Он не создаёт автоматически команду `/root/https-node.py`. Если у вас
-ещё нет проверенной rc5 в этом месте, скачайте установщик rc5,
+ещё нет проверенной rc6 в этом месте, скачайте установщик rc6,
 сверьте точный SHA-256 и затем сохраните файл. Ссылка рассчитана на файлы
-релиза rc5; статус их публикации указан в
+релиза rc6; статус их публикации указан в
 [Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases):
 
 <!-- sitekit-release-sha256: installer -->
@@ -20,16 +20,16 @@
   curl -q --fail --silent --show-error --location --proto '=https' \
     --proto-redir '=https' --connect-timeout 10 --max-time 60 --retry 2 \
     --retry-max-time 90 --output "$sitekit_download/https-node.py" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/3x-ui-sitekit-0.3.0-rc5.py'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/3x-ui-sitekit-0.3.0-rc6.py'
   printf '%s  %s\n' \
-    419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663 \
+    ad10280e655dad12441f097c97402de73f59fc9ea75eca0b9ccdf35d40dbd8a3 \
     "$sitekit_download/https-node.py" | sha256sum --check --strict
   sudo install -m 0700 "$sitekit_download/https-node.py" /root/https-node.py
 )
 ```
 <!-- /sitekit-release-sha256 -->
 
-Standalone rc5 поддерживает `panel-access` и `credentials --refresh-file`.
+Standalone rc6 поддерживает `panel-access` и `credentials --refresh-file`.
 Загрузка только сохраняет файл управления; обслуживание начинается после
 запуска соответствующей команды. Если уже сохранён проверенный установщик
 более нового выпуска, используйте его.
@@ -150,13 +150,13 @@ ssh -N -o ExitOnForwardFailure=yes \
 ## Ссылка и QR-код VLESS
 
 Закрытый файл `/root/https-node-access.txt` содержит адрес панели, логин,
-пароль и VLESS-ссылку. **В rc5** установка и переключение режима панели
+пароль и VLESS-ссылку. **В rc6** установка и переключение режима панели
 также сохраняют туда QR-код в обычном UTF-8.
 Его нужно сканировать в функции импорта VLESS-клиента; это не вход в админку.
 Используйте светлые символы на тёмном фоне и моноширинный шрифт. Расширьте
 окно терминала так, чтобы строки QR не переносились, затем сканируйте.
 
-С проверенным установщиком rc5 на уже работающем узле:
+С проверенным установщиком rc6 на уже работающем узле:
 
 ```bash
 sudo python3 /root/https-node.py credentials --refresh-file
@@ -174,8 +174,8 @@ sudo cat /root/https-node-access.txt
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-`--refresh-file` входит в rc5. На существующем узле rc4 для этой команды
-нужен проверенный standalone rc5. QR формируется локально без ANSI-кодов
+`--refresh-file` входит в rc6. На существующем узле rc4 для этой команды
+нужен проверенный standalone rc6. QR формируется локально без ANSI-кодов
 цвета и отправки VLESS-ссылки стороннему сервису. При ошибке QR во
 время установки или изменения режима файл всё равно сохраняет рабочие
 доступы и ссылку с явной отметкой о недоступном QR. Ссылка и QR содержат

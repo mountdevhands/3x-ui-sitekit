@@ -39,6 +39,7 @@ source "$1"
 shift
 ip() { return 99; }
 setup_require_root() { :; }
+setup_find_apt_backports() { printf '%s' "$TEST_APT_BACKPORTS"; }
 setup_check_dns() {
     printf 'dns:%s\n' "$1" >> "$TEST_TRACE"
     if [[ "$1" == bad.example.test ]]; then printf 'fixture DNS mismatch\n' >&2; return 1; fi
@@ -88,13 +89,15 @@ raise SystemExit(status)
 
 class WizardPTY(unittest.TestCase):
     def run_wizard(self, lines, *, arguments=("--dry-run",), verify="real", child_exit=0,
-                   eof=False, interrupt=False, choose_language=False, dialog=None, terminal="xterm-256color", dns_warning=False):
+                   eof=False, interrupt=False, choose_language=False, dialog=None, terminal="xterm-256color", dns_warning=False,
+                   apt_backports=""):
         with tempfile.TemporaryDirectory(prefix="sitekit-wizard-test-") as temporary:
             root = Path(temporary)
             trace, args, tempfile_record = root / "trace", root / "args", root / "tempfile"
             env = {**os.environ, "TEST_TRACE": str(trace), "TEST_ARGS": str(args),
                    "TEST_TEMPFILE": str(tempfile_record), "TEST_VERIFY": verify,
-                   "TEST_CHILD_EXIT": str(child_exit), "PYTHONDONTWRITEBYTECODE": "1", "TERM": terminal, "TEST_DNS_WARNING": "1" if dns_warning else "0"}
+                   "TEST_CHILD_EXIT": str(child_exit), "PYTHONDONTWRITEBYTECODE": "1", "TERM": terminal,
+                   "TEST_APT_BACKPORTS": apt_backports, "TEST_DNS_WARNING": "1" if dns_warning else "0"}
             invocation = list(arguments)
             if "--lang" not in invocation and not choose_language:
                 invocation[:0] = ["--lang", "en"]
@@ -182,6 +185,26 @@ class WizardPTY(unittest.TestCase):
             self.assertEqual(arguments[arguments.index(option) + 1], value)
         self.assertIn("No files downloaded", output)
         self.assertIn("Release:", output)
+
+    def test_backports_requires_consent_is_in_review_and_reaches_only_confirmed_install(self):
+        location = "/etc/apt/sources.list.d/ubuntu.sources (stanza at line 1)"
+        status, output, actions, args = self.run_wizard([""], arguments=(), apt_backports=location)
+        self.assertEqual((status, actions, args), (0, [], []))
+        self.assertIn("outside the verified SiteKit package set", output)
+        self.assertIn(location, output)
+        answers = ["y", DOMAIN, "owner@example.com", "", "", "", "y"]
+        for arguments, confirmation in ((('--dry-run',), 'y'), ((), '')):
+            status, output, actions, args = self.run_wizard([*answers, confirmation], arguments=arguments,
+                                                            apt_backports=location)
+            self.assertEqual((status, actions, args), (0, ["dns:" + DOMAIN], []))
+            self.assertIn("APT during installation: back up original files and disable only resolute-backports", output)
+            if arguments:
+                self.assertIn("--disable-apt-backports", output)
+        status, output, actions, args = self.run_wizard([*answers, "y"], arguments=(), verify="pass",
+                                                        apt_backports=location)
+        self.assertEqual(status, 0, output)
+        self.assertEqual(args.count("--disable-apt-backports"), 1)
+        self.assertEqual(actions[-3:], ["mktemp", "download", "execute"])
 
     def test_https_allowlist_normalizes_deduplicates_and_keeps_actual_arguments(self):
         status, output, actions, argv = self.run_wizard(

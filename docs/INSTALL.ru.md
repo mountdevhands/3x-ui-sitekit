@@ -2,7 +2,7 @@
 
 [English](INSTALL.md) · Русский
 
-Команды в этой ревизии рассчитаны на **v0.3.0-rc5**. Используйте её
+Команды в этой ревизии рассчитаны на **v0.3.0-rc6**. Используйте её
 опубликованные файлы из [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases):
 коммит исходников и публикация релиза выполняются отдельно.
 
@@ -13,14 +13,22 @@ CDN-прокси и NAT перед VPS не поддерживаются.
 
 Используйте штатные подписанные Ubuntu pockets `resolute`,
 `resolute-updates` и `resolute-security` с дистрибутивным `Signed-By`.
-Если образ включает `resolute-backports`, сохраните оригинал файла
-источников и уберите только этот pocket перед установкой.
+Мастер заранее обнаруживает `resolute-backports` и показывает предлагаемое
+изменение в итоговом подтверждении. При явной установке это изменение
+разрешает параметр `--disable-apt-backports`.
+
+Установщик проверяет политику APT до записи состояния и маскирования nginx.
+После подтверждения он сохраняет файлы в приватном каталоге
+`/root/sitekit-apt-backports.*` и отключает только backports. Если правка или
+повторная проверка доверия завершается ошибкой, установщик возвращает оригиналы.
+Команды `check` и `--dry-run` только читают источники. Для прежнего сбоя RC5
+см. [восстановление после ошибки APT](DIAGNOSTICS.ru.md#установка-остановилась-на-политике-источников-apt).
 
 Нужен отдельный чистый хост со свободными портами, без прежнего состояния
 SiteKit и Certbot lineage. В интерактивной консоли под root запустите
 [мастер одной командой](../README.ru.md#одна-команда-из-github-releases).
-Эта команда сначала подготовит вспомогательные пакеты, включая `whiptail`,
-затем откроет мастер для ввода настроек и подтверждений.
+Для запуска нужны `curl`, `sha256sum`, `python3` и `ip`. При наличии `whiptail`
+мастер использует окна, в остальных случаях открывает текстовые меню.
 
 ## Установка с вопросами и ответами
 
@@ -75,7 +83,7 @@ cat /root/https-node-access.txt
 
 ## Установка с явными параметрами
 
-Для автоматизации загрузите закреплённый bootstrap rc5, проверьте SHA-256
+Для автоматизации загрузите закреплённый bootstrap rc6, проверьте SHA-256
 и передайте настройки явно. В этом примере нужны `curl`, `sha256sum` и
 `sudo`; при работе под root можно убрать `sudo`. Подставьте свой домен
 и email. Передавайте `--agree-tos` после согласия с условиями ACME-провайдера.
@@ -90,9 +98,9 @@ cat /root/https-node-access.txt
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/install.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/install.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/install.sh'
   printf '%s  %s\n' \
-    '91e7457f68240ea294ac9fb6f21c2598d69e8acd9269c2f7e9d9bd8805027f1c' "$sitekit_download/install.sh" |
+    '9b08fbc3655573fc9a124d31f844bc8c307dbf71177e0b7f8042d0b359e4e209' "$sitekit_download/install.sh" |
     sha256sum --check --strict
   sudo bash "$sitekit_download/install.sh" \
     --repository mountdevhands/3x-ui-sitekit \
@@ -122,7 +130,7 @@ cat /root/https-node-access.txt
 ## Завершение и обслуживание
 
 После успеха прочитайте `/root/https-node-access.txt` на сервере под root.
-Там находятся URL панели, логин, пароль, VLESS-ссылка и в rc5 её QR в UTF-8.
+Там находятся URL панели, логин, пароль, VLESS-ссылка и в rc6 её QR в UTF-8.
 Откройте нужный URL по [инструкции доступа](PANEL-ACCESS.ru.md).
 Сохраните проверенный standalone как `/root/https-node.py` для обслуживания:
 bootstrap удаляет временный скачанный установщик. При отсутствии файла

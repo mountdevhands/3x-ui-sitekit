@@ -6,9 +6,9 @@ SiteKit installs 3x-ui and Xray on a dedicated VPS, configures nginx, TLS and
 VLESS over XHTTP or WebSocket, and creates a static website with procedurally
 generated content.
 
-**Release candidate: 0.3.0-rc5.** This version combines the interactive setup
+**Release candidate: 0.3.0-rc6.** This version combines the interactive setup
 wizard, saved VLESS QR codes and `credentials --refresh-file` in one release.
-The download commands target the `v0.3.0-rc5` assets; check
+The download commands target the `v0.3.0-rc6` assets; check
 [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
 for publication. Updating `main` alone does not publish those assets.
 
@@ -30,26 +30,23 @@ dependency and APT checks performed by `install`.
 ## Install from GitHub Releases
 
 Log in to the **new server as root**, using SSH or your provider's interactive
-console. Paste this entire block as one command. It prepares the helper
-packages, downloads the pinned rc5 wizard, verifies its SHA-256 and opens
-setup. The wizard asks for the domain and email; there are no values to edit
-inside this command.
+console. Paste the entire block as one command. It uses the system `curl`,
+`sha256sum`, `python3` and `ip` to open the verified RC6 wizard. Enter your
+domain and email in the wizard.
 
 <!-- sitekit-release-sha256: setup -->
 ```bash
 (
   set -eu
-  apt-get -o APT::Update::Error-Mode=any update
-  apt-get install -y ca-certificates curl python3 iproute2 whiptail
   sitekit_download=$(mktemp -d)
   trap 'rm -rf -- "$sitekit_download"' EXIT
   curl -q --fail --silent --show-error --location \
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/setup.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/setup.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/setup.sh'
   printf '%s  %s\n' \
-    '226988a24cbae0cc97acae0e47d1855fc81059965b1ca08404869d3a51809fb4' "$sitekit_download/setup.sh" |
+    '75b0917e88793dc10488ea4673ffd7f60940d705f57af822d2f429b0011b2600' "$sitekit_download/setup.sh" |
     sha256sum --check --strict
   bash "$sitekit_download/setup.sh"
 )
@@ -58,14 +55,17 @@ inside this command.
 
 The first screen selects **English by default**. Choose Russian there, or
 append `--lang ru` to the final `bash` line to skip the language selection.
-The command installs `whiptail` for terminal windows and keyboard menus.
+If `whiptail` is installed, the wizard uses terminal windows and keyboard menus.
+Text menus are available on minimal images.
 Use arrow keys to select an item, Tab to move between controls and Enter
 to continue. Escape or Cancel closes the wizard before installation starts.
 
-The pinned wizard installs **rc5**, including the saved QR feature. It
-verifies the rc5 bootstrap, which verifies the installer and runtime before
+The pinned wizard installs **rc6**, including the saved QR feature. It
+verifies the rc6 bootstrap, which verifies the installer and runtime before
 executing them. The reviewed runtime is byte-for-byte the same dependency
-bundle used by rc4. [Installation details](docs/INSTALL.md).
+bundle used by rc4. If Ubuntu enables `resolute-backports`, the wizard asks
+whether to back up the source files and disable only that pocket. The final
+confirmation includes the affected entries. [Installation details](docs/INSTALL.md).
 
 ## Guided setup
 
@@ -135,7 +135,7 @@ Replace `node.example.com` with your existing installation's domain. The
 examples assume a verified installer saved as `/root/https-node.py`; use
 its actual path if different. If it is missing, first follow
 [Get a maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer):
-it downloads the pinned rc5 file, verifies SHA-256 and saves it at that path.
+it downloads the pinned rc6 file, verifies SHA-256 and saves it at that path.
 Use maintenance commands on an existing node.
 
 Open the **exact `Public panel:` URL** from the access file in your normal
@@ -188,19 +188,19 @@ certificate renewal and access-mode changes preserve the path.
 ## VLESS link and QR code
 
 The root-only `/root/https-node-access.txt` contains panel credentials and
-the VLESS connection link. **In rc5**, installation and access-mode changes
+the VLESS connection link. **In rc6**, installation and access-mode changes
 also save a plain UTF-8 QR code in that file. Scan
 it in your VLESS client's import screen; it represents the VLESS link,
 not the admin panel login. Use light text on a dark background and a monospaced font. Widen the
 terminal window until the QR lines do not wrap before scanning.
 
-Use the [rc5 maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer)
-or build the matching source with `python3 -B build.py`. The rc5 installer
+Use the [rc6 maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer)
+or build the matching source with `python3 -B build.py`. The rc6 installer
 SHA-256 is:
 
 <!-- sitekit-release-sha256: installer -->
 ```text
-419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663
+ad10280e655dad12441f097c97402de73f59fc9ea75eca0b9ccdf35d40dbd8a3
 ```
 <!-- /sitekit-release-sha256 -->
 
@@ -223,8 +223,8 @@ For a read-only display of credentials and a QR code:
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-`--refresh-file` is included in rc5. Existing rc4 nodes can use the verified
-rc5 standalone for this command. QR generation uses plain UTF-8 without
+`--refresh-file` is included in rc6. Existing rc4 nodes can use the verified
+rc6 standalone for this command. QR generation uses plain UTF-8 without
 ANSI color escapes and does not send the link to a remote QR service. If
 automatic QR generation during installation or panel-mode changes fails,
 the access file retains usable credentials and the link, with an explicit
@@ -247,8 +247,8 @@ Managed paths and services use the system name `https-node`.
 
 ## Install from downloaded files
 
-Download `3x-ui-sitekit-0.3.0-rc5.py` and the separate
-`3x-ui-sitekit-0.3.0-rc5-linux-amd64.tar.gz`. The runtime SHA-256 is:
+Download `3x-ui-sitekit-0.3.0-rc6.py` and the separate
+`3x-ui-sitekit-0.3.0-rc6-linux-amd64.tar.gz`. The runtime SHA-256 is:
 
 ```text
 cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f
@@ -262,7 +262,7 @@ sudo python3 https-node.py check --domain node.example.com
 
 sudo python3 https-node.py install \
   --domain node.example.com \
-  --release-archive ./3x-ui-sitekit-0.3.0-rc5-linux-amd64.tar.gz \
+  --release-archive ./3x-ui-sitekit-0.3.0-rc6-linux-amd64.tar.gz \
   --transport xhttp \
   --panel-access ssh \
   --site-theme auto \
@@ -354,7 +354,7 @@ and does not replace real 3x-ui, VLESS or renewal acceptance on a VPS.
 
 
 The [rc4 acceptance report](docs/ACCEPTANCE-0.3.0-rc4.en.md) documents that
-historical release. Local checks of rc5 do not constitute a new VPS, ACME or
+historical release. Local checks of rc6 do not constitute a new VPS, ACME or
 reboot acceptance. Release preparation and publication are described in
 [RELEASING.md](docs/RELEASING.md).
 

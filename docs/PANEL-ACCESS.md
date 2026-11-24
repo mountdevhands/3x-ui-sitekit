@@ -6,9 +6,9 @@ English · [Русский](PANEL-ACCESS.ru.md)
 
 The bootstrap removes its temporary installer after installation. It does
 not automatically install a `/root/https-node.py` management command. If you
-do not already have a verified rc5 standalone there, download the rc5
+do not already have a verified rc6 standalone there, download the rc6
 installer and verify its exact SHA-256 before saving it. The URL targets
-the rc5 release assets; check [Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
+the rc6 release assets; check [Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
 for their publication:
 
 <!-- sitekit-release-sha256: installer -->
@@ -20,16 +20,16 @@ for their publication:
   curl -q --fail --silent --show-error --location --proto '=https' \
     --proto-redir '=https' --connect-timeout 10 --max-time 60 --retry 2 \
     --retry-max-time 90 --output "$sitekit_download/https-node.py" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/3x-ui-sitekit-0.3.0-rc5.py'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc6/3x-ui-sitekit-0.3.0-rc6.py'
   printf '%s  %s\n' \
-    419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663 \
+    ad10280e655dad12441f097c97402de73f59fc9ea75eca0b9ccdf35d40dbd8a3 \
     "$sitekit_download/https-node.py" | sha256sum --check --strict
   sudo install -m 0700 "$sitekit_download/https-node.py" /root/https-node.py
 )
 ```
 <!-- /sitekit-release-sha256 -->
 
-The rc5 standalone supports both `panel-access` and
+The rc6 standalone supports both `panel-access` and
 `credentials --refresh-file`. Downloading it only saves the management file;
 maintenance begins when you run a command. Keep the existing verified file
 if it belongs to a newer release.
@@ -141,13 +141,13 @@ Display the credentials and QR in the terminal without changing the file:
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-**Version 0.3.0-rc5 also saves a plain UTF-8 QR code**
+**Version 0.3.0-rc6 also saves a plain UTF-8 QR code**
 inside `/root/https-node-access.txt` during installation and panel-mode
 changes. It is the VLESS import QR, not a link that logs in to the panel.
 Use light text on a dark background and a monospaced font. Widen the
 terminal window until the QR lines do not wrap, then scan it.
 
-With the verified rc5 installer, refresh an existing access file:
+With the verified rc6 installer, refresh an existing access file:
 
 ```bash
 sudo python3 /root/https-node.py credentials --refresh-file
@@ -159,7 +159,7 @@ The command reports the saved path without printing secrets. If QR generation
 fails, it leaves the old file unchanged. Add `--qr` if you also want to print
 the refreshed access details and QR once. Without `--refresh-file`, `credentials`
 and `credentials --qr` remain read-only. Existing rc4 installations need
-the verified rc5 standalone for `--refresh-file`.
+the verified rc6 standalone for `--refresh-file`.
 
 QR generation runs locally, using plain UTF-8 without ANSI color escapes.
 During automatic installation or mode changes, a QR-tool failure leaves

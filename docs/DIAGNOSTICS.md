@@ -35,3 +35,33 @@ are in `/var/log/letsencrypt`.
 For a policy error, check its expiry, full package versions and any
 `UNKNOWN`/`BLOCKED` findings. Before sharing output, remove credentials,
 connection URIs, private paths and production-host details.
+
+## APT source policy stopped installation
+
+Published rc5 can stop at `packages` with `APT source suite is outside the
+reviewed release/security/updates pockets` when an image enables
+`resolute-backports`. Only `resolute`, `resolute-updates` and
+`resolute-security` are allowed. This error identifies an unsupported source;
+it does not establish that an installed package has a vulnerability.
+
+In that exact rc5 failure, the source check happens before the installer's
+APT update and package installation. SiteKit has saved failed state, but has
+not deployed nginx, the panel or Certbot, and has not requested a certificate.
+The generic suggestion that an nginx package remains is incorrect for this
+case. RC6 checks APT during read-only preflight and reports the source file
+and offending suite. The wizard offers the scoped edit with a backup.
+
+For an already failed rc5 attempt:
+
+1. Inspect `status` with the verified rc5 standalone. Confirm the domain and
+   `failed/packages` state, and preserve `/etc/https-node` in a root-only backup
+   outside that directory. Do not publish `state.json`; it contains credentials.
+2. Confirm that the earlier cleanup succeeded and there is no deployed runtime,
+   managed service or certificate lineage. Then use
+   the ordinary [uninstall command](UNINSTALL.md) with the exact failed domain.
+3. Run the RC6 wizard after the reset. Authorize the backports edit in the wizard
+   or pass `--disable-apt-backports` to the explicit installation command.
+
+If the failure happened later and nginx files are present, the stock service
+must be stopped and disabled, and the manual installer needs
+`--reuse-stock-nginx`. Do not apply that recovery to a working node.
