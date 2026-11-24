@@ -42,7 +42,7 @@ from rendering import SITE_THEMES, generate_site_profile, normalize_panel_access
 from security_policy import SECURITY_APPROVED_BUNDLE, SECURITY_CERTBOT_MANIFEST_SHA256, evaluate_packages, evaluate_pinned_release, verify_policy_freshness
 from certbot_runtime import CERTBOT_LIBRARIES, install_certbot_runtime, verify_certbot_payload
 
-APP_VERSION = "0.3.0-rc5-dev"
+APP_VERSION = "0.3.0-rc5"
 RELEASE_VERSION = SECURITY_APPROVED_BUNDLE[0] if SECURITY_APPROVED_BUNDLE else "v3.11.0"
 RELEASE_SHA256 = (SECURITY_APPROVED_BUNDLE[1] if SECURITY_APPROVED_BUNDLE else
                   "0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916")

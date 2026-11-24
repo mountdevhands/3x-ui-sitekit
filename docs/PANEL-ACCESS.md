@@ -6,9 +6,12 @@ English · [Русский](PANEL-ACCESS.ru.md)
 
 The bootstrap removes its temporary installer after installation. It does
 not automatically install a `/root/https-node.py` management command. If you
-do not already have a verified standalone there, download the published rc4
-installer and verify its exact SHA-256 before saving it:
+do not already have a verified rc5 standalone there, download the rc5
+installer and verify its exact SHA-256 before saving it. The URL targets
+the rc5 release assets; check [Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
+for their publication:
 
+<!-- sitekit-release-sha256: installer -->
 ```bash
 (
   set -eu
@@ -17,22 +20,24 @@ installer and verify its exact SHA-256 before saving it:
   curl -q --fail --silent --show-error --location --proto '=https' \
     --proto-redir '=https' --connect-timeout 10 --max-time 60 --retry 2 \
     --retry-max-time 90 --output "$sitekit_download/https-node.py" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc4/3x-ui-sitekit-0.3.0-rc4.py'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/3x-ui-sitekit-0.3.0-rc5.py'
   printf '%s  %s\n' \
-    a42b7cb5e3896b373c38d35b7a22f5c085072a18c7ef22a602179c580985dfd6 \
+    419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663 \
     "$sitekit_download/https-node.py" | sha256sum --check --strict
   sudo install -m 0700 "$sitekit_download/https-node.py" /root/https-node.py
 )
 ```
+<!-- /sitekit-release-sha256 -->
 
-This downloads the unchanged rc4 installer, which already supports
-`panel-access`. The file is executed only when you run a maintenance command;
-this download does not reinstall or reconfigure the node. Use a verified
-updated development standalone instead for `credentials --refresh-file`;
-that option is not in rc4. Keep an existing newer installer rather than
-replacing it with this older release.
+The rc5 standalone supports both `panel-access` and
+`credentials --refresh-file`. Downloading it only saves the management file;
+maintenance begins when you run a command. Keep the existing verified file
+if it belongs to a newer release.
 
 ## Enable browser access without a tunnel
+
+For a fresh installation, choose **HTTPS browser access** in the wizard.
+The steps below change the mode on an already installed node.
 
 The default `ssh` mode deliberately has no public panel route. Receiving
 HTTP 404 at the panel's HTTPS URL is expected until you enable HTTPS access.
@@ -130,19 +135,19 @@ authentication.
 
 ## Access file and VLESS QR code
 
-Released rc4 supports a read-only terminal display:
+Display the credentials and QR in the terminal without changing the file:
 
 ```bash
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-**Current source, 0.3.0-rc5-dev, additionally saves a plain UTF-8 QR code**
+**Version 0.3.0-rc5 also saves a plain UTF-8 QR code**
 inside `/root/https-node-access.txt` during installation and panel-mode
 changes. It is the VLESS import QR, not a link that logs in to the panel.
 Use light text on a dark background and a monospaced font. Widen the
 terminal window until the QR lines do not wrap, then scan it.
 
-With the updated development installer, refresh an existing access file:
+With the verified rc5 installer, refresh an existing access file:
 
 ```bash
 sudo python3 /root/https-node.py credentials --refresh-file
@@ -153,8 +158,8 @@ ownership and mode `0600`. It does not change node identity or reload services.
 The command reports the saved path without printing secrets. If QR generation
 fails, it leaves the old file unchanged. Add `--qr` if you also want to print
 the refreshed access details and QR once. Without `--refresh-file`, `credentials`
-and `credentials --qr` remain read-only. The new option is not present in
-published rc4 assets.
+and `credentials --qr` remain read-only. Existing rc4 installations need
+the verified rc5 standalone for `--refresh-file`.
 
 QR generation runs locally, using plain UTF-8 without ANSI color escapes.
 During automatic installation or mode changes, a QR-tool failure leaves

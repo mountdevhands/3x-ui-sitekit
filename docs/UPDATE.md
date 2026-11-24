@@ -5,9 +5,8 @@ English · [Русский](UPDATE.ru.md)
 On a running node, check `status`, save a [backup](BACKUP.md), and obtain
 the matching standalone with a trusted SHA-256. If the bootstrap's temporary
 installer is gone, follow [Get a maintenance installer](PANEL-ACCESS.md#get-a-maintenance-installer)
-to download, verify and save the published rc4 standalone before running
-maintenance commands. Use the updated development standalone for the new QR
-refresh option below.
+to download, verify and save the rc5 standalone before running maintenance
+commands. It includes the QR refresh option below.
 
 ```bash
 sudo python3 https-node.py security-check
@@ -30,14 +29,16 @@ existing node.
 
 ## Refresh the access file with a QR code
 
-This is a **0.3.0-rc5-dev source feature**; published rc4 does not include
-the option. Download the [development standalone](../dist/https-node.py)
-from this source revision or run `python3 -B build.py` from the source root.
-The SHA-256 of `dist/https-node.py` is:
+This option is included in **0.3.0-rc5**. Obtain the
+[verified maintenance installer](PANEL-ACCESS.md#get-a-maintenance-installer),
+or run `python3 -B build.py` from the matching source root. The rc5
+standalone SHA-256 is:
 
+<!-- sitekit-release-sha256: installer -->
 ```text
-1e19523c9185918be41a9338b4d608343a98dabc5e7979a5bfcda13f5ee1796b
+419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663
 ```
+<!-- /sitekit-release-sha256 -->
 
 Verify the file against that digest before using it as `/root/https-node.py`.
 Then run:
@@ -53,5 +54,6 @@ panel URL, username, password, UUID, database, site or certificate. It
 prints only the saved path. A QR generation failure leaves the previous
 access file unchanged. Use `credentials --qr` for a read-only display.
 
-The published rc4 tag, release assets and installation command remain
-unchanged. A development source update is not a new accepted runtime release.
+The rc5 installer reuses the exact approved rc4 dependency runtime. Refreshing
+the access file does not upgrade those dependencies. Their versions and
+security coverage remain governed by the [dated policy](../SECURITY.md).
