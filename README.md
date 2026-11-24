@@ -6,16 +6,116 @@ SiteKit installs 3x-ui and Xray on a dedicated VPS, configures nginx, TLS and
 VLESS over XHTTP or WebSocket, and creates a static website with procedurally
 generated content.
 
-**Published prerelease: 0.3.0-rc4.** The installation commands below use that
-exact release. Panel access defaults to an SSH tunnel; HTTPS browser access
-can be enabled without reinstalling. nginx and Certbot each use a separate
-copy of the pinned OpenSSL libraries. See the [security scope](SECURITY.md)
-and [rc4 acceptance report](docs/ACCEPTANCE-0.3.0-rc4.en.md).
+**Release candidate: 0.3.0-rc5.** This version combines the interactive setup
+wizard, saved VLESS QR codes and `credentials --refresh-file` in one release.
+The download commands target the `v0.3.0-rc5` assets; check
+[GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
+for publication. Updating `main` alone does not publish those assets.
 
-**Current source: 0.3.0-rc5-dev.** Guided `setup.sh`, saved VLESS QR codes
-and `credentials --refresh-file` are development additions described below.
-The guided setup installs verified rc4; it does not enable the QR additions
-that are absent from the published rc4 assets.
+## Requirements
+
+- A clean Ubuntu 26.04 amd64 VPS with systemd and system CPython 3.14.
+- Root access for installation and maintenance.
+- A public IPv4 directly assigned to the VPS interface, with the domain's DNS A record pointing to it.
+- No AAAA record for the domain: this installation supports IPv4 only.
+- Available TCP ports 80 and 443, reachable from outside; outbound access to DNS, APT and ACME.
+- Official signed Ubuntu repositories for the same release: release, updates and security.
+
+A CDN proxy or NAT in front of the VPS is outside this release's supported
+configuration. Use a separate host without a running nginx, another panel
+or existing Certbot lineages. `check` does not replace the additional Python,
+dependency and APT checks performed by `install`.
+
+
+## Install from GitHub Releases
+
+Log in to the **new server as root**, using SSH or your provider's interactive
+console. Paste this entire block as one command. It prepares the helper
+packages, downloads the pinned rc5 wizard, verifies its SHA-256 and opens
+setup. The wizard asks for the domain and email; there are no values to edit
+inside this command.
+
+<!-- sitekit-release-sha256: setup -->
+```bash
+(
+  set -eu
+  apt-get -o APT::Update::Error-Mode=any update
+  apt-get install -y ca-certificates curl python3 iproute2 whiptail
+  sitekit_download=$(mktemp -d)
+  trap 'rm -rf -- "$sitekit_download"' EXIT
+  curl -q --fail --silent --show-error --location \
+    --proto '=https' --proto-redir '=https' \
+    --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
+    --output "$sitekit_download/setup.sh" \
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/setup.sh'
+  printf '%s  %s\n' \
+    '226988a24cbae0cc97acae0e47d1855fc81059965b1ca08404869d3a51809fb4' "$sitekit_download/setup.sh" |
+    sha256sum --check --strict
+  bash "$sitekit_download/setup.sh"
+)
+```
+<!-- /sitekit-release-sha256 -->
+
+The first screen selects **English by default**. Choose Russian there, or
+append `--lang ru` to the final `bash` line to skip the language selection.
+The command installs `whiptail` for terminal windows and keyboard menus.
+Use arrow keys to select an item, Tab to move between controls and Enter
+to continue. Escape or Cancel closes the wizard before installation starts.
+
+The pinned wizard installs **rc5**, including the saved QR feature. It
+verifies the rc5 bootstrap, which verifies the installer and runtime before
+executing them. The reviewed runtime is byte-for-byte the same dependency
+bundle used by rc4. [Installation details](docs/INSTALL.md).
+
+## Guided setup
+
+The wizard shows a welcome screen and walks through these choices:
+
+| Setting | What to enter or choose |
+| --- | --- |
+| Domain | Your domain without `https://`, a path or a port. DNS is checked immediately. |
+| Certificate email | Your email, or explicitly confirm registration without one. |
+| Panel access | **SSH tunnel** by default; choose **HTTPS browser access** for an ordinary login URL. |
+| Allowed panel IPs | Optional in HTTPS mode. Enter your computer's public IP/CIDR, or leave blank for any IP with normal panel authentication. |
+| Website | **Automatic** selects a generated theme; individual themes are also available. |
+| Transport | **XHTTP** by default, or WebSocket. |
+
+The domain must have exactly one A record matching a public IPv4 assigned
+to this server and no AAAA record. If DNS does not match, choose Retry,
+Change domain or Cancel. After collecting the choices, setup asks you to
+accept the Let's Encrypt terms and confirm a readable settings summary.
+Both consent choices default to **No**. SiteKit release files are downloaded
+only after both confirmations.
+
+A verified local copy of `setup.sh` also supports:
+
+```bash
+sudo bash setup.sh --lang en --ui dialog
+sudo bash setup.sh --lang ru --ui text
+bash setup.sh --lang en --dry-run
+```
+
+`--ui auto` is the default: it uses `whiptail` when the terminal supports
+it, or numbered text menus otherwise. `--ui dialog` requires `whiptail` and
+a suitable terminal; `--ui text` explicitly selects text menus. `--lang en`
+or `--lang ru` skips language selection. EOF, Ctrl-C or Cancel ends setup.
+
+`--dry-run` performs DNS checks and shows the resulting command without
+downloading release files or changing the system. It does not require root.
+All interactive modes require a terminal; use the
+[explicit bootstrap arguments](docs/INSTALL.md#install-with-explicit-arguments)
+for automation.
+
+After installation, read the access details on the server:
+
+```bash
+cat /root/https-node-access.txt
+```
+
+For HTTPS, open the exact **`Public panel:`** URL and sign in with the saved
+`Username:` and `Password:`. The domain's root URL opens the generated site.
+For SSH mode, follow the tunnel command and local URL in the access file.
+The installer generates the password, VLESS UUID and random panel path.
 
 ## Open the admin panel in a browser
 
@@ -35,8 +135,8 @@ Replace `node.example.com` with your existing installation's domain. The
 examples assume a verified installer saved as `/root/https-node.py`; use
 its actual path if different. If it is missing, first follow
 [Get a maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer):
-it downloads the pinned rc4 file, verifies SHA-256 and saves it at that path. Do not run `install` again
-on an existing node.
+it downloads the pinned rc5 file, verifies SHA-256 and saves it at that path.
+Use maintenance commands on an existing node.
 
 Open the **exact `Public panel:` URL** from the access file in your normal
 browser, then sign in with its `Username:` and `Password:`. The URL includes
@@ -84,21 +184,25 @@ text prefix and is independent of the domain and password. Reboots,
 certificate renewal and access-mode changes preserve the path.
 [Full panel access guide](docs/PANEL-ACCESS.md).
 
+
 ## VLESS link and QR code
 
 The root-only `/root/https-node-access.txt` contains panel credentials and
-the VLESS connection link. **In the current development source**, installation
-and access-mode changes also save a plain UTF-8 QR code in that file. Scan
+the VLESS connection link. **In rc5**, installation and access-mode changes
+also save a plain UTF-8 QR code in that file. Scan
 it in your VLESS client's import screen; it represents the VLESS link,
 not the admin panel login. Use light text on a dark background and a monospaced font. Widen the
 terminal window until the QR lines do not wrap before scanning.
 
-Use the [development standalone](dist/https-node.py) from this source
-revision, or build it with `python3 -B build.py`. Its SHA-256 is:
+Use the [rc5 maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer)
+or build the matching source with `python3 -B build.py`. The rc5 installer
+SHA-256 is:
 
+<!-- sitekit-release-sha256: installer -->
 ```text
-1e19523c9185918be41a9338b4d608343a98dabc5e7979a5bfcda13f5ee1796b
+419874b25257c3bda3df7dd004bf500c1813b18762cdad7bdf4a908779730663
 ```
+<!-- /sitekit-release-sha256 -->
 
 Verify the downloaded or built file before using it as the updated
 `/root/https-node.py`. With that installer on an existing node:
@@ -119,13 +223,13 @@ For a read-only display of credentials and a QR code:
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-`--qr` also exists in released rc4, where it displays the QR in the terminal.
-`--refresh-file` requires the updated source; downloading rc4 again will not
-add that option. The new implementation uses plain UTF-8 without ANSI color
-escapes and does not send the connection link to a remote QR service. If
+`--refresh-file` is included in rc5. Existing rc4 nodes can use the verified
+rc5 standalone for this command. QR generation uses plain UTF-8 without
+ANSI color escapes and does not send the link to a remote QR service. If
 automatic QR generation during installation or panel-mode changes fails,
 the access file retains usable credentials and the link, with an explicit
 QR-unavailable message. The file and its QR contain connection secrets.
+
 
 ## What SiteKit installs
 
@@ -140,103 +244,11 @@ QR-unavailable message. The file and its QR contain connection secrets.
 `install` verifies the runtime SHA-256 and nested manifests before installing.
 Managed paths and services use the system name `https-node`.
 
-## Requirements
-
-- A clean Ubuntu 26.04 amd64 VPS with systemd and system CPython 3.14.
-- Root access for installation and maintenance.
-- A public IPv4 directly assigned to the VPS interface, with the domain's DNS A record pointing to it.
-- No AAAA record for the domain: this installation supports IPv4 only.
-- Available TCP ports 80 and 443, reachable from outside; outbound access to DNS, APT and ACME.
-- Official signed Ubuntu repositories for the same release: release, updates and security.
-
-A CDN proxy or NAT in front of the VPS is outside this release's supported
-configuration. Use a separate host without a running nginx, another panel
-or existing Certbot lineages. `check` does not replace the additional Python,
-dependency and APT checks performed by `install`.
-
-## Guided setup
-
-For an interactive server terminal, use the question-and-answer setup.
-Save a reviewed local copy of [setup.sh](setup.sh) from these sources, then run:
-
-```bash
-sudo bash setup.sh
-```
-
-English is the default; use `sudo bash setup.sh --lang ru` for Russian.
-The wizard asks for the domain and immediately checks public DNS, before
-any download or installation. A single A record must match a public IPv4
-assigned to this VPS; the domain must have no AAAA record. It checks two
-public resolvers and does not mistake a private `docker0` address for your
-public IP. On a mismatch, correct DNS and retry, enter another domain, or
-cancel. The installer repeats its own preflight later.
-
-The remaining questions cover email registration, panel access, an optional
-HTTPS IP/CIDR list, the generated-site theme and transport. Defaults are
-**SSH**, **auto** and **XHTTP**. Leaving email blank requires a separate
-confirmation to register without email. HTTPS allowlist entries may be
-separated by spaces or commas. The wizard asks you to accept the Let's Encrypt
-terms and displays a settings summary before final confirmation; both consent
-prompts default to **no**. EOF or Ctrl-C at a prompt cancels the wizard.
-
-To review the selected command without installing:
-
-```bash
-bash setup.sh --lang en --dry-run
-```
-
-`--dry-run` still performs the read-only DNS checks. It does not download
-release files, install packages or change the system. It does not require
-root. The question flow requires an interactive terminal; `--help` lists
-the available options.
-
-You do not need to choose a panel password, VLESS UUID or random panel
-path: the installer generates and saves them. Open the resulting
-`/root/https-node-access.txt` for your actual access details.
-
-`setup.sh` is a development-source addition. It downloads and verifies the
-unchanged **rc4 bootstrap**, which in turn verifies the rc4 installer and
-runtime. Thus this guided flow installs published rc4; the saved-QR and
-`--refresh-file` additions still require the separate development installer.
-There is no published `setup.sh` release download linked here yet.
-
-For automation or a noninteractive environment, use the pinned command
-below with explicit arguments. [Guided setup details](docs/INSTALL.md#guided-setup).
-
-## Install from GitHub Releases
-
-The source is [mountdevhands/3x-ui-sitekit](https://github.com/mountdevhands/3x-ui-sitekit).
-This command uses the published, publicly accessible `v0.3.0-rc4`. Replace
-the domain and email before running it. Verify the bootstrap SHA-256 against
-a trusted copy of the accepted release manifest. A manifest from the same
-location verifies transfer integrity only if you trust that release source.
-
-```bash
-(
-  set -eu
-  repo='mountdevhands/3x-ui-sitekit'
-  scratch=$(mktemp -d)
-  trap 'rm -rf -- "$scratch"' EXIT
-  curl -q --fail --silent --show-error --location --proto '=https' \
-    --proto-redir '=https' --connect-timeout 10 --max-time 60 --retry 2 \
-    --retry-max-time 90 --output "$scratch/install.sh" \
-    "https://github.com/$repo/releases/download/v0.3.0-rc4/install.sh"
-  (cd "$scratch" && printf '%s  %s\n' \
-    06df2e8cdbf4ee8e75979e8c4a141aa4f2eb0a87264f2e91ffbf81632cb76328 install.sh | sha256sum --check --strict)
-  sudo bash "$scratch/install.sh" --repository "$repo" \
-    --domain node.example.com --email admin@example.com --agree-tos
-)
-```
-
-To enable HTTPS panel access during installation, append `--panel-access https`
-to the final `sudo bash` command. Optionally add `--panel-allow YOUR_PUBLIC_IP/32`.
-Omitting these options keeps the default SSH-only panel.
-[Bootstrap options and installation requirements](docs/INSTALL.md).
 
 ## Install from downloaded files
 
-Download `3x-ui-sitekit-0.3.0-rc4.py` and the separate
-`3x-ui-sitekit-0.3.0-rc4-linux-amd64.tar.gz`. The runtime SHA-256 is:
+Download `3x-ui-sitekit-0.3.0-rc5.py` and the separate
+`3x-ui-sitekit-0.3.0-rc5-linux-amd64.tar.gz`. The runtime SHA-256 is:
 
 ```text
 cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f
@@ -250,7 +262,7 @@ sudo python3 https-node.py check --domain node.example.com
 
 sudo python3 https-node.py install \
   --domain node.example.com \
-  --release-archive ./3x-ui-sitekit-0.3.0-rc4-linux-amd64.tar.gz \
+  --release-archive ./3x-ui-sitekit-0.3.0-rc5-linux-amd64.tar.gz \
   --transport xhttp \
   --panel-access ssh \
   --site-theme auto \
@@ -262,6 +274,7 @@ sudo python3 https-node.py install \
 without email, use `--acme-no-email` instead of `--email`. If certificate
 issuance fails, preserve the diagnostics and fix the cause before retrying.
 Keep a verified standalone copy for later maintenance commands.
+
 
 ## Generated website
 
@@ -294,6 +307,7 @@ python3 -m http.server 8080 --bind 127.0.0.1 \
 Open `http://127.0.0.1:8080/`. Serve only the `site` subdirectory; the private
 `site-profile.json` is stored beside it.
 
+
 ## Maintenance
 
 ```bash
@@ -316,6 +330,7 @@ Before migration or removal, keep a private consistent backup of state,
 database, website and Certbot data. Diagnostic checkpoints do not replace
 a complete backup and must not be published with the source code.
 
+
 ## Build and local checks
 
 ```bash
@@ -336,6 +351,12 @@ python3 -B tests/integration_panel_access.py \
 This fixture uses loopback, a temporary certificate explicitly trusted by
 the test client, and HTTP/WebSocket mock backends. It installs no packages
 and does not replace real 3x-ui, VLESS or renewal acceptance on a VPS.
+
+
+The [rc4 acceptance report](docs/ACCEPTANCE-0.3.0-rc4.en.md) documents that
+historical release. Local checks of rc5 do not constitute a new VPS, ACME or
+reboot acceptance. Release preparation and publication are described in
+[RELEASING.md](docs/RELEASING.md).
 
 ## Licenses
 

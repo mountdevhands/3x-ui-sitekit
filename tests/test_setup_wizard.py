@@ -14,6 +14,7 @@ import pty
 import select
 import shlex
 import signal
+import struct
 import subprocess
 import tempfile
 import termios
@@ -41,6 +42,7 @@ setup_require_root() { :; }
 setup_check_dns() {
     printf 'dns:%s\n' "$1" >> "$TEST_TRACE"
     if [[ "$1" == bad.example.test ]]; then printf 'fixture DNS mismatch\n' >&2; return 1; fi
+    if [[ "${TEST_DNS_WARNING:-0}" == 1 ]]; then printf '%s\n' 'Warning: only Google provided a complete DNS answer.' >&2; fi
     printf '%s\n' '93.184.216.34'
 }
 setup_download() {
@@ -59,15 +61,59 @@ setup_main "$@"
 '''
 
 
+FAKE_WHIPTAIL = r"""#!/usr/bin/env python3
+import json
+import os
+from pathlib import Path
+import sys
+args = sys.argv[1:]
+widget = next((value[2:] for value in args if value in ('--menu', '--inputbox', '--yesno', '--msgbox', '--infobox')), '')
+with Path(os.environ['TEST_DIALOG_CALLS']).open('a') as stream:
+    stream.write(json.dumps({'widget': widget, 'argv': args}, ensure_ascii=False) + '\n')
+if widget == 'infobox':
+    raise SystemExit(0)
+state = Path(os.environ['TEST_DIALOG_RESPONSES'])
+responses = json.loads(state.read_text())
+if not responses or responses[0][0] != widget:
+    print('unexpected fake dialog call: ' + widget, file=sys.stderr)
+    raise SystemExit(2)
+expected, response, status = responses.pop(0)
+state.write_text(json.dumps(responses))
+print('[dialog:' + widget + ']', flush=True)
+if response:
+    print(response, end='', file=sys.stderr)
+raise SystemExit(status)
+"""
+
+
 class WizardPTY(unittest.TestCase):
-    def run_wizard(self, lines, *, arguments=("--dry-run",), verify="real", child_exit=0, eof=False, interrupt=False):
+    def run_wizard(self, lines, *, arguments=("--dry-run",), verify="real", child_exit=0,
+                   eof=False, interrupt=False, choose_language=False, dialog=None, terminal="xterm-256color", dns_warning=False):
         with tempfile.TemporaryDirectory(prefix="sitekit-wizard-test-") as temporary:
             root = Path(temporary)
             trace, args, tempfile_record = root / "trace", root / "args", root / "tempfile"
             env = {**os.environ, "TEST_TRACE": str(trace), "TEST_ARGS": str(args),
                    "TEST_TEMPFILE": str(tempfile_record), "TEST_VERIFY": verify,
-                   "TEST_CHILD_EXIT": str(child_exit), "PYTHONDONTWRITEBYTECODE": "1"}
+                   "TEST_CHILD_EXIT": str(child_exit), "PYTHONDONTWRITEBYTECODE": "1", "TERM": terminal, "TEST_DNS_WARNING": "1" if dns_warning else "0"}
+            invocation = list(arguments)
+            if "--lang" not in invocation and not choose_language:
+                invocation[:0] = ["--lang", "en"]
+            if "--ui" not in invocation:
+                invocation[:0] = ["--ui", "dialog" if dialog is not None else "text"]
+            calls_path = root / "dialog-calls"
+            responses_path = root / "dialog-responses"
+            if dialog is not None:
+                binary = root / "bin"
+                binary.mkdir()
+                fake = binary / "whiptail"
+                fake.write_text(FAKE_WHIPTAIL)
+                fake.chmod(0o755)
+                responses_path.write_text(json.dumps(dialog))
+                env.update({"PATH": str(binary) + os.pathsep + env["PATH"],
+                            "TEST_DIALOG_CALLS": str(calls_path),
+                            "TEST_DIALOG_RESPONSES": str(responses_path)})
             master, slave = pty.openpty()
+            fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 24, 80, 0, 0))
             settings = termios.tcgetattr(slave)
             settings[3] &= ~termios.ECHO
             termios.tcsetattr(slave, termios.TCSANOW, settings)
@@ -76,7 +122,7 @@ class WizardPTY(unittest.TestCase):
                 signal.signal(signal.SIGTERM, signal.SIG_DFL)
                 os.setsid()
                 fcntl.ioctl(slave, termios.TIOCSCTTY, 0)
-            process = subprocess.Popen(["bash", "-c", HARNESS, "wizard-fixture", str(SCRIPT), *arguments],
+            process = subprocess.Popen(["bash", "-c", HARNESS, "wizard-fixture", str(SCRIPT), *invocation],
                                        stdin=slave, stdout=slave, stderr=slave, env=env, preexec_fn=attach_terminal)
             os.close(slave)
             output = bytearray()
@@ -99,7 +145,7 @@ class WizardPTY(unittest.TestCase):
                         if not chunk:
                             break
                         output.extend(chunk)
-                    if interrupt and not sent_interrupt and b"Domain (" in output:
+                    if interrupt and not sent_interrupt and b"Domain" in output:
                         os.write(master, b"\x03")  # Real foreground-terminal Ctrl-C.
                         sent_interrupt = True
                     if process.poll() is not None and not ready:
@@ -120,6 +166,8 @@ class WizardPTY(unittest.TestCase):
             downloaded = Path(tempfile_record.read_text()) if tempfile_record.exists() else None
             if downloaded is not None:
                 self.assertFalse(downloaded.parent.exists(), "Private temporary download directory was not removed")
+            self.dialog_calls = [json.loads(line) for line in calls_path.read_text().splitlines()] if calls_path.exists() else []
+            self.dialog_remaining = json.loads(responses_path.read_text()) if responses_path.exists() else []
             return result, output.decode(errors="replace"), actions, argv
 
     def test_defaults_preview_is_read_only_and_command_is_safely_quoted(self):
@@ -133,7 +181,7 @@ class WizardPTY(unittest.TestCase):
                               ("--bind-ip", ADDRESS), ("--repository", "mountdevhands/3x-ui-sitekit")):
             self.assertEqual(arguments[arguments.index(option) + 1], value)
         self.assertIn("No files downloaded", output)
-        self.assertIn("v0.3.0-rc4", output)
+        self.assertIn("Release:", output)
 
     def test_https_allowlist_normalizes_deduplicates_and_keeps_actual_arguments(self):
         status, output, actions, argv = self.run_wizard(
@@ -205,6 +253,124 @@ class WizardPTY(unittest.TestCase):
         self.assertEqual(status, 0, output)
         self.assertNotIn("Certificate email", output)
         self.assertEqual(actions, ["dns:bad.example.test"])
+
+
+    def test_language_selection_defaults_to_english_and_numeric_menus_work(self):
+        status, output, actions, _ = self.run_wizard(
+            ['', DOMAIN, 'owner@example.com', '2', '', '4', '2', 'yes', 'yes'], choose_language=True)
+        self.assertEqual(status, 0, output)
+        self.assertIn('English  [default]', output)
+        self.assertIn('[1 / 6  Domain and DNS]', output)
+        self.assertIn('[6 / 6  Review and install]', output)
+        self.assertIn('--panel-access https', output)
+        self.assertIn('--site-theme palettes', output)
+        self.assertIn('--transport ws', output)
+        self.assertEqual(actions, ['dns:' + DOMAIN])
+        status, output, actions, _ = self.run_wizard(
+            ['2', DOMAIN, 'owner@example.com', '', '', '', 'да', 'да'], choose_language=True)
+        self.assertEqual(status, 0, output)
+        self.assertIn('Настройте свой сервер', output)
+        self.assertIn('[1 / 6  Домен и DNS]', output)
+
+    def test_real_run_summary_does_not_show_shell_command(self):
+        status, output, actions, argv = self.run_wizard(
+            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'], arguments=(), verify='pass')
+        self.assertEqual(status, 0, output)
+        self.assertNotIn('  bash ', output)
+        self.assertNotIn('--agree-tos', output)
+        self.assertEqual(actions[-1], 'execute')
+        self.assertIn('--agree-tos', argv)
+
+    def test_dialog_flow_uses_widgets_and_default_no_confirmations(self):
+        dialogs = [
+            ('menu', 'en', 0), ('msgbox', '', 0),
+            ('inputbox', DOMAIN, 0), ('inputbox', 'owner@example.com', 0),
+            ('menu', 'https', 0), ('inputbox', '', 0),
+            ('menu', 'auto', 0), ('menu', 'xhttp', 0),
+            ('yesno', '', 0), ('yesno', '', 0), ('msgbox', '', 0),
+        ]
+        status, output, actions, argv = self.run_wizard([], arguments=(), verify='pass',
+                                                       choose_language=True, dialog=dialogs)
+        self.assertEqual(status, 0, output)
+        self.assertEqual(self.dialog_remaining, [])
+        self.assertEqual(actions, ['dns:' + DOMAIN, 'mktemp', 'download', 'execute'])
+        self.assertEqual(argv[argv.index('--panel-access') + 1], 'https')
+        self.assertNotIn('--panel-allow', argv)
+        calls = self.dialog_calls
+        self.assertEqual(calls[0]['widget'], 'menu')
+        self.assertEqual(calls[0]['argv'][calls[0]['argv'].index('--default-item') + 1], 'en')
+        self.assertTrue(any(call['widget'] == 'infobox' for call in calls))
+        confirms = [call for call in calls if call['widget'] == 'yesno']
+        self.assertEqual(len(confirms), 2)
+        self.assertTrue(all('--defaultno' in call['argv'] for call in confirms))
+        summary = confirms[-1]['argv'][confirms[-1]['argv'].index('--yesno') + 1]
+        self.assertIn('HTTPS link in your browser', summary)
+        self.assertIn('Any IP, with login and password', summary)
+        self.assertNotIn('bash ', summary)
+        self.assertTrue(all('--default-item' not in call['argv'] or '--menu' in call['argv'] for call in calls))
+
+    def test_dialog_explicit_russian_skips_language_and_cancel_or_escape_is_clean(self):
+        for status_code, expected in ((1, 0), (255, 130), (130, 130)):
+            with self.subTest(status=status_code):
+                status, output, actions, argv = self.run_wizard([], arguments=('--lang', 'ru'),
+                    dialog=[('msgbox', '', 0), ('inputbox', '', status_code)])
+                self.assertEqual(status, expected, output)
+                self.assertEqual(actions, [])
+                self.assertEqual(argv, [])
+                self.assertEqual(self.dialog_calls[0]['widget'], 'msgbox')
+                self.assertIn('Добро пожаловать', ' '.join(self.dialog_calls[0]['argv']))
+        status, output, actions, _ = self.run_wizard([], arguments=(), choose_language=True,
+                                                   dialog=[('menu', '', 255)])
+        self.assertEqual(status, 130, output)
+        self.assertEqual(actions, [])
+
+    def test_dialog_declined_terms_never_downloads_and_error_never_silently_accepts(self):
+        dialogs = [
+            ('msgbox', '', 0), ('inputbox', DOMAIN, 0), ('inputbox', 'owner@example.com', 0),
+            ('menu', 'ssh', 0), ('menu', 'auto', 0), ('menu', 'xhttp', 0), ('yesno', '', 1),
+        ]
+        status, output, actions, _ = self.run_wizard([], arguments=(), dialog=dialogs)
+        self.assertEqual(status, 0, output)
+        self.assertEqual(actions, ['dns:' + DOMAIN])
+        status, output, actions, _ = self.run_wizard([], arguments=(), dialog=[('msgbox', '', 2)])
+        self.assertEqual(status, 2, output)
+        self.assertEqual(actions, [])
+        self.assertIn('--ui text', output)
+
+    def test_dialog_success_screen_escape_keeps_install_success_and_instructions(self):
+        dialogs = [
+            ('msgbox', '', 0), ('inputbox', DOMAIN, 0), ('inputbox', 'owner@example.com', 0),
+            ('menu', 'ssh', 0), ('menu', 'auto', 0), ('menu', 'xhttp', 0),
+            ('yesno', '', 0), ('yesno', '', 0), ('msgbox', '', 255),
+        ]
+        status, output, actions, _ = self.run_wizard([], arguments=(), verify='pass', dialog=dialogs)
+        self.assertEqual(status, 0, output)
+        self.assertEqual(actions[-1], 'execute')
+        self.assertIn('cat /root/https-node-access.txt', output)
+        self.assertNotIn('No installation was started', output)
+
+    def test_dns_warning_is_shown_and_does_not_corrupt_bind_ip(self):
+        status, output, actions, argv = self.run_wizard(
+            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'],
+            arguments=(), verify='pass', dns_warning=True)
+        self.assertEqual(status, 0, output)
+        self.assertIn('only Google', output)
+        self.assertEqual(argv[argv.index('--bind-ip') + 1], ADDRESS)
+
+
+    def test_dialog_unavailable_terminal_and_auto_fallback(self):
+        status, output, actions, _ = self.run_wizard([], arguments=('--ui', 'dialog'),
+                                                   terminal='dumb', dialog=[])
+        self.assertEqual(status, 2, output)
+        self.assertEqual(actions, [])
+        self.assertIn('72 columns by 22 rows', output)
+        status, output, actions, _ = self.run_wizard(
+            [DOMAIN, 'owner@example.com', '', '', '', 'y', 'y'],
+            arguments=('--ui', 'auto', '--dry-run'), terminal='dumb', dialog=[])
+        self.assertEqual(status, 0, output)
+        self.assertEqual(self.dialog_calls, [])
+        self.assertIn('[1 / 6  Domain and DNS]', output)
+        self.assertEqual(actions, ['dns:' + DOMAIN])
 
 
 class SyntheticDNS(unittest.TestCase):

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Interactive front end for the unchanged, verified SiteKit rc4 release.
+# Interactive terminal wizard for the pinned SiteKit release.
 
 readonly SITEKIT_SETUP_REPOSITORY='mountdevhands/3x-ui-sitekit'
-readonly SITEKIT_SETUP_TAG='v0.3.0-rc4'
-readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='06df2e8cdbf4ee8e75979e8c4a141aa4f2eb0a87264f2e91ffbf81632cb76328'
+readonly SITEKIT_SETUP_TAG='v0.3.0-rc5'
+readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='91e7457f68240ea294ac9fb6f21c2598d69e8acd9269c2f7e9d9bd8805027f1c'
 
 setup_text() {
     if [[ "${setup_lang:-en}" == ru ]]; then printf '%s' "$2"; else printf '%s' "$1"; fi
@@ -16,6 +16,8 @@ setup_cancel() {
     exit "${1:-0}"
 }
 
+# The presentation layer never evaluates user input or installs optional packages.
+# whiptail is optional; small/minimal terminals keep the same numbered workflow.
 setup_read() {
     local prompt
     prompt=$(setup_text "$1" "$2")
@@ -24,6 +26,136 @@ setup_read() {
 
 setup_yes() {
     case "$REPLY" in y|Y|yes|YES|Yes|д|Д|да|ДА|Да) return 0 ;; *) return 1 ;; esac
+}
+
+setup_dialog() {
+    local result=0
+    REPLY=$(whiptail --title "$setup_title" \
+        --backtitle "3x-ui SiteKit  $SITEKIT_SETUP_TAG  |  $(setup_text 'Setup' 'Установка')" \
+        --ok-button "$(setup_text 'Next' 'Далее')" \
+        --cancel-button "$(setup_text 'Cancel' 'Отмена')" \
+        "$@" 3>&1 1>&2 2>&3) || result=$?
+    # Closing the completion screen must not change a successful install status.
+    if [[ "${setup_complete:-0}" == 1 ]]; then return 0; fi
+    case "$result" in
+        0) return 0 ;;
+        1) return 1 ;;
+        130|143|255) setup_cancel 130 ;;
+        *) setup_line 'The terminal dialog could not be displayed. Retry with --ui text.' \
+                      'Не удалось открыть окно. Повторите с --ui text.' >&2; exit 2 ;;
+    esac
+}
+
+setup_ui_init() {
+    local dimensions='' rows=0 columns=0
+    setup_ui=text
+    if [[ "$ui_requested" == text ]]; then return; fi
+    if [[ -t 0 && -t 1 && -t 2 && -n "${TERM:-}" && "${TERM:-}" != dumb ]] && command -v whiptail >/dev/null; then
+        dimensions=$(stty size 2>/dev/null) || dimensions=''
+        if [[ "$dimensions" =~ ^([0-9]+)[[:space:]]+([0-9]+)$ ]]; then
+            rows=${BASH_REMATCH[1]}; columns=${BASH_REMATCH[2]}
+            if (( rows >= 22 && columns >= 72 )); then
+                setup_ui=dialog
+                setup_width=$((columns - 4)); (( setup_width <= 96 )) || setup_width=96
+                setup_height=$((rows - 4)); (( setup_height <= 24 )) || setup_height=24
+                return
+            fi
+        fi
+    fi
+    if [[ "$ui_requested" == dialog ]]; then
+        setup_line 'Dialog mode needs whiptail and an interactive terminal of at least 72 columns by 22 rows. Use --ui text for this console.' \
+                   'Для окон нужны whiptail и интерактивный терминал минимум 72 столбца на 22 строки. Для этой консоли используйте --ui text.' >&2
+        exit 2
+    fi
+}
+
+setup_step() {
+    setup_title="$1 / 6  $(setup_text "$2" "$3")"
+    if [[ "$setup_ui" == text ]]; then printf '\n[%s]\n' "$setup_title"; fi
+}
+
+setup_notice() {
+    local message
+    message=$(setup_text "$1" "$2")
+    if [[ "$setup_ui" == dialog ]]; then
+        setup_dialog --scrolltext --msgbox "$message" "$setup_height" "$setup_width" || setup_cancel
+        if [[ "${setup_complete:-0}" == 1 ]]; then printf '%s\n' "$message"; fi
+    else
+        printf '%s\n' "$message"
+    fi
+}
+
+setup_input() {
+    local message initial=${3:-}
+    message=$(setup_text "$1" "$2")
+    if [[ "$setup_ui" == dialog ]]; then
+        setup_dialog --inputbox "$message" "$setup_height" "$setup_width" "$initial" || setup_cancel
+    else
+        printf '%s\n' "$message"
+        setup_read '> ' '> '
+        # Empty input is meaningful for email and the HTTPS allowlist.
+    fi
+}
+
+# Arguments: EN prompt, RU prompt, default value, followed by value/EN/RU triples.
+setup_choice() {
+    local message default=$3 number=0 item='' index=0 found=0
+    local -a values=() descriptions=() dialog_items=()
+    message=$(setup_text "$1" "$2"); shift 3
+    while (($#)); do
+        values+=("$1"); descriptions+=("$(setup_text "$2" "$3")"); shift 3
+    done
+    while :; do
+        if [[ "$setup_ui" == dialog ]]; then
+            dialog_items=()
+            for ((index=0; index<${#values[@]}; index++)); do
+                dialog_items+=("${values[$index]}" "${descriptions[$index]}")
+            done
+            setup_dialog --default-item "$default" --menu "$message" "$setup_height" "$setup_width" \
+                "${#values[@]}" "${dialog_items[@]}" || setup_cancel
+        else
+            printf '%s\n' "$message"
+            for ((index=0; index<${#values[@]}; index++)); do
+                printf '  %s) %s' "$((index+1))" "${descriptions[$index]}"
+                if [[ "${values[$index]}" == "$default" ]]; then printf '  [%s]' "$(setup_text 'default' 'по умолчанию')"; fi
+                printf '\n'
+            done
+            setup_read 'Choose a number, or press Enter for the default: ' 'Введите номер или нажмите Enter для варианта по умолчанию: '
+            if [[ -z "$REPLY" ]]; then REPLY=$default; fi
+            case "$REPLY" in SSH) REPLY=ssh ;; HTTPS) REPLY=https ;; EN) REPLY=en ;; RU) REPLY=ru ;; esac
+            # Compare literal numbers instead of evaluating user text as arithmetic.
+            for ((index=0; index<${#values[@]}; index++)); do
+                if [[ "$REPLY" == "$((index+1))" ]]; then REPLY=${values[$index]}; break; fi
+            done
+        fi
+        found=0
+        for item in "${values[@]}"; do if [[ "$REPLY" == "$item" ]]; then found=1; break; fi; done
+        if (( found )); then return; fi
+        setup_notice 'Choose one of the listed options.' 'Выберите один из предложенных вариантов.'
+    done
+}
+
+setup_confirm() {
+    local message
+    message=$(setup_text "$1" "$2")
+    if [[ "$setup_ui" == dialog ]]; then
+        setup_dialog --defaultno --yes-button "$(setup_text 'Yes' 'Да')" \
+            --no-button "$(setup_text 'No' 'Нет')" --scrolltext --yesno "$message" "$setup_height" "$setup_width"
+    else
+        printf '%s\n' "$message"
+        setup_read 'Confirm? [y/N]: ' 'Подтвердить? [y/N]: '
+        setup_yes
+    fi
+}
+
+setup_dns_progress() {
+    local message
+    message=$(setup_text 'Checking that your domain points to this server...' 'Проверяю, что домен указывает на этот сервер...')
+    if [[ "$setup_ui" == dialog ]]; then
+        setup_dialog --infobox "$message" 8 "$setup_width" || setup_cancel
+    else
+        printf '%s\n' "$message"
+    fi
 }
 
 setup_python() {
@@ -300,138 +432,181 @@ setup_verify_bootstrap() {
 setup_run_bootstrap() { bash "$@"; }
 
 setup_help() {
-    setup_line 'Usage: bash setup.sh [--lang en|ru] [--dry-run] [--help]' \
-               'Запуск: bash setup.sh [--lang en|ru] [--dry-run] [--help]'
-    setup_line 'An interactive TTY is required. English is the default language.' \
-               'Нужен интерактивный терминал. Язык по умолчанию — английский.'
-    setup_line 'Installs the verified v0.3.0-rc4 release on a fresh Ubuntu 26.04 amd64 VPS.' \
-               'Устанавливает проверенную v0.3.0-rc4 на чистый VPS Ubuntu 26.04 amd64.'
-    setup_line 'The saved-QR feature in the development version is not included in rc4.' \
-               'QR в файле доступов из версии разработки в rc4 не включён.'
-    setup_line '--dry-run permits non-root preview. It checks public DNS but downloads nothing and changes no system files.' \
-               '--dry-run допускает запуск без root: проверяет публичный DNS, но ничего не скачивает и не меняет.'
-    setup_line 'Root is required for installation. No download or installation occurs before both terms and summary consent.' \
-               'Для установки нужен root. Загрузка и установка начнутся только после согласия с условиями и итогом.'
+    setup_line 'Usage: bash setup.sh [--lang en|ru] [--ui auto|dialog|text] [--dry-run] [--help]' \
+               'Запуск: bash setup.sh [--lang en|ru] [--ui auto|dialog|text] [--dry-run] [--help]'
+    setup_line 'English is selected by default. Choose Russian on the first screen, or pass --lang ru.' \
+               'По умолчанию выбран английский. Выберите русский на первом экране или передайте --lang ru.'
+    setup_line 'The wizard uses whiptail windows when available; otherwise it shows numbered text menus.' \
+               'Мастер открывает окна whiptail, если они доступны; иначе использует нумерованные текстовые меню.'
+    setup_line '--ui dialog requires whiptail and a terminal of at least 72x22. --ui text works in minimal consoles.' \
+               '--ui dialog требует whiptail и терминал минимум 72x22. --ui text подходит для минимальных консолей.'
+    printf '%s %s\n' "$(setup_text 'Release:' 'Версия:')" "$SITEKIT_SETUP_TAG"
+    setup_line 'Use a fresh Ubuntu 26.04 amd64 VPS. Installation requires root.' \
+               'Нужен чистый VPS Ubuntu 26.04 amd64. Для установки требуется root.'
+    setup_line '--dry-run checks DNS and previews your choices without downloading or installing SiteKit.' \
+               '--dry-run проверяет DNS и показывает настройки без скачивания и установки SiteKit.'
 }
 
 setup_main() (
     set -euo pipefail
-    local setup_lang=en dry_run=0 REPLY='' domain='' bind_ip='' email='' panel=ssh theme=auto transport=xhttp
-    local value allow_text='' status=0
+    local setup_lang=en lang_selected=0 ui_requested=auto setup_ui=text setup_complete=0 setup_title='Language / Язык'
+    local setup_width=76 setup_height=20 dry_run=0 REPLY='' domain='' bind_ip='' email='' panel=ssh theme=auto transport=xhttp
+    local value allow_text='' status=0 dns_result='' dns_warning='' summary='' panel_label='' allowed_label=''
     local -a allowed=() registration=() arguments=()
     SITEKIT_SETUP_DOWNLOAD_DIR=''
     while (($#)); do
         case "$1" in
             --lang)
                 [[ $# -ge 2 && ( "$2" == en || "$2" == ru ) ]] || { printf '%s\n' 'Use --lang en or --lang ru.' >&2; exit 2; }
-                setup_lang=$2; shift 2 ;;
+                setup_lang=$2; lang_selected=1; shift 2 ;;
+            --ui)
+                [[ $# -ge 2 && ( "$2" == auto || "$2" == dialog || "$2" == text ) ]] || { printf '%s\n' 'Use --ui auto, --ui dialog or --ui text.' >&2; exit 2; }
+                ui_requested=$2; shift 2 ;;
             --dry-run) dry_run=1; shift ;;
             --help|-h) setup_help; exit 0 ;;
             *) printf '%s\n' 'Unknown option. Use --help.' >&2; exit 2 ;;
         esac
     done
-    [[ -t 0 ]] || { setup_line 'Use an interactive terminal for setup.sh.' 'Запустите setup.sh в интерактивном терминале.' >&2; exit 2; }
+    [[ -t 0 ]] || { setup_line 'Open an interactive SSH session or server console to run the wizard.' 'Запустите мастер в интерактивном SSH-сеансе или консоли сервера.' >&2; exit 2; }
     command -v python3 >/dev/null || { setup_line 'python3 is required.' 'Требуется python3.' >&2; exit 2; }
     command -v ip >/dev/null || { setup_line 'The ip command (iproute2) is required to inspect this VPS.' 'Для проверки интерфейсов VPS нужна команда ip (iproute2).' >&2; exit 2; }
     if (( ! dry_run )); then setup_require_root || exit $?; fi
     trap '[[ -z "$SITEKIT_SETUP_DOWNLOAD_DIR" ]] || rm -rf -- "$SITEKIT_SETUP_DOWNLOAD_DIR"' EXIT
     trap 'exit 130' INT
     trap 'exit 143' TERM
-    setup_line '3x-ui SiteKit — interactive installation of v0.3.0-rc4' \
-               '3x-ui SiteKit — интерактивная установка v0.3.0-rc4'
-    setup_line 'Use this on the new VPS. Domain validation performs read-only public DNS requests.' \
-               'Запускайте на новом VPS. Проверка домена выполняет только чтение публичного DNS.'
-    if (( dry_run )); then setup_line 'DRY RUN: no downloads or installation.' 'ПРЕДПРОСМОТР: без загрузки и установки.'; fi
+    setup_ui_init
+    if (( ! lang_selected )); then
+        setup_choice 'Choose your language / Выберите язык' 'Choose your language / Выберите язык' en \
+            en 'English' 'English' ru 'Русский' 'Русский'
+        setup_lang=$REPLY
+    fi
+    setup_title=$(setup_text 'Welcome to SiteKit' 'Добро пожаловать в SiteKit')
+    setup_notice \
+        $'Set up your own 3x-ui server in six steps.\n\nWe will configure the panel, a generated website, HTTPS and VLESS. Your login details and QR code will be saved on the server.\n\nBefore you begin:\n- A fresh Ubuntu 26.04 amd64 VPS\n- A domain with one A record pointing to this VPS, and no AAAA record\n- Public TCP ports 80 and 443 available\n\nUse the arrow keys and Tab in windows, then Enter. Esc cancels the wizard.' \
+        $'Настройте свой сервер 3x-ui за шесть шагов.\n\nМастер подготовит панель, сгенерированный сайт, HTTPS и VLESS. Доступы и QR-код будут сохранены на сервере.\n\nПеред началом нужны:\n- Чистый VPS Ubuntu 26.04 amd64\n- Домен с одной A-записью на этот VPS, без AAAA\n- Доступные извне TCP-порты 80 и 443\n\nВ окнах используйте стрелки, Tab и Enter. Esc отменяет мастер.'
+    if (( dry_run )); then
+        setup_notice 'PREVIEW MODE: DNS will be checked, but SiteKit will not be downloaded or installed.' \
+                     'ПРЕДПРОСМОТР: мастер проверит DNS, но не будет скачивать и устанавливать SiteKit.'
+    fi
 
+    setup_step 1 'Domain and DNS' 'Домен и DNS'
     while :; do
-        setup_read 'Domain (for example node.example.com): ' 'Домен (например node.example.com): '
+        setup_input $'Domain\n\nEnter the name visitors will use, for example node.example.com. Use the name only, without https:// or a path.' \
+                    $'Домен\n\nУкажите имя для подключения, например node.example.com. Только имя: без https:// и пути.' "$domain"
         if ! domain=$(setup_python domain "$REPLY"); then
-            setup_line 'Enter a valid DNS name, without https://, a path or port.' 'Введите корректное DNS-имя без https://, пути и порта.'
+            setup_notice 'Enter a valid DNS name, without https://, a path or port.' 'Введите корректное DNS-имя без https://, пути и порта.'
             continue
         fi
         while :; do
-            setup_line 'Checking public A/AAAA against this server...' 'Проверяю публичные A/AAAA и IPv4 этого сервера...'
-            if bind_ip=$(setup_check_dns "$domain"); then
+            setup_dns_progress
+            if dns_result=$(setup_check_dns "$domain" 2>&1); then
+                bind_ip=${dns_result##*$'\n'}
+                if [[ "$dns_result" != "$bind_ip" ]]; then
+                    dns_warning=${dns_result%$'\n'*}
+                    setup_notice "$dns_warning" "$dns_warning"
+                fi
                 printf 'DNS OK: %s -> %s\n' "$domain" "$bind_ip"
                 break 2
             fi
-            setup_read 'DNS failed: [r]etry, [c]hange domain, [q]uit [c]: ' 'DNS не прошёл: [r] повторить, [c] другой домен, [q] отмена [c]: '
-            case "$REPLY" in r|R) ;; c|C|'') continue 2 ;; q|Q) setup_cancel ;; *) setup_line 'Choose r, c or q.' 'Выберите r, c или q.' ;; esac
+            setup_notice "$dns_result" "$dns_result"
+            setup_choice 'The domain is not ready yet. What would you like to do?' \
+                         'Домен пока не готов. Что сделать?' c \
+                         r 'Check again after updating DNS' 'Проверить снова после изменения DNS' \
+                         c 'Enter another domain' 'Указать другой домен' \
+                         q 'Cancel setup' 'Отменить установку'
+            case "$REPLY" in r) ;; c) continue 2 ;; q) setup_cancel ;; esac
         done
     done
 
+    setup_step 2 'HTTPS certificate' 'Сертификат HTTPS'
     while :; do
-        setup_read 'Certificate email (blank to request registration without email): ' 'Email для сертификата (пусто — регистрация без email): '
+        setup_input $'Certificate email\n\nEnter an email address for your Let\'s Encrypt account. You may leave this blank and explicitly choose registration without email.' \
+                    $'Email для сертификата\n\nУкажите email для учётной записи Let\'s Encrypt. Можно оставить поле пустым и отдельно подтвердить регистрацию без email.' "$email"
         if [[ -z "$REPLY" ]]; then
-            setup_read "Register with Let's Encrypt WITHOUT an email address? [y/N]: " "Зарегистрироваться в Let's Encrypt БЕЗ email? [y/N]: "
-            if setup_yes; then registration=(--acme-no-email); email=''; break; fi
-            setup_line 'Enter an email address, or explicitly confirm registration without email.' 'Введите email либо явно подтвердите регистрацию без email.'
+            if setup_confirm "Register with Let's Encrypt WITHOUT an email address?" "Зарегистрироваться в Let's Encrypt БЕЗ email?"; then
+                registration=(--acme-no-email); email=''; break
+            fi
         elif email=$(setup_python email "$REPLY"); then
             registration=(--email "$email"); break
         else
-            setup_line 'Enter a valid unquoted email address.' 'Введите корректный email без кавычек.'
+            setup_notice 'Enter a valid unquoted email address.' 'Введите корректный email без кавычек.'
         fi
     done
 
-    while :; do
-        setup_read 'Panel access: ssh (tunnel) or https (browser) [ssh]: ' 'Доступ к панели: ssh (туннель) или https (браузер) [ssh]: '
-        case "$REPLY" in ''|ssh|SSH|1) panel=ssh; break ;; https|HTTPS|2) panel=https; break ;; *) setup_line 'Choose ssh or https.' 'Выберите ssh или https.' ;; esac
-    done
+    setup_step 3 'Panel access' 'Вход в панель'
+    setup_choice 'How would you like to open the admin panel?' 'Как вы хотите открывать панель управления?' ssh \
+        ssh 'Private: open through an SSH tunnel' 'Приватно: через SSH-туннель' \
+        https 'Browser: open a unique HTTPS link' 'В браузере: по уникальной HTTPS-ссылке'
+    panel=$REPLY
     if [[ "$panel" == https ]]; then
         while :; do
-            setup_read 'Your computer/client PUBLIC IPs or CIDRs, separated by spaces or commas (blank = any IP): ' 'ПУБЛИЧНЫЕ IP ваших компьютеров/клиентов или CIDR через пробел/запятую (пусто = любой IP): '
+            setup_input $'Allowed client IPs (optional)\n\nTo restrict panel access, enter the PUBLIC IP of your computer or a CIDR such as 198.51.100.24/32. Separate multiple entries with spaces or commas.\n\nLeave blank to allow any IP; a login and password will still be required.' \
+                        $'Разрешённые IP клиентов (необязательно)\n\nДля ограничения доступа укажите ПУБЛИЧНЫЙ IP своего компьютера или CIDR, например 198.51.100.24/32. Несколько адресов разделяйте пробелом или запятой.\n\nПустое поле разрешает любой IP; логин и пароль остаются обязательными.'
             if allow_text=$(setup_python allowlist "$REPLY"); then break; fi
-            setup_line 'Use literal IP addresses or CIDRs, up to 128 entries.' 'Введите IP-адреса или CIDR, не более 128 записей.'
+            setup_notice 'Use literal IP addresses or CIDRs, up to 128 entries.' 'Введите IP-адреса или CIDR, не более 128 записей.'
         done
         if [[ -n "$allow_text" ]]; then
             while IFS= read -r value; do allowed+=("$value"); done <<< "$allow_text"
         fi
     fi
-    while :; do
-        setup_read 'Site theme: auto/generative/patterns/palettes/curves [auto]: ' 'Тема сайта: auto/generative/patterns/palettes/curves [auto]: '
-        case "$REPLY" in ''|auto) theme=auto; break ;; generative|patterns|palettes|curves) theme=$REPLY; break ;; *) setup_line 'Choose one of the listed themes.' 'Выберите одну из указанных тем.' ;; esac
-    done
-    while :; do
-        setup_read 'Transport: xhttp or ws [xhttp]: ' 'Транспорт: xhttp или ws [xhttp]: '
-        case "$REPLY" in ''|xhttp) transport=xhttp; break ;; ws) transport=ws; break ;; *) setup_line 'Choose xhttp or ws.' 'Выберите xhttp или ws.' ;; esac
-    done
-    setup_line "Read the current Let's Encrypt terms: https://letsencrypt.org/repository/" \
-               "Условия Let's Encrypt: https://letsencrypt.org/repository/"
-    setup_read 'Do you agree to these terms? [y/N]: ' 'Вы согласны с этими условиями? [y/N]: '
-    setup_yes || setup_cancel
 
+    setup_step 4 'Website style' 'Стиль сайта'
+    setup_choice 'Choose the theme for your automatically generated website.' 'Выберите тему автоматически создаваемого сайта.' auto \
+        auto 'Surprise me: choose a theme automatically' 'Выбрать тему автоматически' \
+        generative 'Generative: geometric compositions' 'Генеративная графика: геометрические композиции' \
+        patterns 'Patterns: repeating SVG tiles' 'Паттерны: повторяющиеся SVG-узоры' \
+        palettes 'Palettes: colours and downloadable CSS' 'Палитры: цвета и CSS для скачивания' \
+        curves 'Curves: Bezier drawings and control points' 'Кривые: рисунки Безье и контрольные точки'
+    theme=$REPLY
+
+    setup_step 5 'Connection type' 'Тип подключения'
+    setup_choice 'Choose the VLESS transport. Keep XHTTP unless you specifically need WebSocket.' \
+                 'Выберите транспорт VLESS. Оставьте XHTTP, если вам не нужен именно WebSocket.' xhttp \
+                 xhttp 'XHTTP (recommended)' 'XHTTP (рекомендуется)' \
+                 ws 'WebSocket' 'WebSocket'
+    transport=$REPLY
+
+    setup_step 6 'Review and install' 'Проверка и установка'
+    if ! setup_confirm \
+        $'Let\'s Encrypt provides the HTTPS certificate.\n\nRead the terms: https://letsencrypt.org/repository/\n\nDo you agree to these terms?' \
+        $'Let\'s Encrypt выпускает сертификат HTTPS.\n\nУсловия: https://letsencrypt.org/repository/\n\nВы согласны с этими условиями?'; then setup_cancel; fi
     arguments=(--repository "$SITEKIT_SETUP_REPOSITORY" --domain "$domain" --bind-ip "$bind_ip"
                "${registration[@]}" --agree-tos --panel-access "$panel" --site-theme "$theme" --transport "$transport")
     if [[ -n "$allow_text" ]]; then
         for value in "${allowed[@]}"; do arguments+=(--panel-allow "$value"); done
     fi
-    setup_line 'Review the installation settings:' 'Проверьте настройки установки:'
-    printf '  %s: %s\n' "$(setup_text 'Release' 'Версия')" "$SITEKIT_SETUP_TAG"
-    printf '  %s: %s\n' "$(setup_text 'Domain' 'Домен')" "$domain"
-    printf '  IPv4: %s\n  Email: %s\n' "$bind_ip" "${email:-(none)}"
-    printf '  %s: %s\n' "$(setup_text 'Panel' 'Панель')" "$panel"
-    printf '  %s: %s\n' "$(setup_text 'Theme' 'Тема')" "$theme"
-    printf '  %s: %s\n' "$(setup_text 'Transport' 'Транспорт')" "$transport"
     if [[ "$panel" == https ]]; then
-        if [[ -n "$allow_text" ]]; then printf '  Allow: %s\n' "${allowed[@]}"; else setup_line '  Allow: any IP; panel login/password are still required.' '  Доступ: любой IP; логин и пароль панели обязательны.'; fi
+        panel_label=$(setup_text 'HTTPS link in your browser' 'HTTPS-ссылка в браузере')
+        allowed_label=${allow_text:-$(setup_text 'Any IP, with login and password' 'Любой IP, с логином и паролем')}
+    else
+        panel_label=$(setup_text 'Private, through an SSH tunnel' 'Приватно, через SSH-туннель')
+        allowed_label=$(setup_text 'SSH access only' 'Только SSH-доступ')
     fi
-    setup_line 'Credentials, UUID and the random panel path will be generated by the installer.' \
-               'Учётные данные, UUID и случайный путь панели создаст установщик.'
-    setup_line 'This installs rc4; the saved-QR feature in development is not included.' \
-               'Устанавливается rc4; QR в файле доступов из версии разработки здесь ещё нет.'
-    setup_line 'Command after downloading and verifying install.sh:' 'Команда после загрузки и проверки install.sh:'
-    printf '  bash %q' './install.sh'
-    printf ' %q' "${arguments[@]}"
-    printf '\n'
-    setup_read 'Proceed with the displayed settings? [y/N]: ' 'Продолжить с указанными настройками? [y/N]: '
-    setup_yes || setup_cancel
+    summary=$(printf '%s: %s\n%s: %s\nIPv4: %s\nEmail: %s\n%s: %s\n%s: %s\n%s: %s\n%s: %s\n\n%s' \
+        "$(setup_text 'Release' 'Версия')" "$SITEKIT_SETUP_TAG" \
+        "$(setup_text 'Domain' 'Домен')" "$domain" "$bind_ip" "${email:-$(setup_text '(without email)' '(без email)')}" \
+        "$(setup_text 'Panel' 'Панель')" "$panel_label" "$(setup_text 'Allowed clients' 'Доступ клиентов')" "$allowed_label" \
+        "$(setup_text 'Website' 'Сайт')" "$theme" "$(setup_text 'Transport' 'Транспорт')" "$transport" \
+        "$(setup_text 'Your panel login, random panel address and VLESS link/QR will be generated automatically.' 'Логин, пароль, случайный адрес панели и VLESS-ссылка/QR будут созданы автоматически.')")
     if (( dry_run )); then
+        summary="$summary"$'\n\n'"$(setup_text 'Complete this preview?' 'Завершить предпросмотр?')"
+    else
+        summary="$summary"$'\n\n'"$(setup_text 'Install SiteKit with these settings?' 'Установить SiteKit с этими настройками?')"
+    fi
+    setup_confirm "$summary" "$summary" || setup_cancel
+    if (( dry_run )); then
+        setup_line 'Command after downloading and verifying install.sh:' 'Команда после загрузки и проверки install.sh:'
+        printf '  bash %q' './install.sh'
+        printf ' %q' "${arguments[@]}"
+        printf '\n'
         setup_line 'Preview complete. No files downloaded and no system changes made.' 'Предпросмотр завершён. Файлы не скачивались, система не изменялась.'
         exit 0
     fi
     command -v curl >/dev/null && command -v sha256sum >/dev/null || {
         setup_line 'curl and sha256sum are required.' 'Требуются curl и sha256sum.' >&2; exit 2;
     }
+    setup_title=$(setup_text 'Installing SiteKit' 'Установка SiteKit')
+    setup_line 'Downloading the verified installer. Progress will appear below.' 'Скачиваю проверенный установщик. Ход установки появится ниже.'
     umask 077
     SITEKIT_SETUP_DOWNLOAD_DIR=$(mktemp -d /tmp/sitekit-setup.XXXXXXXX)
     setup_download "https://github.com/$SITEKIT_SETUP_REPOSITORY/releases/download/$SITEKIT_SETUP_TAG/install.sh" \
@@ -441,12 +616,14 @@ setup_main() (
     }
     setup_run_bootstrap "$SITEKIT_SETUP_DOWNLOAD_DIR/install.sh" "${arguments[@]}" || status=$?
     if (( status == 0 )); then
+        setup_complete=1
+        setup_title=$(setup_text 'SiteKit is ready' 'SiteKit готов')
         if [[ "$panel" == https ]]; then
-            setup_line 'Installed. Read Public panel, Username and Password in /root/https-node-access.txt; open that exact URL in your browser without an SSH tunnel.' \
-                       'Установлено. В /root/https-node-access.txt найдите Public panel, Username и Password; откройте точный URL в обычном браузере без SSH-туннеля.'
+            setup_notice $'Installed.\n\nRun: cat /root/https-node-access.txt\n\nOpen the exact Public panel URL in your browser and use the Username and Password from that file. You can log in without an SSH tunnel.\n\nThe same file contains your VLESS link and QR code for importing into a client.' \
+                         $'Установлено.\n\nВыполните: cat /root/https-node-access.txt\n\nОткройте точный URL Public panel в браузере и введите Username и Password из этого файла. Вход работает без SSH-туннеля.\n\nВ том же файле находятся VLESS-ссылка и QR-код для импорта в клиент.'
         else
-            setup_line 'Installed. Follow the SSH tunnel instructions and local browser URL in /root/https-node-access.txt.' \
-                       'Установлено. Используйте команду SSH-туннеля и локальный URL из /root/https-node-access.txt.'
+            setup_notice $'Installed.\n\nRun: cat /root/https-node-access.txt\n\nFollow the SSH tunnel command and local browser URL in that file to open the panel.\n\nVLESS clients connect directly using the link or QR code in the same file.' \
+                         $'Установлено.\n\nВыполните: cat /root/https-node-access.txt\n\nИспользуйте команду SSH-туннеля и локальный URL из этого файла для входа в панель.\n\nVLESS-клиенты подключаются напрямую по ссылке или QR-коду из того же файла.'
         fi
     fi
     exit "$status"

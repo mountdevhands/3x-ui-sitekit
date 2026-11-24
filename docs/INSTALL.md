@@ -2,109 +2,136 @@
 
 English · [Русский](INSTALL.ru.md)
 
+The installation commands in this source version target **v0.3.0-rc5**.
+Use its published assets from [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases);
+a source commit and a published release are separate steps.
+
 Use Ubuntu 26.04 amd64, system CPython 3.14, systemd, available TCP ports
 80/443, and a public IPv4 directly assigned to the VPS interface. Point one
 DNS A record for the domain at that IPv4 and remove any AAAA record. This
-release does not configure an IPv6 listener.
+release does not configure an IPv6 listener. A CDN proxy or NAT in front
+of the VPS is outside this release's supported configuration.
 
 Use the official signed Ubuntu pockets `resolute`, `resolute-updates` and
 `resolute-security`, with the distribution's `Signed-By` keyring. If the
 image enables `resolute-backports`, preserve the original sources file and
 remove only that pocket before installation.
 
-Keep earlier backups separately. A fresh installation requires a dedicated
-host with available ports and no previous Certbot lineage. For downloaded
-files, follow [Install from downloaded files](../README.md#install-from-downloaded-files).
-For GitHub Releases, use the [verified command in the README](../README.md#install-from-github-releases).
-Both examples install the published `v0.3.0-rc4`; they do not install development
-changes from `main`.
+A fresh installation requires a dedicated host with available ports and no
+previous SiteKit state or Certbot lineage. Start with the
+[one-command wizard](../README.md#install-from-github-releases) in an
+interactive root shell. That command prepares helper packages, including
+`whiptail`, before starting the wizard. The wizard then asks for the setup
+values and confirmations.
 
 ## Guided setup
 
-For an interactive server terminal, use the question-and-answer setup.
-Save a reviewed local copy of [setup.sh](../setup.sh) from these sources, then run:
+The wizard shows a welcome screen and walks through these choices:
+
+| Setting | What to enter or choose |
+| --- | --- |
+| Domain | Your domain without `https://`, a path or a port. DNS is checked immediately. |
+| Certificate email | Your email, or explicitly confirm registration without one. |
+| Panel access | **SSH tunnel** by default; choose **HTTPS browser access** for an ordinary login URL. |
+| Allowed panel IPs | Optional in HTTPS mode. Enter your computer's public IP/CIDR, or leave blank for any IP with normal panel authentication. |
+| Website | **Automatic** selects a generated theme; individual themes are also available. |
+| Transport | **XHTTP** by default, or WebSocket. |
+
+The domain must have exactly one A record matching a public IPv4 assigned
+to this server and no AAAA record. If DNS does not match, choose Retry,
+Change domain or Cancel. After collecting the choices, setup asks you to
+accept the Let's Encrypt terms and confirm a readable settings summary.
+Both consent choices default to **No**. SiteKit release files are downloaded
+only after both confirmations.
+
+A verified local copy of `setup.sh` also supports:
 
 ```bash
-sudo bash setup.sh
-```
-
-English is the default; use `sudo bash setup.sh --lang ru` for Russian.
-The wizard asks for the domain and immediately checks public DNS, before
-any download or installation. A single A record must match a public IPv4
-assigned to this VPS; the domain must have no AAAA record. It checks two
-public resolvers and does not mistake a private `docker0` address for your
-public IP. On a mismatch, correct DNS and retry, enter another domain, or
-cancel. The installer repeats its own preflight later.
-
-The remaining questions cover email registration, panel access, an optional
-HTTPS IP/CIDR list, the generated-site theme and transport. Defaults are
-**SSH**, **auto** and **XHTTP**. Leaving email blank requires a separate
-confirmation to register without email. HTTPS allowlist entries may be
-separated by spaces or commas. The wizard asks you to accept the Let's Encrypt
-terms and displays a settings summary before final confirmation; both consent
-prompts default to **no**. EOF or Ctrl-C at a prompt cancels the wizard.
-
-To review the selected command without installing:
-
-```bash
+sudo bash setup.sh --lang en --ui dialog
+sudo bash setup.sh --lang ru --ui text
 bash setup.sh --lang en --dry-run
 ```
 
-`--dry-run` still performs the read-only DNS checks. It does not download
-release files, install packages or change the system. It does not require
-root. The question flow requires an interactive terminal; `--help` lists
-the available options.
+`--ui auto` is the default: it uses `whiptail` when the terminal supports
+it, or numbered text menus otherwise. `--ui dialog` requires `whiptail` and
+a suitable terminal; `--ui text` explicitly selects text menus. `--lang en`
+or `--lang ru` skips language selection. EOF, Ctrl-C or Cancel ends setup.
 
-You do not need to choose a panel password, VLESS UUID or random panel
-path: the installer generates and saves them. Open the resulting
-`/root/https-node-access.txt` for your actual access details.
+`--dry-run` performs DNS checks and shows the resulting command without
+downloading release files or changing the system. It does not require root.
+All interactive modes require a terminal; use the
+[explicit bootstrap arguments](#install-with-explicit-arguments)
+for automation.
 
-`setup.sh` is a development-source addition. It downloads and verifies the
-unchanged **rc4 bootstrap**, which in turn verifies the rc4 installer and
-runtime. Thus this guided flow installs published rc4; the saved-QR and
-`--refresh-file` additions still require the separate development installer.
-There is no published `setup.sh` release download linked here yet.
+After installation, read the access details on the server:
 
-For automation or a noninteractive environment, use the
-[pinned rc4 command](../README.md#install-from-github-releases) with explicit
-arguments. The question-and-answer frontend requires an interactive terminal.
+```bash
+cat /root/https-node-access.txt
+```
+
+For HTTPS, open the exact **`Public panel:`** URL and sign in with the saved
+`Username:` and `Password:`. The domain's root URL opens the generated site.
+For SSH mode, follow the tunnel command and local URL in the access file.
+The installer generates the password, VLESS UUID and random panel path.
+
+
+## Install with explicit arguments
+
+For automation, download the pinned rc5 bootstrap, verify its SHA-256, and
+supply the settings explicitly. This example requires `curl`, `sha256sum`
+and `sudo`; when running as root, omit `sudo`. Replace the domain and email.
+Pass `--agree-tos` only after accepting the ACME provider's terms.
+
+<!-- sitekit-release-sha256: bootstrap -->
+```bash
+(
+  set -eu
+  sitekit_download=$(mktemp -d)
+  trap 'rm -rf -- "$sitekit_download"' EXIT
+  curl -q --fail --silent --show-error --location \
+    --proto '=https' --proto-redir '=https' \
+    --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
+    --output "$sitekit_download/install.sh" \
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc5/install.sh'
+  printf '%s  %s\n' \
+    '91e7457f68240ea294ac9fb6f21c2598d69e8acd9269c2f7e9d9bd8805027f1c' "$sitekit_download/install.sh" |
+    sha256sum --check --strict
+  sudo bash "$sitekit_download/install.sh" \
+    --repository mountdevhands/3x-ui-sitekit \
+    --domain node.example.com --email admin@example.com --agree-tos \
+    --panel-access ssh --site-theme auto --transport xhttp
+)
+```
+<!-- /sitekit-release-sha256 -->
+
+Instead of `--email`, explicitly select `--acme-no-email` for registration
+without email. `--transport` accepts `xhttp` or `ws`. The bootstrap supplies
+the verified local runtime through `--release-archive`. For files already
+on the server, see [Install from downloaded files](../README.md#install-from-downloaded-files).
 
 ## Choose the panel access mode
 
-By default, the panel uses `--panel-access ssh`: access it through an SSH
-tunnel. To enable an HTTPS login URL during installation, add:
+The wizard presents **SSH tunnel** and **HTTPS browser access** as menu
+options. SSH is selected by default. For the noninteractive bootstrap,
+choose HTTPS with `--panel-access https` and optionally repeat
+`--panel-allow YOUR_PUBLIC_IP/32` for each allowed client IP or CIDR.
 
-```text
---panel-access https
-```
+The IP must be your computer's public address, not the server's IP. A blank
+list accepts any source IP with the panel's normal username/password login.
+These rules apply only to the panel; the website and VLESS remain reachable.
+You can change the mode later using [`panel-access`](PANEL-ACCESS.md), with
+the existing certificate and panel path.
 
-To allow only your external IP, also add the optional, repeatable argument:
-
-```text
---panel-allow 198.51.100.24/32
-```
-
-Replace this documentation address with your own public IP. Without a list,
-HTTPS accepts requests from any source IP and requires normal panel login.
-The website and VLESS are not restricted by the panel's IP rules. You can
-change the mode later using [`panel-access`](PANEL-ACCESS.md), without a new
-installation, new certificate or new panel path.
-
-## Other options and completion
-
-In an interactive terminal, the bootstrap can ask for the domain if
-`--domain` is omitted. Instead of `--email`, explicitly select
-`--acme-no-email` if you want registration without email. `--transport`
-accepts `xhttp` or `ws`. `https-node.py preview-site --help` lists the available
-`--site-theme` values. The bootstrap supplies the verified local runtime
-through `--release-archive`.
+## Completion and maintenance
 
 After success, read `/root/https-node-access.txt` locally as root. It contains
-the panel URL, username, password and VLESS link. Follow the
-[panel access guide](PANEL-ACCESS.md) to open the correct URL. Keep a verified
-standalone copy as `/root/https-node.py` for maintenance; the bootstrap cleans
-up its temporary downloaded installer.
+the panel URL, username, password, VLESS link and, in rc5, its plain UTF-8 QR.
+Follow the [panel access guide](PANEL-ACCESS.md) to open the correct URL.
+Keep a verified standalone as `/root/https-node.py` for maintenance; the
+bootstrap removes its temporary downloaded installer. Use the
+[maintenance download](PANEL-ACCESS.md#get-a-maintenance-installer) if needed.
 
 If installation fails, retain the output and inspect the recorded stage
-before making another ACME request. Do not run `install` to change the
-configuration of an existing ready node.
+before making another ACME request. Use maintenance commands to change an
+existing ready node. `--dry-run` is a settings preview, not a real installation
+or certificate acceptance test.

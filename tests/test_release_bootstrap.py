@@ -3,12 +3,26 @@
 import hashlib
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
 
 
 BOOTSTRAP = Path(__file__).resolve().parents[1] / "install.sh"
+
+
+def release_constant(name):
+    match = re.search(r"^" + re.escape(name) + r"=(['\"]?)([A-Za-z0-9._-]+)\1$",
+                      BOOTSTRAP.read_text(), re.MULTILINE)
+    if match is None:
+        raise ValueError("Missing release constant: " + name)
+    return match.group(2)
+
+
+TAG = release_constant("TAG")
+INSTALLER = release_constant("INSTALLER")
+RUNTIME = release_constant("RUNTIME")
 FIXTURE = r'''
 source "$BOOTSTRAP"
 INSTALLER_SHA256=$EXPECTED_INSTALLER
@@ -46,8 +60,8 @@ class BootstrapTests(unittest.TestCase):
     def run_fixture(self, scenario):
         with tempfile.TemporaryDirectory() as scratch:
             root = Path(scratch)
-            (root / "3x-ui-sitekit-0.3.0-rc4.py").write_bytes(b"python fixture")
-            (root / "3x-ui-sitekit-0.3.0-rc4-linux-amd64.tar.gz").write_bytes(b"runtime fixture")
+            (root / INSTALLER).write_bytes(b"python fixture")
+            (root / RUNTIME).write_bytes(b"runtime fixture")
             record = root / "log"
             record.touch()
             host_fixture = root / "host"
@@ -64,9 +78,8 @@ class BootstrapTests(unittest.TestCase):
     def test_exact_release_and_exit_status(self):
         result, lines = self.run_fixture("ok")
         self.assertEqual(result.returncode, 7, result.stderr)
-        prefix = "https://github.com/example/3x-ui-sitekit/releases/download/v0.3.0-rc4/"
-        self.assertEqual(lines, [prefix + "3x-ui-sitekit-0.3.0-rc4.py",
-                                 prefix + "3x-ui-sitekit-0.3.0-rc4-linux-amd64.tar.gz", "ran"])
+        prefix = "https://github.com/example/3x-ui-sitekit/releases/download/" + TAG + "/"
+        self.assertEqual(lines, [prefix + INSTALLER, prefix + RUNTIME, "ran"])
 
     def test_failed_transfers_or_tampering_do_not_run_installer(self):
         for scenario in ("http", "partial", "mismatch"):

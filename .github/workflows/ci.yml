@@ -34,6 +34,7 @@ jobs:
           python -B -m unittest discover -s tests -p 'test_access_credentials.py'
           python -B -m unittest discover -s tests -p 'test_nginx_openssl.py'
           python -B -m unittest discover -s tests -p 'test_release_bootstrap.py'
+          python -B -m unittest discover -s tests -p 'test_release_packaging.py'
           python -B -m unittest discover -s tests -p 'test_setup_wizard.py'
           python -B -m unittest discover -s tests -p 'test_guards.py'
           python -B tests/test_artifact_sites.py --module dist/https-node.py

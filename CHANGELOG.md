@@ -2,27 +2,32 @@
 
 English · [Русский](CHANGELOG.ru.md)
 
-## 0.3.0-rc5-dev — unreleased
+## 0.3.0-rc5 — release candidate
 
-- Add a guided Bash `setup.sh` frontend that collects installation choices,
-  checks public DNS immediately after the domain input, confirms ACME terms
-  and a settings summary, then verifies and launches the immutable rc4
-  bootstrap. Defaults remain SSH, XHTTP and generated-site auto. English and
-  Russian prompts and a read-only `--dry-run` are available. It installs rc4;
-  development QR features remain a separate update.
+- Add a terminal setup wizard with a welcome screen, language selection,
+  numbered steps and keyboard menus using `whiptail`. English is the default;
+  `--lang en|ru` skips the language screen. `--ui auto|dialog|text` supports
+  windowed and numbered-text modes.
+- Check public DNS immediately after entering the domain. Collect email,
+  panel access, optional HTTPS client IP/CIDR restrictions, generated-site
+  theme and transport. Defaults remain SSH, auto and XHTTP. Ask for ACME
+  terms acceptance and a readable final confirmation before installation.
+- Package the wizard with the rc5 bootstrap and installer, with matching
+  pinned hashes. The release uses the byte-identical approved rc4 runtime.
+- Save a plain UTF-8 VLESS QR code in the private access file during install
+  and panel-mode changes. Automatic QR failures retain usable credentials
+  and the connection link with an explicit unavailable message.
+- Add `credentials --refresh-file` to update an existing access file while
+  preserving node identity and services. A QR failure leaves the old file intact.
+  `credentials --qr` remains a read-only display.
+- Provide English and Russian installation, panel and maintenance instructions,
+  including one-command startup and SHA-256 verification.
+- Add deterministic release packaging that verifies runtime and dependency
+  source archives, synchronizes release pins and emits the complete asset set.
 
-- Save a plain UTF-8 VLESS QR code in the private access file on installation
-  and panel access-mode changes. Automatic QR failures retain usable access
-  details with an explicit unavailable message.
-- Add `credentials --refresh-file` to update an existing access file without
-  changing node identity or services. A QR failure leaves the old file intact.
-- Keep `credentials --qr` read-only and pass the VLESS link to the local QR
-  renderer through standard input, without ANSI color escapes in its output.
-- Add English and Russian documentation, with explicit instructions for
-  enabling HTTPS panel access and obtaining a maintenance installer.
-
-Published rc4 assets, bootstrap command and runtime remain unchanged.
-Development-source checks do not replace a new release's VPS acceptance.
+Publication is a separate step from merging source. The historical rc4
+acceptance report does not constitute fresh rc5 VPS, ACME or reboot acceptance.
+See [release preparation](docs/RELEASING.md) for the remaining publication gates.
 
 ## 0.3.0-rc4 — 23 November 2026
 
