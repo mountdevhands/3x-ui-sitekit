@@ -42,7 +42,7 @@ from rendering import SITE_THEMES, generate_site_profile, normalize_panel_access
 from security_policy import SECURITY_APPROVED_BUNDLE, SECURITY_CERTBOT_MANIFEST_SHA256, evaluate_packages, evaluate_pinned_release, verify_policy_freshness
 from certbot_runtime import CERTBOT_LIBRARIES, install_certbot_runtime, verify_certbot_payload
 
-APP_VERSION = "0.3.0-rc4"
+APP_VERSION = "0.3.0-rc5-dev"
 RELEASE_VERSION = SECURITY_APPROVED_BUNDLE[0] if SECURITY_APPROVED_BUNDLE else "v3.11.0"
 RELEASE_SHA256 = (SECURITY_APPROVED_BUNDLE[1] if SECURITY_APPROVED_BUNDLE else
                   "0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916")
@@ -1516,30 +1516,84 @@ def final_tls_probe(state):
         raise NodeError("Unexpected SNI was accepted by the default TLS server.")
 
 
-def make_access_text(state):
+def render_vless_qr(state):
+    """Render a plain-text QR without placing the connection secret in argv."""
+    try:
+        result = command(["qrencode", "-t", "UTF8", "-m", "4"],
+                         input_text=client_link(state), timeout=10, secret=True)
+    except UnicodeError:
+        raise NodeError("qrencode returned text that could not be decoded.") from None
+    qr = result.stdout
+    # UTF8 output needs only half/full blocks, spaces and newlines. In
+    # particular, no terminal escape sequences belong in a saved text file.
+    lines = qr.splitlines()
+    if (not qr.endswith("\n") or len(qr) > 65536
+            or any(char not in " ▀▄█\n" for char in qr)
+            or not 15 <= len(lines) <= 93
+            or not 29 <= len(lines[0]) <= 185
+            or any(len(line) != len(lines[0]) for line in lines)
+            or not any(char in qr for char in "▀▄")):
+        raise NodeError("qrencode did not return a valid plain UTF-8 QR code.")
+    return qr
+
+
+def make_access_text(state, *, qr_text=None, qr_unavailable=False):
+    """Format saved access details; QR rendering is an explicit caller action."""
     panel_mode, panel_allow = panel_settings(state)
-    panel_summary = "Panel access: SSH tunnel only.\n"
+    panel_summary = (
+        "Panel access: SSH tunnel only; its public HTTPS URL is disabled.\n"
+        "To enable browser access without a tunnel, run on the server once:\n"
+        f"python3 /root/https-node.py panel-access --mode https --confirm-domain {state['domain']}\n"
+        "Use your verified standalone installer at /root/https-node.py, or substitute its saved path.\n"
+        "Optionally append --allow YOUR_PUBLIC_IP/32 to restrict only the HTTPS panel.\n"
+        "Then read the Public panel URL in this file and open it in your browser.\n"
+    )
     if panel_mode == "https":
         panel_summary = (f"Panel access: HTTPS and SSH tunnel.\n"
                          f"Public panel: https://{state['domain']}{state['panel_path']}\n"
+                         "Open the Public panel URL directly in your browser; no SSH tunnel is needed.\n"
+                         "Sign in with the Username and Password below.\n"
                          "HTTPS panel allowed source IPs: " + (", ".join(panel_allow) if panel_allow else
                          "any IP (normal panel authentication is required)") + "\n")
     routing_summary = ("Panel is not routed through public nginx. Subscription service is disabled.\n"
                        if panel_mode == "ssh" else
                        "Only the secret panel URL is proxied to loopback. Subscription service is disabled.\n"
                        "Source-IP restrictions apply only to that HTTPS panel URL; website and VLESS remain public.\n")
+    qr_section = ""
+    if qr_text is not None:
+        qr_section = (
+            "VLESS QR code (import this connection in your VLESS client):\n"
+            "Display with a fixed-width font, light text on a dark background, and no line wrapping.\n"
+            + qr_text + "\n"
+        )
+    elif qr_unavailable:
+        qr_section = (
+            "VLESS QR code: unavailable. The VLESS link above is still usable.\n"
+            "To regenerate this file with QR, run your verified installer on the server:\n"
+            "python3 /root/https-node.py credentials --refresh-file\n\n"
+        )
     return (
         f"HTTPS Node {APP_VERSION}\nDomain: {state['domain']}\nTransport: VLESS + {state['transport']} + TLS\n"
         f"Website: https://{state['domain']}/\n" + panel_summary + "\n"
-        f"SSH tunnel (replace root/SSH port if needed):\n"
+        f"SSH tunnel instructions (run on YOUR computer; replace root/SSH port if needed):\n"
         f"ssh -N -L 127.0.0.1:2053:127.0.0.1:{state['panel_port']} root@{state['bind_ip']}\n"
         f"Panel in YOUR local browser: http://127.0.0.1:2053{state['panel_path']}\n"
         f"Username: {state['username']}\nPassword: {state['password']}\n\n"
         f"VLESS link:\n{client_link(state)}\n\n"
-        + routing_summary +
+        + qr_section + routing_summary +
         "Proxy connections to private/local IP ranges are blocked; system firewall is unchanged.\n"
         "Panel/transport versions are pinned at installation; inspect future updates explicitly.\n"
     )
+
+
+def make_saved_access_text(state):
+    """Keep usable credentials if the optional QR renderer is unavailable."""
+    try:
+        return make_access_text(state, qr_text=render_vless_qr(state))
+    except NodeError:
+        log("WARNING: VLESS QR generation failed; access details retain the connection link. "
+            "Use credentials --refresh-file to retry after fixing qrencode.")
+        return make_access_text(state, qr_unavailable=True)
 
 
 def _panel_safe_parent(path):
@@ -1585,6 +1639,44 @@ def _panel_maintenance_lock():
         os.close(fd)
 
 
+def credentials(args):
+    """Show access details, or explicitly refresh only the private access file."""
+    if os.geteuid() != 0:
+        raise NodeError("Use sudo to read credentials.")
+    if not args.refresh_file:
+        state = load_state()
+        if state.get("status") != "ready":
+            raise NodeError("Installation is not ready; inspect status.")
+        qr = render_vless_qr(state) if args.qr else None
+        print(make_access_text(state, qr_text=qr), end="")
+        return
+    with _panel_maintenance_lock():
+        before_state = _panel_private_file(STATE_FILE)
+        _panel_safe_parent(ACCESS)
+        try:
+            before_access = _panel_private_file(ACCESS)
+        except FileNotFoundError:
+            before_access = None
+        state = load_state()
+        if state.get("status") != "ready" or state.get("stage") != "complete":
+            raise NodeError("Refreshing access details requires a ready/complete installation.")
+        # A refresh is deliberately strict: QR failure never replaces the
+        # previous access file. No service or installation state is changed.
+        content = make_access_text(state, qr_text=render_vless_qr(state))
+        if _panel_private_file(STATE_FILE) != before_state:
+            raise NodeError("Installation state changed; access details were not overwritten.")
+        if before_access is None:
+            if ACCESS.exists() or ACCESS.is_symlink():
+                raise NodeError("The access file appeared during refresh; nothing was overwritten.")
+            _panel_safe_parent(ACCESS)
+        elif _panel_private_file(ACCESS) != before_access:
+            raise NodeError("The access file changed during refresh; nothing was overwritten.")
+        write_file(ACCESS, content)
+        log("Updated root-only access file: " + str(ACCESS))
+        if args.qr:
+            print(content, end="")
+
+
 def panel_access(args):
     """Change only nginx panel exposure; retain the existing installation identity."""
     if os.geteuid() != 0:
@@ -1606,7 +1698,7 @@ def panel_access(args):
         updated = {**state, "panel_access": mode, "panel_allow": allow}
         after = {
             STATE_FILE: (json.dumps(updated, indent=2, ensure_ascii=False) + "\n").encode("utf-8"),
-            ACCESS: make_access_text(updated).encode("utf-8"),
+            ACCESS: make_saved_access_text(updated).encode("utf-8"),
             ETC / "nginx.conf": nginx_config(updated, True).encode("utf-8"),
         }
         # Validate all snapshots before any replacement, including their text encoding.
@@ -1891,13 +1983,17 @@ def install(args):
                     time.sleep(0.5)
             ensure_private_listeners()
             verify_running_nginx_openssl(state)
-            write_file(ACCESS, make_access_text(state))
+            write_file(ACCESS, make_saved_access_text(state))
             state["status"] = "ready"
             state["stage"] = "complete"
             save_state(state)
-            log(f"Ready. Credentials and the VLESS link: {ACCESS}")
+            log(f"Ready. Panel credentials, VLESS link and QR status: {ACCESS}")
             log(f"Website: https://{state['domain']}/")
-            log(f"Open a local SSH tunnel: ssh -N -L 127.0.0.1:2053:127.0.0.1:{state['panel_port']} root@{state['bind_ip']}")
+            if panel_settings(state)[0] == "https":
+                log("HTTPS panel enabled. Open the Public panel URL in the access file; no SSH tunnel is needed.")
+            else:
+                log("Panel access is SSH-only. The access file includes the command to enable HTTPS browser access.")
+                log(f"Open a local SSH tunnel: ssh -N -L 127.0.0.1:2053:127.0.0.1:{state['panel_port']} root@{state['bind_ip']}")
         except BaseException as exc:
             state["status"] = "failed"
             state["last_error_type"] = type(exc).__name__
@@ -2061,7 +2157,8 @@ def main(argv=None):
                               help="Replace the HTTPS panel allowlist; repeatable. Omit to allow any IP with normal panel authentication. Invalid with SSH mode.")
     panel_parser.add_argument("--confirm-domain", required=True, help="Exact domain of the existing ready/complete installation.")
     credentials_parser = sub.add_parser("credentials", help="Print the root-only saved panel credentials and VLESS link.")
-    credentials_parser.add_argument("--qr", action="store_true", help="Also display the VLESS QR code.")
+    credentials_parser.add_argument("--qr", action="store_true", help="Also display one plain-text VLESS QR code; read-only unless --refresh-file is used.")
+    credentials_parser.add_argument("--refresh-file", action="store_true", help="Regenerate the private access file with QR, preserving all accounts/settings; print only its path unless --qr is also used.")
     remove_parser = sub.add_parser("uninstall", help="Delete only this installation's services, DB, website and credentials.")
     remove_parser.add_argument("--confirm-domain", required=True)
     remove_parser.add_argument("--keep-certificate", action="store_true", help="Keep the issued certificate; this intentionally prevents a fresh install until it is removed.")
@@ -2085,14 +2182,7 @@ def main(argv=None):
     elif args.operation == "panel-access":
         panel_access(args)
     elif args.operation == "credentials":
-        if os.geteuid() != 0:
-            raise NodeError("Use sudo to read credentials.")
-        state = load_state()
-        if state["status"] != "ready":
-            raise NodeError("Installation is not ready; inspect status.")
-        print(make_access_text(state))
-        if args.qr:
-            subprocess.run(["qrencode", "-t", "ANSIUTF8", "-m", "2", client_link(state)], check=True)
+        credentials(args)
     elif args.operation == "uninstall":
         uninstall(args)
 
