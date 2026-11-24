@@ -2,8 +2,8 @@
 # Interactive terminal wizard for the pinned SiteKit release.
 
 readonly SITEKIT_SETUP_REPOSITORY='mountdevhands/3x-ui-sitekit'
-readonly SITEKIT_SETUP_TAG='v0.3.0-rc7'
-readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='f91c150ca973ea11f0f7f29da23300bda8d94a4b73d32f19f6a9cac3f104545b'
+readonly SITEKIT_SETUP_TAG='v0.3.0'
+readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='3c59557da649a9e134fb152c253eb142b533b9c0eb468dc55e8e02996ea329db'
 
 setup_text() {
     if [[ "${setup_lang:-en}" == ru ]]; then printf '%s' "$2"; else printf '%s' "$1"; fi

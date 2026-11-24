@@ -6,9 +6,9 @@ SiteKit installs 3x-ui and Xray on a dedicated VPS, configures nginx, TLS and
 VLESS over XHTTP or WebSocket, and creates a static website with procedurally
 generated content.
 
-**Release candidate: 0.3.0-rc7.** This version combines the interactive setup
+**Stable release: 0.3.0.** This version combines the interactive setup
 wizard, saved VLESS QR codes and `credentials --refresh-file` in one release.
-The download commands target the `v0.3.0-rc7` assets; check
+The download commands target the `v0.3.0` assets; check
 [GitHub Releases](https://github.com/mountdevhands/3x-ui-sitekit/releases)
 for publication. Updating `main` alone does not publish those assets.
 
@@ -44,9 +44,9 @@ domain and email in the wizard.
     --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --retry 2 --retry-max-time 90 \
     --output "$sitekit_download/setup.sh" \
-    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0-rc7/setup.sh'
+    'https://github.com/mountdevhands/3x-ui-sitekit/releases/download/v0.3.0/setup.sh'
   printf '%s  %s\n' \
-    '068aebeca75b76f67cdba5fa5fcde23f6c49349d0243efd3f47450aaf0b88bc6' "$sitekit_download/setup.sh" |
+    '35ed2e990cad24fb7b5d14bfcf19c04856921aa5762448cb3030189a9dfc280c' "$sitekit_download/setup.sh" |
     sha256sum --check --strict
   bash "$sitekit_download/setup.sh"
 )
@@ -61,8 +61,8 @@ Type directly in fields, use the arrow keys to choose an item, and press
 Enter to continue. Next, Yes and Install are the default actions in their
 respective windows. Esc or Cancel closes the wizard before installation.
 
-The pinned wizard installs **rc7**, including the saved QR feature. It
-verifies the rc7 bootstrap, which verifies the installer and runtime before
+The pinned wizard installs **0.3.0**, including the saved QR feature. It
+verifies the 0.3.0 bootstrap, which verifies the installer and runtime before
 executing them. The reviewed runtime is byte-for-byte the same dependency
 bundle used by rc4. If Ubuntu enables `resolute-backports`, the wizard asks
 whether to back up the source files and disable only that pocket. The final
@@ -137,7 +137,7 @@ Replace `node.example.com` with your existing installation's domain. The
 examples assume a verified installer saved as `/root/https-node.py`; use
 its actual path if different. If it is missing, first follow
 [Get a maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer):
-it downloads the pinned rc7 file, verifies SHA-256 and saves it at that path.
+it downloads the pinned 0.3.0 file, verifies SHA-256 and saves it at that path.
 Use maintenance commands on an existing node.
 
 Open the **exact `Public panel:` URL** from the access file in your normal
@@ -190,19 +190,19 @@ certificate renewal and access-mode changes preserve the path.
 ## VLESS link and QR code
 
 The root-only `/root/https-node-access.txt` contains panel credentials and
-the VLESS connection link. **In rc7**, installation and access-mode changes
+the VLESS connection link. **In 0.3.0**, installation and access-mode changes
 also save a plain UTF-8 QR code in that file. Scan
 it in your VLESS client's import screen; it represents the VLESS link,
 not the admin panel login. Use light text on a dark background and a monospaced font. Widen the
 terminal window until the QR lines do not wrap before scanning.
 
-Use the [rc7 maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer)
-or build the matching source with `python3 -B build.py`. The rc7 installer
+Use the [0.3.0 maintenance installer](docs/PANEL-ACCESS.md#get-a-maintenance-installer)
+or build the matching source with `python3 -B build.py`. The 0.3.0 installer
 SHA-256 is:
 
 <!-- sitekit-release-sha256: installer -->
 ```text
-b6e086aea99af79122210cd79057d3304a31dd1fd02e4976751b852d9cbd55e1
+7ae172a564d07ba1592494452f4704f5f5ff83822df30f372f317c9e1ca41d14
 ```
 <!-- /sitekit-release-sha256 -->
 
@@ -225,8 +225,8 @@ For a read-only display of credentials and a QR code:
 sudo python3 /root/https-node.py credentials --qr
 ```
 
-`--refresh-file` is included in rc7. Existing rc4 nodes can use the verified
-rc7 standalone for this command. QR generation uses plain UTF-8 without
+`--refresh-file` is included in 0.3.0. Existing rc4 nodes can use the verified
+0.3.0 standalone for this command. QR generation uses plain UTF-8 without
 ANSI color escapes and does not send the link to a remote QR service. If
 automatic QR generation during installation or panel-mode changes fails,
 the access file retains usable credentials and the link, with an explicit
@@ -249,8 +249,8 @@ Managed paths and services use the system name `https-node`.
 
 ## Install from downloaded files
 
-Download `3x-ui-sitekit-0.3.0-rc7.py` and the separate
-`3x-ui-sitekit-0.3.0-rc7-linux-amd64.tar.gz`. The runtime SHA-256 is:
+Download `3x-ui-sitekit-0.3.0.py` and the separate
+`3x-ui-sitekit-0.3.0-linux-amd64.tar.gz`. The runtime SHA-256 is:
 
 ```text
 cb2abb5a45b8eee5d30ad0d4e8de6003b088a943ae8f0c2d32af6fec799e787f
@@ -264,7 +264,7 @@ sudo python3 https-node.py check --domain node.example.com
 
 sudo python3 https-node.py install \
   --domain node.example.com \
-  --release-archive ./3x-ui-sitekit-0.3.0-rc7-linux-amd64.tar.gz \
+  --release-archive ./3x-ui-sitekit-0.3.0-linux-amd64.tar.gz \
   --transport xhttp \
   --panel-access ssh \
   --site-theme auto \
@@ -356,7 +356,7 @@ and does not replace real 3x-ui, VLESS or renewal acceptance on a VPS.
 
 
 The [rc4 acceptance report](docs/ACCEPTANCE-0.3.0-rc4.en.md) documents that
-historical release. Local checks of rc7 do not constitute a new VPS, ACME or
+historical release. Local checks of 0.3.0 do not constitute a new VPS, ACME or
 reboot acceptance. Release preparation and publication are described in
 [RELEASING.md](docs/RELEASING.md).
 

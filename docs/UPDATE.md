@@ -5,7 +5,7 @@ English · [Русский](UPDATE.ru.md)
 On a running node, check `status`, save a [backup](BACKUP.md), and obtain
 the matching standalone with a trusted SHA-256. If the bootstrap's temporary
 installer is gone, follow [Get a maintenance installer](PANEL-ACCESS.md#get-a-maintenance-installer)
-to download, verify and save the rc7 standalone before running maintenance
+to download, verify and save the 0.3.0 standalone before running maintenance
 commands. It includes the QR refresh option below.
 
 ```bash
@@ -29,14 +29,14 @@ existing node.
 
 ## Refresh the access file with a QR code
 
-This option is included in **0.3.0-rc7**. Obtain the
+This option is included in **0.3.0**. Obtain the
 [verified maintenance installer](PANEL-ACCESS.md#get-a-maintenance-installer),
-or run `python3 -B build.py` from the matching source root. The rc7
+or run `python3 -B build.py` from the matching source root. The 0.3.0
 standalone SHA-256 is:
 
 <!-- sitekit-release-sha256: installer -->
 ```text
-b6e086aea99af79122210cd79057d3304a31dd1fd02e4976751b852d9cbd55e1
+7ae172a564d07ba1592494452f4704f5f5ff83822df30f372f317c9e1ca41d14
 ```
 <!-- /sitekit-release-sha256 -->
 
@@ -54,6 +54,6 @@ panel URL, username, password, UUID, database, site or certificate. It
 prints only the saved path. A QR generation failure leaves the previous
 access file unchanged. Use `credentials --qr` for a read-only display.
 
-The rc7 installer reuses the exact approved rc4 dependency runtime. Refreshing
+The 0.3.0 installer reuses the exact approved rc4 dependency runtime. Refreshing
 the access file does not upgrade those dependencies. Their versions and
 security coverage remain governed by the [dated policy](../SECURITY.md).
