@@ -2,8 +2,8 @@
 # Interactive terminal wizard for the pinned SiteKit release.
 
 readonly SITEKIT_SETUP_REPOSITORY='mountdevhands/3x-ui-sitekit'
-readonly SITEKIT_SETUP_TAG='v0.3.0-rc6'
-readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='9b08fbc3655573fc9a124d31f844bc8c307dbf71177e0b7f8042d0b359e4e209'
+readonly SITEKIT_SETUP_TAG='v0.3.0-rc7'
+readonly SITEKIT_SETUP_BOOTSTRAP_SHA256='f91c150ca973ea11f0f7f29da23300bda8d94a4b73d32f19f6a9cac3f104545b'
 
 setup_text() {
     if [[ "${setup_lang:-en}" == ru ]]; then printf '%s' "$2"; else printf '%s' "$1"; fi
@@ -22,19 +22,20 @@ setup_read() {
     local prompt
     prompt=$(setup_text "$1" "$2")
     if ! IFS= read -r -p "$prompt" REPLY; then setup_cancel 130; fi
+    if [[ "$REPLY" == $'\e'* ]]; then setup_cancel 130; fi
 }
 
 setup_yes() {
-    case "$REPLY" in y|Y|yes|YES|Yes|д|Д|да|ДА|Да) return 0 ;; *) return 1 ;; esac
+    case "$REPLY" in ''|y|Y|yes|YES|Yes|д|Д|да|ДА|Да) return 0 ;; *) return 1 ;; esac
 }
 
 setup_dialog() {
     local result=0
-    REPLY=$(whiptail --title "$setup_title" \
+    REPLY=$(setup_python terminal-dialog --title "$setup_title" \
         --backtitle "3x-ui SiteKit  $SITEKIT_SETUP_TAG  |  $(setup_text 'Setup' 'Установка')" \
         --ok-button "$(setup_text 'Next' 'Далее')" \
         --cancel-button "$(setup_text 'Cancel' 'Отмена')" \
-        "$@" 3>&1 1>&2 2>&3) || result=$?
+        "$@" 3>&1 1>&2 4<&0) || result=$?
     # Closing the completion screen must not change a successful install status.
     if [[ "${setup_complete:-0}" == 1 ]]; then return 0; fi
     case "$result" in
@@ -57,7 +58,7 @@ setup_ui_init() {
             if (( rows >= 22 && columns >= 72 )); then
                 setup_ui=dialog
                 setup_width=$((columns - 4)); (( setup_width <= 96 )) || setup_width=96
-                setup_height=$((rows - 4)); (( setup_height <= 24 )) || setup_height=24
+                setup_height=$((rows - 2)); (( setup_height <= 24 )) || setup_height=24
                 return
             fi
         fi
@@ -74,11 +75,24 @@ setup_step() {
     if [[ "$setup_ui" == text ]]; then printf '\n[%s]\n' "$setup_title"; fi
 }
 
+# whiptail needs six rows for the frame and buttons. Show long text on Next pages
+# so the text area never takes keyboard focus from the default button.
+setup_dialog_pages() {
+    local pages
+    pages=$(setup_python dialog-pages "$1" "$((setup_width - 4))" "$((setup_height - 6))") || setup_cancel 2
+    while [[ "$pages" == *$'\f'* ]]; do
+        setup_dialog --msgbox "${pages%%$'\f'*}" "$setup_height" "$setup_width" || setup_cancel
+        pages=${pages#*$'\f'}
+    done
+    REPLY=$pages
+}
+
 setup_notice() {
     local message
     message=$(setup_text "$1" "$2")
     if [[ "$setup_ui" == dialog ]]; then
-        setup_dialog --scrolltext --msgbox "$message" "$setup_height" "$setup_width" || setup_cancel
+        setup_dialog_pages "$message"
+        setup_dialog --msgbox "$REPLY" "$setup_height" "$setup_width" || setup_cancel
         if [[ "${setup_complete:-0}" == 1 ]]; then printf '%s\n' "$message"; fi
     else
         printf '%s\n' "$message"
@@ -137,15 +151,26 @@ setup_choice() {
 
 setup_confirm() {
     local message
+    local positive=${3:-$(setup_text 'Yes' 'Да')} negative=${4:-$(setup_text 'No' 'Нет')}
     message=$(setup_text "$1" "$2")
     if [[ "$setup_ui" == dialog ]]; then
-        setup_dialog --defaultno --yes-button "$(setup_text 'Yes' 'Да')" \
-            --no-button "$(setup_text 'No' 'Нет')" --scrolltext --yesno "$message" "$setup_height" "$setup_width"
+        setup_dialog_pages "$message"
+        setup_dialog --yes-button "$positive" --no-button "$negative" \
+            --yesno "$REPLY" "$setup_height" "$setup_width"
     else
         printf '%s\n' "$message"
-        setup_read 'Confirm? [y/N]: ' 'Подтвердить? [y/N]: '
+        setup_read "$positive? [Y/n]: " "$positive? [Y/n]: "
         setup_yes
     fi
+}
+
+setup_summary_field() {
+    local label=$1 value=$2
+    if [[ "$setup_ui" == dialog ]] && (( ${#label} + ${#value} + 2 > setup_width - 4 )); then
+        review_details+="$label: $value"$'\n'
+        value=$(setup_text '(see details)' '(см. подробности)')
+    fi
+    summary+="$label: $value"$'\n'
 }
 
 setup_dns_progress() {
@@ -160,13 +185,22 @@ setup_dns_progress() {
 
 setup_python() {
     python3 -B - "$@" <<'SITEKIT_SETUP_PYTHON'
+import contextlib
+import errno
 import http.client
 import ipaddress
 import json
+import os
+import pty
 import re
+import select
 import signal
 import subprocess
 import sys
+import termios
+import textwrap
+import time
+import tty
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -492,9 +526,65 @@ def check_dns(name, lang):
         signal.signal(signal.SIGALRM, previous)
 
 
+def terminal_dialog(options):
+    # whiptail uses S-Lang raw input, which does not treat Ctrl+C as SIGINT.
+    # Forward terminal input through a PTY and translate interrupt/EOF to Esc
+    # so whiptail can restore the display before the wrapper cancels the wizard.
+    terminal = 4  # setup_python reads its program on stdin.
+    settings = termios.tcgetattr(terminal)
+    size = termios.tcgetwinsize(terminal)
+    pid, master = pty.fork()
+    if pid == 0:
+        try:
+            termios.tcsetwinsize(0, size)
+            os.execvp('whiptail', ['whiptail', '--output-fd', '3', *options])
+        except OSError as error:
+            print(error, file=sys.stderr)
+            os._exit(2)
+
+    cancel_at = None
+    try:
+        tty.setraw(terminal)
+        while True:
+            if cancel_at is None:
+                inputs, _, _ = select.select([master, terminal], [], [])
+            else:
+                inputs, _, _ = select.select([master], [], [], max(0, cancel_at - time.monotonic()))
+                if not inputs:
+                    break
+            if terminal in inputs:
+                data = os.read(terminal, 1024)
+                if not data or b'\x03' in data or b'\x04' in data:
+                    cancel_at = time.monotonic() + 2
+                    data = b'\x1b'
+                with contextlib.suppress(OSError):
+                    os.write(master, data)
+            if master in inputs:
+                try:
+                    output = os.read(master, 4096)
+                except OSError as error:
+                    if error.errno != errno.EIO:
+                        raise
+                    break
+                if not output:
+                    break
+                os.write(1, output)
+    finally:
+        os.close(master)
+        with contextlib.suppress(OSError):
+            termios.tcsetattr(terminal, termios.TCSANOW, settings)
+        _, status = os.waitpid(pid, 0)
+    if cancel_at is not None:
+        return 130
+    code = os.waitstatus_to_exitcode(status)
+    return 128 - code if code < 0 else code
+
+
 def main(argv):
     action = argv[0]
-    if action == 'domain':
+    if action == 'terminal-dialog':
+        raise SystemExit(terminal_dialog(argv[1:]))
+    elif action == 'domain':
         result = domain_name(argv[1])
     elif action == 'email':
         result = email_address(argv[1])
@@ -502,6 +592,12 @@ def main(argv):
         result = allowlist(argv[1])
     elif action == 'dns':
         result = check_dns(domain_name(argv[1]), argv[2])
+    elif action == 'dialog-pages':
+        width, height = map(int, argv[2:4])
+        lines = []
+        for line in argv[1].splitlines():
+            lines.extend(textwrap.wrap(line, width, break_on_hyphens=False) or [''])
+        result = '\f'.join('\n'.join(lines[i:i + height]) for i in range(0, len(lines), height))
     elif action == 'apt-backports':
         locations = []
         try:
@@ -564,6 +660,8 @@ setup_help() {
                'Мастер открывает окна whiptail, если они доступны; иначе использует нумерованные текстовые меню.'
     setup_line '--ui dialog requires whiptail and a terminal of at least 72x22. --ui text works in minimal consoles.' \
                '--ui dialog требует whiptail и терминал минимум 72x22. --ui text подходит для минимальных консолей.'
+    setup_line 'Type in fields, use arrows in menus and press Enter to continue. Esc cancels a dialog.' \
+               'Печатайте в полях, выбирайте стрелками и нажимайте Enter. Esc отменяет диалог.'
     printf '%s %s\n' "$(setup_text 'Release:' 'Версия:')" "$SITEKIT_SETUP_TAG"
     setup_line 'Use a fresh Ubuntu 26.04 amd64 VPS. Installation requires root.' \
                'Нужен чистый VPS Ubuntu 26.04 amd64. Для установки требуется root.'
@@ -576,6 +674,7 @@ setup_main() (
     local setup_lang=en lang_selected=0 ui_requested=auto setup_ui=text setup_complete=0 setup_title='Language / Язык'
     local setup_width=76 setup_height=20 dry_run=0 REPLY='' domain='' bind_ip='' email='' panel=ssh theme=auto transport=xhttp
     local value allow_text='' status=0 dns_result='' dns_warning='' summary='' panel_label='' allowed_label='' apt_changes=''
+    local review_details='' final_note='' final_action=''
     local -a allowed=() registration=() arguments=()
     SITEKIT_SETUP_DOWNLOAD_DIR=''
     while (($#)); do
@@ -606,8 +705,8 @@ setup_main() (
     fi
     setup_title=$(setup_text 'Welcome to SiteKit' 'Добро пожаловать в SiteKit')
     setup_notice \
-        $'Set up your own 3x-ui server in six steps.\n\nWe will configure the panel, a generated website, HTTPS and VLESS. Your login details and QR code will be saved on the server.\n\nBefore you begin:\n- A fresh Ubuntu 26.04 amd64 VPS\n- A domain with one A record pointing to this VPS, and no AAAA record\n- Public TCP ports 80 and 443 available\n\nUse the arrow keys and Tab in windows, then Enter. Esc cancels the wizard.' \
-        $'Настройте свой сервер 3x-ui за шесть шагов.\n\nМастер подготовит панель, сгенерированный сайт, HTTPS и VLESS. Доступы и QR-код будут сохранены на сервере.\n\nПеред началом нужны:\n- Чистый VPS Ubuntu 26.04 amd64\n- Домен с одной A-записью на этот VPS, без AAAA\n- Доступные извне TCP-порты 80 и 443\n\nВ окнах используйте стрелки, Tab и Enter. Esc отменяет мастер.'
+        $'Set up your own 3x-ui server in six steps.\n\nYou need a fresh Ubuntu 26.04 amd64 VPS, a domain with one A record pointing here and no AAAA record, and public TCP ports 80 and 443.\n\nType in fields, choose with arrows and press Enter. Esc cancels.' \
+        $'Настройте свой сервер 3x-ui за шесть шагов.\n\nМастер подготовит панель, сгенерированный сайт, HTTPS и VLESS. Доступы и QR-код будут сохранены на сервере.\n\nПеред началом нужны:\n- Чистый VPS Ubuntu 26.04 amd64\n- Домен с одной A-записью на этот VPS, без AAAA\n- Доступные извне TCP-порты 80 и 443\n\nПечатайте в полях, выбирайте стрелками и нажимайте Enter. Esc отменяет мастер.'
     if (( dry_run )); then
         setup_notice 'PREVIEW MODE: DNS will be checked, but SiteKit will not be downloaded or installed.' \
                      'ПРЕДПРОСМОТР: мастер проверит DNS, но не будет скачивать и устанавливать SiteKit.'
@@ -700,39 +799,51 @@ setup_main() (
     transport=$REPLY
 
     setup_step 6 'Review and install' 'Проверка и установка'
-    if ! setup_confirm \
-        $'Let\'s Encrypt provides the HTTPS certificate.\n\nRead the terms: https://letsencrypt.org/repository/\n\nDo you agree to these terms?' \
-        $'Let\'s Encrypt выпускает сертификат HTTPS.\n\nУсловия: https://letsencrypt.org/repository/\n\nВы согласны с этими условиями?'; then setup_cancel; fi
+    if [[ "$panel" == https ]]; then
+        panel_label=$(setup_text 'HTTPS link in your browser' 'HTTPS-ссылка в браузере')
+        allowed_label=${allow_text//$'\n'/, }
+        allowed_label=${allowed_label:-$(setup_text 'Any IP, with login and password' 'Любой IP, с логином и паролем')}
+    else
+        panel_label=$(setup_text 'Private, through an SSH tunnel' 'Приватно, через SSH-туннель')
+        allowed_label=$(setup_text 'SSH access only' 'Только SSH-доступ')
+    fi
+    setup_summary_field "$(setup_text 'Release' 'Версия')" "$SITEKIT_SETUP_TAG"
+    setup_summary_field "$(setup_text 'Domain' 'Домен')" "$domain"
+    setup_summary_field 'IPv4' "$bind_ip"
+    setup_summary_field 'Email' "${email:-$(setup_text '(without email)' '(без email)')}"
+    setup_summary_field "$(setup_text 'Panel' 'Панель')" "$panel_label"
+    setup_summary_field "$(setup_text 'Allowed clients' 'Доступ клиентов')" "$allowed_label"
+    setup_summary_field "$(setup_text 'Website' 'Сайт')" "$theme"
+    setup_summary_field "$(setup_text 'Transport' 'Транспорт')" "$transport"
+    if [[ -n "$apt_changes" ]]; then
+        summary+="$(setup_text 'APT: back up sources and disable only resolute-backports.' 'APT: копия источников и отключение только resolute-backports.')"$'\n'
+        if [[ "$setup_ui" == dialog && ( "$apt_changes" == *$'\n'* || ${#apt_changes} -gt $((setup_width - 4)) ) ]]; then
+            review_details+="APT:"$'\n'"$apt_changes"$'\n'
+        else
+            summary+="$apt_changes"$'\n'
+        fi
+    fi
+    if [[ -n "$review_details" ]]; then setup_notice "$review_details" "$review_details"; fi
+    if (( dry_run )); then
+        final_note=$(setup_text 'Preview only. Review the agreement before installing:' 'Предпросмотр. Перед установкой прочитайте соглашение:')
+        final_action=$(setup_text 'Finish preview' 'Завершить')
+    else
+        final_note=$(setup_text 'By choosing Install, you agree to the Let’s Encrypt Subscriber Agreement:' \
+                                'Нажимая «Установить», вы принимаете соглашение подписчика Let’s Encrypt:')
+        final_action=$(setup_text 'Install' 'Установить')
+    fi
+    summary+=$'\n'"$final_note"$'\nhttps://letsencrypt.org/repository/'
+    setup_confirm "$summary" "$summary" "$final_action" "$(setup_text 'Cancel' 'Отмена')" || setup_cancel
+
     arguments=(--repository "$SITEKIT_SETUP_REPOSITORY" --domain "$domain" --bind-ip "$bind_ip"
                "${registration[@]}" --agree-tos --panel-access "$panel" --site-theme "$theme" --transport "$transport")
     if [[ -n "$apt_changes" ]]; then arguments+=(--disable-apt-backports); fi
     if [[ -n "$allow_text" ]]; then
         for value in "${allowed[@]}"; do arguments+=(--panel-allow "$value"); done
     fi
-    if [[ "$panel" == https ]]; then
-        panel_label=$(setup_text 'HTTPS link in your browser' 'HTTPS-ссылка в браузере')
-        allowed_label=${allow_text:-$(setup_text 'Any IP, with login and password' 'Любой IP, с логином и паролем')}
-    else
-        panel_label=$(setup_text 'Private, through an SSH tunnel' 'Приватно, через SSH-туннель')
-        allowed_label=$(setup_text 'SSH access only' 'Только SSH-доступ')
-    fi
-    summary=$(printf '%s: %s\n%s: %s\nIPv4: %s\nEmail: %s\n%s: %s\n%s: %s\n%s: %s\n%s: %s\n\n%s' \
-        "$(setup_text 'Release' 'Версия')" "$SITEKIT_SETUP_TAG" \
-        "$(setup_text 'Domain' 'Домен')" "$domain" "$bind_ip" "${email:-$(setup_text '(without email)' '(без email)')}" \
-        "$(setup_text 'Panel' 'Панель')" "$panel_label" "$(setup_text 'Allowed clients' 'Доступ клиентов')" "$allowed_label" \
-        "$(setup_text 'Website' 'Сайт')" "$theme" "$(setup_text 'Transport' 'Транспорт')" "$transport" \
-        "$(setup_text 'Your panel login, random panel address and VLESS link/QR will be generated automatically.' 'Логин, пароль, случайный адрес панели и VLESS-ссылка/QR будут созданы автоматически.')")
-    if [[ -n "$apt_changes" ]]; then
-        summary="$summary"$'\n\n'"$(setup_text 'APT during installation: back up original files and disable only resolute-backports.' 'APT при установке: сохранить оригиналы и отключить только resolute-backports.')"$'\n'"$apt_changes"
-    fi
     if (( dry_run )); then
-        summary="$summary"$'\n\n'"$(setup_text 'Complete this preview?' 'Завершить предпросмотр?')"
-    else
-        summary="$summary"$'\n\n'"$(setup_text 'Install SiteKit with these settings?' 'Установить SiteKit с этими настройками?')"
-    fi
-    setup_confirm "$summary" "$summary" || setup_cancel
-    if (( dry_run )); then
-        setup_line 'Command after downloading and verifying install.sh:' 'Команда после загрузки и проверки install.sh:'
+        setup_line 'After verifying install.sh and accepting the agreement, run:' \
+                   'После проверки install.sh и принятия соглашения выполните:'
         printf '  bash %q' './install.sh'
         printf ' %q' "${arguments[@]}"
         printf '\n'

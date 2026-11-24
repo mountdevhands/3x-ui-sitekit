@@ -43,7 +43,7 @@ from security_policy import SECURITY_APPROVED_BUNDLE, SECURITY_CERTBOT_MANIFEST_
 from certbot_runtime import CERTBOT_LIBRARIES, install_certbot_runtime, verify_certbot_payload
 from apt_sources import APT_BACKPORTS, apt_source_enabled, apt_source_paths, apt_source_records, without_apt_backports
 
-APP_VERSION = "0.3.0-rc6"
+APP_VERSION = "0.3.0-rc7"
 RELEASE_VERSION = SECURITY_APPROVED_BUNDLE[0] if SECURITY_APPROVED_BUNDLE else "v3.11.0"
 RELEASE_SHA256 = (SECURITY_APPROVED_BUNDLE[1] if SECURITY_APPROVED_BUNDLE else
                   "0ddfa4702f595442e2962acd81addc768fdacaa4ff2672c971a0463dae744916")
